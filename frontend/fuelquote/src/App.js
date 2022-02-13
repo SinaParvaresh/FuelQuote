@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom'
 
 
 import Login from './components/pages/login.js';
+import FuelQuoteHistory from './components/pages/fuelQuoteHistory.js';
 
 
 
@@ -13,6 +14,7 @@ function App() {
      <Routes>
        <Route path="/" element={<App />}/>
        <Route path="/login" element={<Login />}/>
+       <Route path="/fuelQuoteHistory" element={<FuelQuoteHistory />}/>
      </Routes>
    </BrowserRouter>
   );

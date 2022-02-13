@@ -3,30 +3,30 @@ import './login.css'
 
 const Login = () => {
     return (
-        <div>
+        <div className='login-background'>
             <form className="Login" >
                 <h1>
                     LOGIN
                 </h1>
-                <div className='form-group row'>
-                    <label className="col-sm-2 col-form label">Email</label>
-                    <div className="col-sm-10">
-                        <input type="text" className="form-control" placeholder="email@example.com" />
-                    </div>
-                </div>
-                <div className="form-group row">
-                    <label className="col-sm-2 col-form-label">Password</label>
-                    <div className="col-sm-10">
-                        <input type="password" className="form-control" id="inputPassword" placeholder="Password" />
-                    </div>
-                </div>
                 <br/>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Username</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="user@example.com" aria-label="Username" aria-describedby="basic-addon1" />
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Password</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="**********" aria-label="Username" aria-describedby="basic-addon1" />
+                </div>
                 <div>
                     <button className="btn btn-primary">Submit</button>
                 </div>
             </form>
         </div>
-        
+
     )
 };
 

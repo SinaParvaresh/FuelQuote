@@ -1,6 +1,7 @@
 .Login {
     border: 5px solid black;
     border-radius: 20px;
+    background-color: rgb(255, 255, 255);
     position: absolute;
     top: 50%;
     left: 50%;
@@ -13,10 +14,23 @@
   }
   
 .col-sm-2 {
-  width: 50%;
+  padding-right: 30px;
+}
+
+.form-control {
+  position: relative;
 }
 
 .new-user {
   padding-top: 30px;
   display: inline;
 }
+
+.login-background {
+  background-image: url('./background.jpg');
+  height: 922px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
