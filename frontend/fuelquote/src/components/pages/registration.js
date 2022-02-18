@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import './login.css'
+import './registration.css'
 
-const Login = () => {
+const Registration = () => {
     return (
-        <div className='login-background'>
-            <form className="Login" >
+        <div className='registration-background'>
+            <form className="Registration" >
                 <h1>
-                    LOGIN
+                    REGISTRATION
                 </h1>
-                <br/>
+                <br />
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1">Username</span>
@@ -19,7 +19,7 @@ const Login = () => {
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1">Password</span>
                     </div>
-                    <input type="password" class="form-control" placeholder="**********" aria-label="Username" aria-describedby="basic-addon1" />
+                    <input type="text" class="form-control" placeholder="**********" aria-label="Username" aria-describedby="basic-addon1" />
                 </div>
                 <div>
                     <button className="btn btn-primary">Submit</button>
@@ -27,11 +27,11 @@ const Login = () => {
                 <br></br>
                 <a
                     className="App-link"
-                    href="./registration"
+                    href="./login"
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    New User? Register here.
+                    Login
                 </a>
             </form>
         </div>
@@ -39,4 +39,4 @@ const Login = () => {
     )
 };
 
-export default Login;
+export default Registration;
