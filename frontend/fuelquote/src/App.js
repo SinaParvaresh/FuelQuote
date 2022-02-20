@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom'
 import Login from './components/pages/login.js';
 import Registration from './components/pages/registration.js';
 import FuelQuoteHistory from './components/pages/fuelQuoteHistory.js';
-
+import ProfileManagement from './components/pages/profileManagement.js';
 
 function App() {
   return (
@@ -21,6 +21,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/fuelQuoteHistory" element={<FuelQuoteHistory />} />
+        <Route path="/profileManagement" element={<ProfileManagement />} />
       </Routes>
     </BrowserRouter>
     //   <header className="App-header">
