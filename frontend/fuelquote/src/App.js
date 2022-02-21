@@ -5,12 +5,12 @@ import { useHistory } from 'react-router-dom'
 
 import Login from './components/pages/login.js';
 import Registration from './components/pages/registration.js';
+import FuelQuoteForm from './components/pages/fuelQuoteForm.js';
 import FuelQuoteHistory from './components/pages/fuelQuoteHistory.js';
 import ProfileManagement from './components/pages/profileManagement.js';
 
 function App() {
   return (
-    // <div className="App">
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} /> 
@@ -20,14 +20,11 @@ function App() {
         I think it is the frist page the user should encounter?*/}
         <Route path="/login" element={<Login />} />
         <Route path="/registration" element={<Registration />} />
+        <Route path="/fuelQuoteForm" element={<FuelQuoteForm />} />
         <Route path="/fuelQuoteHistory" element={<FuelQuoteHistory />} />
         <Route path="/profileManagement" element={<ProfileManagement />} />
       </Routes>
     </BrowserRouter>
-    //   <header className="App-header">
-    //     <p>This is the hope page?</p>
-    //   </header>      
-    // </div>
   );
 }
 

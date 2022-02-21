@@ -1,60 +1,7 @@
 import React, { useState, useEffect, Component } from "react";
-import { ReactDOM } from "react";
-
-import Button from "./Button";
 
 const ProfileManagement = (props) => {
-  const [enteredName, setEnteredName] = useState("");
-  const [enteredAddress, setEnteredAddress] = useState("");
-  const [enteredSecondAddress, setEnteredSecondAddress] = useState("");
-  const [enteredCity, setEnteredCity] = useState("");
-  const [enteredZipcode, setEnteredZipcode] = useState("");
-  const [enteredStateUS, setEnteredStateUS] = useState("");
-
-  const addProfileHandler = (event) => {
-    event.preventDefault();
-    // if (enteredName.trim().length === 0 || enteredAddress.trim().length === 0 || enteredCity.trim().length === 0 || enteredZipcode.trim().length === 0 || enteredStateUS=="") {
-    //   console.log("empty field");
-    //   return;
-    // }
-    // if (enteredName.trim().length > 50 || enteredAddress.trim().length > 100 || enteredSecondAddress.trim().length > 100 || enteredCity.trim().length > 100 || enteredZipcode.trim().length > 9 || enteredZipcode.trim().length < 5) {
-    //   console.log("Field out of bounds");
-    //   return;
-    // }
-    console.log(enteredName, enteredAddress);
-    setEnteredName("");
-    setEnteredAddress("");
-    setEnteredSecondAddress('');
-    setEnteredCity("");
-    setEnteredZipcode("");
-    setEnteredStateUS("");
-  };
-
-  const nameChangedHandler = (event) => {
-    setEnteredName(event.target.value);
-  };
-
-  const addressChangedHandler = (event) => {
-    setEnteredAddress(event.target.value);
-  };
-
-  const secondAddressChangedHandler = (event) => {
-    setEnteredSecondAddress(event.target.value);
-  };
-
-  const cityChangedHandler = (event) => {
-    setEnteredCity(event.target.value);
-  };
-
-  const zipcodeChangedHandler = (event) => {
-    setEnteredZipcode(event.target.value);
-  };
-
-  const stateUSChangedHandler = (event) => {
-    setEnteredStateUS(event.target.value);
-  };
-
-
+  
 
   return (
     <div className="maincontainer">
@@ -78,8 +25,6 @@ const ProfileManagement = (props) => {
                   type="text"
                   value={enteredName}
                   onChange={nameChangedHandler}
-                  required
-                  maxLength={50}
                 />
               </div>
 
@@ -97,7 +42,6 @@ const ProfileManagement = (props) => {
                   type="address"
                   value={enteredAddress}
                   onChange={addressChangedHandler}
-                  maxLength={100}
                 />
               </div>
               <div className="form-group input-group">
@@ -114,7 +58,6 @@ const ProfileManagement = (props) => {
                   type="address"
                   value={enteredSecondAddress}
                   onChange={secondAddressChangedHandler}
-                  maxLength={100}
                 />
               </div>
 
@@ -132,8 +75,6 @@ const ProfileManagement = (props) => {
                   type="city"
                   value={enteredCity}
                   onChange={cityChangedHandler}
-                  maxLength={100}
-                  required
                 />
               </div>
 
@@ -144,7 +85,7 @@ const ProfileManagement = (props) => {
                     <i className="fa fa-building"></i>{" "}
                   </span>
                 </div>
-                <select className="input-group-text" name="state" placeholder='' onChange={stateUSChangedHandler} value={enteredStateUS} required>
+                <select className="input-group-text" name="state" placeholder='none' onChange={stateUSChangedHandler} value={enteredStateUS}>
                     <option value="">Select</option>
                     <option value="AL">Alabama</option>
                     <option value="AK">Alaska</option>
@@ -209,13 +150,9 @@ const ProfileManagement = (props) => {
                 <input
                   className="form-control"
                   placeholder="Zipcode"
-                  type="text"
-                  pattern="[0-9]*"
+                  type="zipcode"
                   value={enteredZipcode}
                   onChange={zipcodeChangedHandler}
-                  required
-                  minLength={5}
-                  maxLength={9}
                 />
               </div>
 
@@ -230,4 +167,3 @@ const ProfileManagement = (props) => {
   );
 };
 
-export default ProfileManagement;
