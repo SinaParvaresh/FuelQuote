@@ -3,11 +3,11 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom'
 
 
-import Login from './components/pages/login.js';
-import Registration from './components/pages/registration.js';
-import FuelQuoteForm from './components/pages/fuelQuoteForm.js';
-import FuelQuoteHistory from './components/pages/fuelQuoteHistory.js';
-import ProfileManagement from './components/pages/profileManagement.js';
+import Login from './components/pages/login';
+import Registration from './components/pages/registration';
+import FuelQuoteForm from './components/pages/fuelQuoteForm';
+import FuelQuoteHistory from './components/pages/fuelQuoteHistory';
+import ProfileManagement from './components/pages/profileManagement';
 
 function App() {
   return (

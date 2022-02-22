@@ -2,6 +2,7 @@ import React, { useState, useEffect, Component } from "react";
 import { ReactDOM } from "react";
 
 import Button from "./Button";
+import NavigationBar from "./navigationBar";
 
 const ProfileManagement = (props) => {
   const [enteredName, setEnteredName] = useState("");
@@ -57,7 +58,9 @@ const ProfileManagement = (props) => {
 
 
   return (
-    <div className="maincontainer">
+    <div className="page">
+      <NavigationBar pageName="ProfileManagement"></NavigationBar>
+
       <div className="container">
         <div className="card bg-light">
           <article className="card-body mx-auto" style={{ maxWidth: "400px" }}>

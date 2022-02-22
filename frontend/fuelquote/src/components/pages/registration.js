@@ -53,7 +53,7 @@ const Registration = () => {
 
     return (
         <div className='registration-background'>
-            <form onSubmit={submitHandler} className="Registration" >
+            <form onSubmit={submitHandler} className="Registration" action="/login" >
                 <h1>
                     REGISTRATION
                 </h1>

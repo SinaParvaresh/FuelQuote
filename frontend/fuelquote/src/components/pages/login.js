@@ -5,7 +5,7 @@ import './login.css'
 const Login = () => {
     return (
         <div className='login-background'>
-            <form className="Login" >
+            <form className="Login" action="profileManagement">
                 <h1>
                     LOGIN
                 </h1>

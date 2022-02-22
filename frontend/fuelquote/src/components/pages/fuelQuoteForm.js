@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Component } from "react";
+import NavigationBar from "./navigationBar";
 
 const FuelQuoteForm = (props) => {
   const getTodayDate = () => {
@@ -29,7 +30,8 @@ const FuelQuoteForm = (props) => {
 
   return (
 
-    <div className="maincontainer">
+    <div className="page">
+      <NavigationBar pageName="FuelQuoteForm"></NavigationBar>
       <div className="container">
         <div className="card bg-light">
           <article className="card-body">
