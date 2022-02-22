@@ -1,3 +1,7 @@
 .table {
     position: relative;
 }
+
+.page{
+    max-width: 100%;
+}

@@ -58,12 +58,11 @@ const ProfileManagement = (props) => {
 
 
   return (
-    <div className="page">
+    <div className="page" style={{ maxWidth: "100%" }}>
       <NavigationBar pageName="ProfileManagement"></NavigationBar>
-
       <div className="container">
         <div className="card bg-light">
-          <article className="card-body mx-auto" style={{ maxWidth: "400px" }}>
+          <article className="card-body mx-auto" style={{ maxWidth: "100%" }}>
             <h4 className="card-title mt-3 text-center">Profile</h4>
 
             <form onSubmit={addProfileHandler}>

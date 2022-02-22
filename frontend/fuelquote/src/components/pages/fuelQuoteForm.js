@@ -16,13 +16,11 @@ const FuelQuoteForm = (props) => {
     return yyyy + '-' + mm + '-' + dd;
   }
 
-  // let priceGalRate=(Math.random() * 10).toPrecision(3);
-
   const [gallons, setGallons] = useState(0);
   const gallonsHandler = (retrieved) => {
     setGallons(retrieved.target.value);
   };
-  const [priceGalRate, setRate] = useState((Math.random()*8+1).toPrecision(3));
+  const [priceGalRate, setRate] = useState((Math.random()*8+1).toFixed(2));
   // const rateHandler = (retrieved) => {
   //   setRate(retrieved.target.value);
   // };
@@ -30,20 +28,12 @@ const FuelQuoteForm = (props) => {
 
   return (
 
-    <div className="page">
+    <div className="page" style={{ maxWidth: "100%" }}>
       <NavigationBar pageName="FuelQuoteForm"></NavigationBar>
       <div className="container">
         <div className="card bg-light">
           <article className="card-body">
             <form>
-
-              {/* - Gallons Requested (numeric, required)
-              - Delivery Address (Non-editable, comes from client profile)
-              - Delivery Date (Calender, date picker)
-              - Suggested Price / gallon (numeric non-editable, price will be calculated by Pricing Module - we are not building pricing module yet)
-              - Total Amount Due (numeric non-editable, calculated (gallons * price)) */}
-
-
               <div className="form-group">
                 <label htmlFor="exampleInputEmail1">Gallons Requested</label>
                 <input onChange={gallonsHandler} type="number" className="form-control" min={0} max={10 ** 9} placeholder="Enter number of gallons." required />
@@ -66,7 +56,7 @@ const FuelQuoteForm = (props) => {
 
               <div className="form-group">
                 <label htmlFor="exampleInputEmail1">Total Amount Due</label>
-                <input type="zipcode" className="form-control" value={(gallons*priceGalRate)} readOnly />
+                <input type="zipcode" className="form-control" value={(gallons*priceGalRate).toFixed(2)} readOnly />
               </div>
 
               <button type="submit" className="btn btn-primary">Submit</button>

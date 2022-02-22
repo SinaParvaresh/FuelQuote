@@ -10,6 +10,8 @@
   display: flex;
   flex: 1;
   flex-direction: column;
+  width: 520px;
+  max-width: 100%;
 }
 
 .col-sm-2 {

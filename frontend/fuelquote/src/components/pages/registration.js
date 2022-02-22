@@ -4,23 +4,23 @@ import './registration.css'
 
 const Registration = () => {
 
-    const [button_state, setButton] = useState('disabled');
+    const [button_state, setButton] = useState(true);
     const [errors, setErrors] = useState({});
 
     const checkEmpty = (retrieved) => {
         let fields = document.querySelectorAll("[class^='form-control']");
 
         if ([].slice.call(fields).reduce((prev, curr) => prev * (!!curr.value), 1))
-            setButton('');
+            setButton(false);
         else
-            setButton('disabled');
+            setButton(true);
     }
 
     const submitHandler = (retrieved) => {
         if (Object.keys(errors).length > 0)
             retrieved.preventDefault();
 
-        // const fields=[].slice.call(document.querySelectorAll("[class^='form-con']")).map(e=>e.value);
+        // const fields=[].slice.call(document.querySelectorAll("[class^='form-control']")).map(e=>e.value);
         const fields = [].slice.call(retrieved.target).map(e => e.value);
 
         // let errorMsg=errors.reduce((prev,curr)=>prev+'\n'+curr,'')
@@ -35,7 +35,7 @@ const Registration = () => {
         checkEmpty(retrieved);
 
         if (!retrieved.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/))
-            errors["username"] = "Username must be in valid email format";
+            errors["username"] = "Username must be in valid email format.";
         else
             delete errors["username"];
     }
@@ -43,9 +43,7 @@ const Registration = () => {
     const passwordHandler = (retrieved) => {
         checkEmpty(retrieved);
 
-        if (retrieved.target.value.length < 8)
-            errors["password"] = "Password must be at least 8 characters long.";
-        else if (!retrieved.target.value.match(/^\S+$/))
+        if (!retrieved.target.value.match(/^\S+$/))
             errors["password"] = "Password cannot contain whitespaces.";
         else
             delete errors["password"];
@@ -62,21 +60,37 @@ const Registration = () => {
                     <div className="input-group-prepend">
                         <label htmlFor="usernm" className="input-group-text" id="basic-addon1">Create Username</label>
                     </div>
-                    <input id="usernm" onChange={usernameHandler} type="email" className="form-control" placeholder="user@example.com" aria-label="Username" aria-describedby="basic-addon1" maxLength={30} required/>
+                    <input id="usernm" onChange={usernameHandler} type="email" className="form-control" placeholder="user@example.com" aria-label="Username" aria-describedby="basic-addon1" maxLength={30} required />
                 </div>
-                    <small className="form-text text-muted pt-0 mt-0 mb-3">Username should be of email format.</small>
+                <small className="form-text text-muted pt-0 mt-0 mb-3">Username should be of email format.</small>
+                
+                <div className="alert alert-warning alert-dismissible fade show" role="alert" style={{display: 'none'}}>
+                    <span className="text-center font-weight-bold" style={{color: 'rgb(150,0,0)', fontSize:'10pt'}}>Username must be in valid email format.</span>
+                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
                 <div className="input-group mb-0">
                     <div className="input-group-prepend">
                         <label htmlFor="passwrd" className="input-group-text" id="basic-addon1">Create Password</label>
                     </div>
-                    <input id="passwrd" onChange={passwordHandler} type="text" className="form-control" placeholder="********" aria-label="Password" aria-describedby="basic-addon1" maxLength={16} required/>
+                    <input id="passwrd" onChange={passwordHandler} type="text" className="form-control" placeholder="********" aria-label="Password" aria-describedby="basic-addon1" minLength={8} maxLength={16} required />
                 </div>
-                    <small className="form-text text-muted pt-0 mt-0 mb-3">Password should be at least 8 characters without whitespaces.</small>
-                    {/* Replace alert with style={{}} and useState for span message. */}
+                <small className="form-text text-muted pt-0 mt-0 mb-3">Password should be at least 8 characters without whitespaces.</small>
+                {/* Replace alert with style={{}} and useState for span message. */}
+
+                <div className="alert alert-warning alert-dismissible fade show" role="alert" style={{display: 'none'}}>
+                    <span className="text-center font-weight-bold" style={{color: 'rgb(150,0,0)', fontSize:'10pt'}}>Password cannot contain whitespaces.</span>
+                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
                 <div>
                     <button disabled={button_state} id="submit-register" className="btn btn-primary">Submit</button>
                 </div>
-                <br/>
+                <br />
                 <Link to="/login">Already a user? Login</Link>
             </form>
         </div>

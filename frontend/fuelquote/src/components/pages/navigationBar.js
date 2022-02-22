@@ -23,7 +23,7 @@ const NavigationBar = (props) => {
         <div className="container">
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container mb-2">
-                    <Link className="navbar-brand" to="#">Group 33</Link>
+                    <Link className="navbar-brand" to="/" style={{textDecoration: 'none'}}>Group 33</Link>
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
@@ -31,20 +31,20 @@ const NavigationBar = (props) => {
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav mr-auto mt-lg-0">
                                 <li className={determineActive("ProfileManagement")}>
-                                    <Link className="nav-link" to="/profileManagement">Profile Management</Link>
+                                    <Link className="nav-link" to="/profileManagement" style={{textDecoration: 'none'}}>Profile Management</Link>
                                 </li>
                                 <li className={determineActive("FuelQuoteForm")}>
-                                    <Link className="nav-link" to="/fuelQuoteForm">Fuel Quote Form</Link>
+                                    <Link className="nav-link" to="/fuelQuoteForm" style={{textDecoration: 'none'}}>Fuel Quote Form</Link>
                                 </li>
                                 <li className={determineActive("FuelQuoteHistory")}>
-                                    <Link className="nav-link" to="/fuelQuoteHistory">Fuel Quote History</Link>
+                                    <Link className="nav-link" to="/fuelQuoteHistory" style={{textDecoration: 'none'}}>Fuel Quote History</Link>
                                 </li>
                                 {props.children}
                             </ul>
                         </div>
                     </div>
                 </div>
-                <Link onClick={logoutHandler} to="/login">
+                <Link onClick={logoutHandler} to="/login" style={{textDecoration: 'none'}}>
                 <button className="btn btn-outline-success ml-auto">Logout</button>
                 </Link>
             </nav>

@@ -8,12 +8,13 @@ import Registration from './components/pages/registration';
 import FuelQuoteForm from './components/pages/fuelQuoteForm';
 import FuelQuoteHistory from './components/pages/fuelQuoteHistory';
 import ProfileManagement from './components/pages/profileManagement';
+import HomePage from './components/pages/homePage';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />} /> 
+        <Route path="/" element={<HomePage />} /> 
         {/* ^ Maybe make a home page later and have it be pointed by this 
         instead of App since it seems that we can't write on the same page
         as the BrowserRouter. Or maybe just have login be this page since
