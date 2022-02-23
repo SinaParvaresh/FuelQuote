@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import './registration.css'
 
-const Registration = () => {
+const Registration = (props) => {
 
     const [button_state, setButton] = useState(true);
     const [errors, setErrors] = useState({});
@@ -17,36 +17,54 @@ const Registration = () => {
     }
 
     const submitHandler = (retrieved) => {
-        if (Object.keys(errors).length > 0)
-            retrieved.preventDefault();
+        ////// let errorMsg=errors.reduce((prev,curr)=>prev+'\n'+curr,'')
+        // let errorsMsg = "";
+        // for (let err in errors)
+        // errorsMsg += errors[err] + '\n';
+        // if (errorsMsg.length > 0)
+        //     alert(errorsMsg.trim());
 
+        for (let err in errors)
+        document.getElementById(err+'Alert').style.display='block';
+
+        if (Object.keys(errors).length > 0)
+        {
+            retrieved.preventDefault();
+            return;
+        }
+        
         // const fields=[].slice.call(document.querySelectorAll("[class^='form-control']")).map(e=>e.value);
         const fields = [].slice.call(retrieved.target).map(e => e.value);
 
-        // let errorMsg=errors.reduce((prev,curr)=>prev+'\n'+curr,'')
-        let errorsMsg = "";
-        for (let err in errors)
-            errorsMsg += errors[err] + '\n';
-        if (errorsMsg.length > 0)
-            alert(errorsMsg.trim());
+        props.updateCredentials({'username': 'newUser', 'password':'newPassword'});
     }
 
     const usernameHandler = (retrieved) => {
         checkEmpty(retrieved);
 
         if (!retrieved.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/))
-            errors["username"] = "Username must be in valid email format.";
+            errors["username"] = 1;
         else
+        {
             delete errors["username"];
+            document.getElementById('usernameAlert').style.display='none';
+        }
     }
 
     const passwordHandler = (retrieved) => {
         checkEmpty(retrieved);
 
         if (!retrieved.target.value.match(/^\S+$/))
-            errors["password"] = "Password cannot contain whitespaces.";
+            errors["password"] = 2;
         else
+        {
             delete errors["password"];
+            document.getElementById('passwordAlert').style.display='none';
+        }
+    }
+
+    const closeAlert=(retrieved)=>{
+        document.getElementById(retrieved.target.offsetParent.id).style.display='none';
     }
 
     return (
@@ -64,9 +82,11 @@ const Registration = () => {
                 </div>
                 <small className="form-text text-muted pt-0 mt-0 mb-3">Username should be of email format.</small>
                 
-                <div className="alert alert-warning alert-dismissible fade show" role="alert" style={{display: 'none'}}>
-                    <span className="text-center font-weight-bold" style={{color: 'rgb(150,0,0)', fontSize:'10pt'}}>Username must be in valid email format.</span>
-                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                {/* <div class="alert alert-danger collapse"></div> */}
+
+                <div id="usernameAlert" className="alert alert-danger collapse" role="alert">
+                    <span className="text-center font-weight-bold" style={{color: 'rgb(150,0,0)', fontSize:'11pt'}}>Username must be in valid email format.</span>
+                    <button type="button" className="close" onClick={closeAlert} aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -77,12 +97,12 @@ const Registration = () => {
                     </div>
                     <input id="passwrd" onChange={passwordHandler} type="text" className="form-control" placeholder="********" aria-label="Password" aria-describedby="basic-addon1" minLength={8} maxLength={16} required />
                 </div>
-                <small className="form-text text-muted pt-0 mt-0 mb-3">Password should be at least 8 characters without whitespaces.</small>
+                <small className="form-text text-muted pt-0 mt-0 mb-3">Password should be 8 to 16 characters without whitespaces.</small>
                 {/* Replace alert with style={{}} and useState for span message. */}
 
-                <div className="alert alert-warning alert-dismissible fade show" role="alert" style={{display: 'none'}}>
-                    <span className="text-center font-weight-bold" style={{color: 'rgb(150,0,0)', fontSize:'10pt'}}>Password cannot contain whitespaces.</span>
-                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                <div id="passwordAlert" className="alert alert-danger collapse" role="alert">
+                    <span className="text-center font-weight-bold" style={{color: 'rgb(150,0,0)', fontSize:'11pt'}}>Password cannot contain whitespaces.</span>
+                    <button type="button" className="close" onClick={closeAlert} aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
