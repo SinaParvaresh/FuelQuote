@@ -10,33 +10,28 @@ const profiles = JSON.parse(fs.readFileSync(`resources/users.json`));
 router.get("/getProfile", function (req, res) {
   res.status(200).json({
     status: "success",
-    results: profiles.length,
+    users: profiles.length,
     data: {
-      profiles,
+      profiles: profiles,
     },
   });
 });
 
-
-const filterObj = (obj, ...allowedFields) => {
-  const newObj = {};
-  Object.keys(obj).forEach(el => {
-    if (allowedFields.includes(el)) newObj[el] = obj[el];
-  })
-  return newObj;
-}
-
 /* update profile */
 router.post("/updateProfile", function (req, res) {
-  
-  fs.writeFile(`resources/users.json`, JSON.stringify(profiles), (err) => {
-    res.status(201).json({
-      status: "success",
-      data: {
-        profiles: profiles[1],
-      },
-    });
+  //desctructuring userId
+  const { userId, ...rest } = req.body;
+  const updatedUserInfo = Object.assign(profiles[userId], rest);
+
+  res.status(201).json({
+    status: "success",
+    data: {
+      profiles: updatedUserInfo,
+    },
   });
+
+  //write POST request to JSON file
+  fs.writeFile(`resources/users.json`, JSON.stringify(profiles), (err) => {});
 });
 
 module.exports = router;

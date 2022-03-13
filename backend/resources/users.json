@@ -1,19 +1,15 @@
-[
-  {
-    "id_1": {
-      "username": "sjparvaresh@gmail.com",
-      "password": "bob",
-      "Address 1": "scripps",
-      "Address 2": "",
-      "City": "San Diego",
-      "State": "CA",
-      "Zipcode": "123456"
-    }
+{
+  "id_1": {
+    "username": "sjparvaresh@gmail.com",
+    "password": "bob",
+    "Address 1": "scripps",
+    "Address 2": "",
+    "City": "San Diego",
+    "State": "CA",
+    "Zipcode": "123456"
   },
-  {
-    "id_2": {
-      "username": "elias@gmail.com",
-      "password": "goodbye"
-    }
+  "id_2": {
+    "username": "elias@gmail.com",
+    "password": "goodbye"
   }
-]
+}
