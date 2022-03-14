@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom'
-
+import 'bootstrap-4-react';
 
 import Login from './components/pages/login';
 import Registration from './components/pages/registration';

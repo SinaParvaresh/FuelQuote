@@ -20,7 +20,9 @@ const FuelQuoteForm = (props) => {
   const gallonsHandler = (retrieved) => {
     setGallons(retrieved.target.value);
   };
-  const [priceGalRate, setRate] = useState((Math.random()*8+1).toFixed(2));
+  // const [priceGalRate, setRate] = useState((Math.random()*8+1).toFixed(2));
+  const [priceGalRate, setRate] = useState(1.5);
+
   // const rateHandler = (retrieved) => {
   //   setRate(retrieved.target.value);
   // };
