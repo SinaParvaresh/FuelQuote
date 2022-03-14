@@ -102,6 +102,7 @@ exports[`Fuel Quote History snapshot renders 1`] = `
       </div>
       <a
         href="/login"
+        id="Logout-link"
         onClick={[Function]}
         style={
           Object {
@@ -111,6 +112,7 @@ exports[`Fuel Quote History snapshot renders 1`] = `
       >
         <button
           className="btn btn-outline-success ml-auto"
+          onClick={[Function]}
         >
           Logout
         </button>

@@ -3,18 +3,27 @@ var express = require("express");
 var router = express.Router();
 var fs = require("fs");
 
-//use user.json file as hardcoded DB
-const profiles = JSON.parse(fs.readFileSync(`resources/users.json`));
+//use profiles.json file as hardcoded DB
+const profileDB = JSON.parse(fs.readFileSync(`resources/profiles.json`));
 
 /*grab profile from DB (if it exists)*/
-router.get("/getProfile", function (req, res) {
-  res.status(200).json({
-    status: "success",
-    users: profiles.length,
-    data: {
-      profiles: profiles,
-    },
-  });
+router.post("/getProfile", function (req, res) {
+  //desctructuring userId
+  const { userId, ...rest } = req.body;
+  if (profileDB[userId]==null) {
+        res.status(404).json({
+            status: "error",
+            message: "User {"+userId+"} does not exist in Profile database."
+        });
+    }
+    else {
+        res.status(200).json({
+            status: "success",
+            data: {
+                profile: profileDB[userId]
+            }
+        });
+      }
 });
 
 /* update profile */
@@ -22,19 +31,19 @@ router.post("/updateProfile", function (req, res) {
   //desctructuring userId
   const { userId, ...rest } = req.body;
 
-  if (profiles[userId]==null)
-    profiles[userId]={};
-  const updatedUserInfo = Object.assign(profiles[userId], rest);
+  if (profileDB[userId]==null)
+    profileDB[userId]={};
+  const updatedUserInfo = Object.assign(profileDB[userId], rest);
 
   res.status(201).json({
     status: "success",
     data: {
-      profiles: updatedUserInfo,
+      profile: updatedUserInfo,
     },
   });
 
   //write POST request to JSON file
-  fs.writeFile(`resources/users.json`, JSON.stringify(profiles), (err) => {});
+  fs.writeFile(`resources/profiles.json`, JSON.stringify(profileDB), (err) => {});
 });
 
 module.exports = router;

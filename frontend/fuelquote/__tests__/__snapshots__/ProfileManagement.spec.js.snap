@@ -107,6 +107,7 @@ exports[`Profile Management snapshot renders 1`] = `
       </div>
       <a
         href="/login"
+        id="Logout-link"
         onClick={[Function]}
         style={
           Object {
@@ -116,6 +117,7 @@ exports[`Profile Management snapshot renders 1`] = `
       >
         <button
           className="btn btn-outline-success ml-auto"
+          onClick={[Function]}
         >
           Logout
         </button>
@@ -142,6 +144,7 @@ exports[`Profile Management snapshot renders 1`] = `
           Profile
         </h4>
         <form
+          id="profile-form"
           onSubmit={[Function]}
         >
           <div
@@ -152,20 +155,14 @@ exports[`Profile Management snapshot renders 1`] = `
             >
               <span
                 className="input-group-text"
-              >
-                 
-                <i
-                  className="fa fa-user"
-                />
-                 
-              </span>
+              />
             </div>
             <input
               className="form-control"
               maxLength={50}
-              name=""
+              name="full_name"
               onChange={[Function]}
-              placeholder="Full name"
+              placeholder="Full Name"
               required={true}
               type="text"
               value=""
@@ -179,21 +176,15 @@ exports[`Profile Management snapshot renders 1`] = `
             >
               <span
                 className="input-group-text"
-              >
-                 
-                <i
-                  className="fa fa-envelope"
-                />
-                 
-              </span>
+              />
             </div>
             <input
               className="form-control"
               maxLength={100}
-              name=""
+              name="address_1"
               onChange={[Function]}
               placeholder="Address 1"
-              type="address"
+              type="text"
               value=""
             />
           </div>
@@ -205,21 +196,15 @@ exports[`Profile Management snapshot renders 1`] = `
             >
               <span
                 className="input-group-text"
-              >
-                 
-                <i
-                  className="fa fa-envelope"
-                />
-                 
-              </span>
+              />
             </div>
             <input
               className="form-control"
               maxLength={100}
-              name=""
+              name="address_2"
               onChange={[Function]}
               placeholder="Address 2"
-              type="address"
+              type="text"
               value=""
             />
           </div>
@@ -231,22 +216,16 @@ exports[`Profile Management snapshot renders 1`] = `
             >
               <span
                 className="input-group-text"
-              >
-                 
-                <i
-                  className="fa fa-envelope"
-                />
-                 
-              </span>
+              />
             </div>
             <input
               className="form-control"
               maxLength={100}
-              name=""
+              name="city"
               onChange={[Function]}
               placeholder="City"
               required={true}
-              type="city"
+              type="text"
               value=""
             />
           </div>
@@ -258,19 +237,12 @@ exports[`Profile Management snapshot renders 1`] = `
             >
               <span
                 className="input-group-text"
-              >
-                 
-                <i
-                  className="fa fa-building"
-                />
-                 
-              </span>
+              />
             </div>
             <select
-              className="input-group-text"
-              name="state"
+              className="form-control"
+              name="usa_state"
               onChange={[Function]}
-              placeholder=""
               required={true}
               value=""
             >
@@ -539,18 +511,13 @@ exports[`Profile Management snapshot renders 1`] = `
             >
               <span
                 className="input-group-text"
-              >
-                 
-                <i
-                  className="fa fa-lock"
-                />
-                 
-              </span>
+              />
             </div>
             <input
               className="form-control"
               maxLength={9}
               minLength={5}
+              name="zipcode"
               onChange={[Function]}
               pattern="[0-9]*"
               placeholder="Zipcode"
@@ -564,7 +531,6 @@ exports[`Profile Management snapshot renders 1`] = `
           >
             <button
               className="btn btn-primary"
-              onClick={[Function]}
               type="submit"
             >
                Submit 

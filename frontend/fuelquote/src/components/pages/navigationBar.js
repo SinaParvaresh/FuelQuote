@@ -10,13 +10,13 @@ const NavigationBar = (props) => {
         return original;
     }
 
-    // function sleep(ms) {
-    //     return new Promise(resolve => setTimeout(resolve, ms));
-    // }
+    const sleep = async(ms) => {
+        await new Promise(resolve => setTimeout(resolve, ms));
+    }
 
     const logoutHandler=(retrieved)=>{
-        // retrieved.preventDefault();
-        // sleep(1000000000);
+        retrieved.preventDefault();
+        sleep(1000).then(function(){console.log("Sleep of 2 seconds successful.");document.getElementById("Logout-link").click();})
     }
 
     return (
@@ -44,8 +44,8 @@ const NavigationBar = (props) => {
                         </div>
                     </div>
                 </div>
-                <Link onClick={logoutHandler} to="/login" style={{textDecoration: 'none'}}>
-                <button className="btn btn-outline-success ml-auto">Logout</button>
+                <Link id="Logout-link"  to="/login" style={{textDecoration: 'none'}}>
+                <button onClick={logoutHandler} className="btn btn-outline-success ml-auto">Logout</button>
                 </Link>
             </nav>
         </div>

@@ -21,7 +21,7 @@ const FuelQuoteForm = (props) => {
     setGallons(retrieved.target.value);
   };
   // const [priceGalRate, setRate] = useState((Math.random()*8+1).toFixed(2));
-  const [priceGalRate, setRate] = useState(1.5);
+  const [priceGalRate, setRate] = useState((1.5).toFixed(2));
 
   // const rateHandler = (retrieved) => {
   //   setRate(retrieved.target.value);
@@ -58,7 +58,7 @@ const FuelQuoteForm = (props) => {
 
               <div className="form-group">
                 <label htmlFor="exampleInputEmail1">Total Amount Due</label>
-                <input type="zipcode" className="form-control" value={(gallons*priceGalRate).toFixed(2)} readOnly />
+                <input type="zipcode" className="form-control" value={(gallons * priceGalRate).toFixed(2)} readOnly />
               </div>
 
               <button type="submit" className="btn btn-primary">Submit</button>

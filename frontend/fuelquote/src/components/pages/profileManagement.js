@@ -5,44 +5,48 @@ import Button from "./Button";
 import NavigationBar from "./navigationBar";
 
 const ProfileManagement = (props) => {
+
+  const retrieveProfile = async (some_username) => {
+    let profileInfo = {
+      "full_name": "",
+      "address_1": "",
+      "address_2": "",
+      "city": "",
+      "usa_state": "",
+      "zipcode": ""
+    }
+    const request = await fetch('http://localhost:5000/profileManagement/getProfile', {
+      method: 'POST',
+      body: JSON.stringify({ "userId": some_username }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const response = await request.json();
+    if (response.status == "success") {
+      profileInfo = response.data.profile;
+      //  console.log(profileInfo);
+      setEnteredName(profileInfo.full_name);
+      setEnteredAddress(profileInfo.address_1);
+      setEnteredSecondAddress(profileInfo.address_2);
+      setEnteredCity(profileInfo.city);
+      setEnteredStateUS(profileInfo.usa_state);
+      setEnteredZipcode(profileInfo.zipcode);
+    }
+  }
+
+  // const USERNAME="someone@email.com";
+  const USERNAME = "davebrown@trash.com";
+  useEffect(() => {
+    retrieveProfile(USERNAME);
+  }, []);
+
   const [enteredName, setEnteredName] = useState("");
   const [enteredAddress, setEnteredAddress] = useState("");
   const [enteredSecondAddress, setEnteredSecondAddress] = useState("");
   const [enteredCity, setEnteredCity] = useState("");
-  const [enteredZipcode, setEnteredZipcode] = useState("");
   const [enteredStateUS, setEnteredStateUS] = useState("");
-
-  const checkProfileHandler = (event) => {
-    event.preventDefault();
-    // if (
-    //   enteredName.trim().length === 0 ||
-    //   enteredAddress.trim().length === 0 ||
-    //   enteredCity.trim().length === 0 ||
-    //   enteredZipcode.trim().length === 0 ||
-    //   enteredStateUS == ""
-    // ) {
-    //   console.log("empty field");
-    //   return;
-    // }
-    // if (
-    //   enteredName.trim().length > 50 ||
-    //   enteredAddress.trim().length > 100 ||
-    //   enteredSecondAddress.trim().length > 100 ||
-    //   enteredCity.trim().length > 100 ||
-    //   enteredZipcode.trim().length > 9 ||
-    //   enteredZipcode.trim().length < 5
-    // ) {
-    //   console.log("Field out of bounds");
-    //   return;
-    // }
-    console.log(enteredName, enteredAddress);
-    // setEnteredName("");
-    // setEnteredAddress("");
-    // setEnteredSecondAddress("");
-    // setEnteredCity("");
-    // setEnteredZipcode("");
-    // setEnteredStateUS("");
-  };
+  const [enteredZipcode, setEnteredZipcode] = useState("");
 
   const nameChangedHandler = (event) => {
     setEnteredName(event.target.value);
@@ -60,48 +64,42 @@ const ProfileManagement = (props) => {
     setEnteredCity(event.target.value);
   };
 
-  const zipcodeChangedHandler = (event) => {
-    setEnteredZipcode(event.target.value);
-  };
-
   const stateUSChangedHandler = (event) => {
     setEnteredStateUS(event.target.value);
   };
 
-  const [user, sendUser] = useState([]);
+  const zipcodeChangedHandler = (event) => {
+    setEnteredZipcode(event.target.value);
+  };
 
-  // async function addProfile(userInput) {
-  //  const response = await fetch('http://localhost:3000/profileManagement/updateProfile', {
-  //    method: 'POST',
-  //    body: JSON.stringify(userInput),
-  //    headers: {
-  //      'Content-Type': 'application/json'
-  //    }
-  //  });
-  //  const data = await response.json();
-  //  console.log(data); 
-  // }
-  async function addProfile(userInput) {
-    const fields = [].slice.call(userInput.target).map(e => e.value);
-    console.log("hello",fields);
-    
-    checkProfileHandler(userInput)
-    const someInput={
-      "userId": "id_2",
-      "username": "elias@gmail.com",
-      "password2": "david"
-    }
+  const addProfile = async (userInput) => {
+    userInput.preventDefault();
+    console.log(enteredName, enteredAddress);
+
+    const profileInfo = {};
+    const fields = ([].slice.call(userInput.target).slice(0, 6));
+    fields.forEach((element) => profileInfo[element.name] = element.value);
+
+    // const fieldNames = ([].slice.call(userInput.target).slice(0,6)).map(e => e.name);
+    // const fieldValues = ([].slice.call(userInput.target).slice(0,6)).map(e => e.value);
+    // fieldNames.forEach((element, index) => profileInfo[element]=fieldValues[index]);
+
+    profileInfo["userId"] = USERNAME;
 
     const response = await fetch('http://localhost:5000/profileManagement/updateProfile', {
-     method: 'POST',
-     body: JSON.stringify(someInput),
-     headers: {
-       'Content-Type': 'application/json'
-     }
-   });
-   const data = await response.json();
-   console.log(data);
+      method: 'POST',
+      body: JSON.stringify(profileInfo),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await response.json();
+    console.log(data);
+    if (data.status == "success")
+      document.getElementById("profile-form").submit();
   }
+
+
 
   return (
     <div className="page" style={{ maxWidth: "100%" }}>
@@ -111,18 +109,15 @@ const ProfileManagement = (props) => {
           <article className="card-body mx-auto" style={{ maxWidth: "100%" }}>
             <h4 className="card-title mt-3 text-center">Profile</h4>
 
-            <form onSubmit={checkProfileHandler}>
+            <form id="profile-form" onSubmit={addProfile}>
               <div className="form-group input-group">
                 <div className="input-group-prepend">
-                  <span className="input-group-text">
-                    {" "}
-                    <i className="fa fa-user"></i>{" "}
-                  </span>
+                  <span className="input-group-text" />
                 </div>
                 <input
-                  name=""
+                  name="full_name"
                   className="form-control"
-                  placeholder="Full name"
+                  placeholder="Full Name"
                   type="text"
                   value={enteredName}
                   onChange={nameChangedHandler}
@@ -133,16 +128,13 @@ const ProfileManagement = (props) => {
 
               <div className="form-group input-group">
                 <div className="input-group-prepend">
-                  <span className="input-group-text">
-                    {" "}
-                    <i className="fa fa-envelope"></i>{" "}
-                  </span>
+                  <span className="input-group-text" />
                 </div>
                 <input
-                  name=""
+                  name="address_1"
                   className="form-control"
                   placeholder="Address 1"
-                  type="address"
+                  type="text"
                   value={enteredAddress}
                   onChange={addressChangedHandler}
                   maxLength={100}
@@ -150,16 +142,13 @@ const ProfileManagement = (props) => {
               </div>
               <div className="form-group input-group">
                 <div className="input-group-prepend">
-                  <span className="input-group-text">
-                    {" "}
-                    <i className="fa fa-envelope"></i>{" "}
-                  </span>
+                  <span className="input-group-text" />
                 </div>
                 <input
-                  name=""
+                  name="address_2"
                   className="form-control"
                   placeholder="Address 2"
-                  type="address"
+                  type="text"
                   value={enteredSecondAddress}
                   onChange={secondAddressChangedHandler}
                   maxLength={100}
@@ -168,16 +157,13 @@ const ProfileManagement = (props) => {
 
               <div className="form-group input-group">
                 <div className="input-group-prepend">
-                  <span className="input-group-text">
-                    {" "}
-                    <i className="fa fa-envelope"></i>{" "}
-                  </span>
+                  <span className="input-group-text" />
                 </div>
                 <input
-                  name=""
+                  name="city"
                   className="form-control"
                   placeholder="City"
-                  type="city"
+                  type="text"
                   value={enteredCity}
                   onChange={cityChangedHandler}
                   maxLength={100}
@@ -187,15 +173,11 @@ const ProfileManagement = (props) => {
 
               <div className="form-group input-group">
                 <div className="input-group-prepend">
-                  <span className="input-group-text">
-                    {" "}
-                    <i className="fa fa-building"></i>{" "}
-                  </span>
+                  <span className="input-group-text" />
                 </div>
                 <select
-                  className="input-group-text"
-                  name="state"
-                  placeholder=""
+                  name="usa_state"
+                  className="form-control"
                   onChange={stateUSChangedHandler}
                   value={enteredStateUS}
                   required
@@ -256,12 +238,10 @@ const ProfileManagement = (props) => {
 
               <div className="form-group input-group">
                 <div className="input-group-prepend">
-                  <span className="input-group-text">
-                    {" "}
-                    <i className="fa fa-lock"></i>{" "}
-                  </span>
+                  <span className="input-group-text" />
                 </div>
                 <input
+                  name="zipcode"
                   className="form-control"
                   placeholder="Zipcode"
                   type="text"
@@ -275,7 +255,7 @@ const ProfileManagement = (props) => {
               </div>
 
               <div className="form-group">
-                <Button type="submit" onClick={addProfile} > Submit </Button>
+                <Button type="submit"> Submit </Button>
               </div>
             </form>
           </article>

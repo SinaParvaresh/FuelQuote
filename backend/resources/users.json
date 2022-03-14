@@ -1,15 +1,14 @@
 {
-  "id_1": {
-    "username": "sjparvaresh@gmail.com",
-    "password": "bob",
-    "Address 1": "scripps",
-    "Address 2": "",
-    "City": "San Diego",
-    "State": "CA",
-    "Zipcode": "123456"
+  "sjparvaresh@gmail.com": {
+    "password": "bob"
   },
-  "id_2": {
-    "username": "elias@gmail.com",
+  "elias@gmail.com": {
     "password": "goodbye"
+  },
+  "davebrown@trash.com": {
+    "password": "davethebrave"
+  },
+  "afsadfad@dfasdf.com": {
+    "password": "afdsfdsaf"
   }
 }

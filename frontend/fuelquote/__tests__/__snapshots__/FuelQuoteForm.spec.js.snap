@@ -107,6 +107,7 @@ exports[`Fuel Quote Form snapshot renders 1`] = `
       </div>
       <a
         href="/login"
+        id="Logout-link"
         onClick={[Function]}
         style={
           Object {
@@ -116,6 +117,7 @@ exports[`Fuel Quote Form snapshot renders 1`] = `
       >
         <button
           className="btn btn-outline-success ml-auto"
+          onClick={[Function]}
         >
           Logout
         </button>
@@ -176,7 +178,7 @@ exports[`Fuel Quote Form snapshot renders 1`] = `
             <input
               className="form-control"
               max="2100-01-01"
-              min="2022-03-13"
+              min="2022-03-14"
               required={true}
               type="date"
             />
@@ -193,7 +195,7 @@ exports[`Fuel Quote Form snapshot renders 1`] = `
               className="form-control"
               readOnly={true}
               type="number"
-              value={1.5}
+              value="1.50"
             />
           </div>
           <div

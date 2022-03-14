@@ -5,8 +5,9 @@ exports[`Login snapshot renders 1`] = `
   className="login-background"
 >
   <form
-    action="/profileManagement"
+    action="profileManagement"
     className="Login"
+    id="login-form"
     onSubmit={[Function]}
   >
     <h1>
@@ -55,15 +56,14 @@ exports[`Login snapshot renders 1`] = `
         aria-label="Username"
         className="form-control"
         onChange={[Function]}
+        placeholder="********"
         required={true}
         type="password"
-        value=""
       />
     </div>
     <div>
       <button
         className="btn btn-primary"
-        onClick={[Function]}
         type="submit"
       >
         Submit
