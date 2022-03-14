@@ -5,14 +5,14 @@ const NavigationBar = (props) => {
 
     const determineActive=(listItem)=>{
         const original = "nav-item"
-        if(listItem==props.pageName)
+        if(listItem===props.pageName)
             return original+" active";
         return original;
     }
 
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    // function sleep(ms) {
+    //     return new Promise(resolve => setTimeout(resolve, ms));
+    // }
 
     const logoutHandler=(retrieved)=>{
         // retrieved.preventDefault();

@@ -14,34 +14,34 @@ const ProfileManagement = (props) => {
 
   const checkProfileHandler = (event) => {
     event.preventDefault();
-    if (
-      enteredName.trim().length === 0 ||
-      enteredAddress.trim().length === 0 ||
-      enteredCity.trim().length === 0 ||
-      enteredZipcode.trim().length === 0 ||
-      enteredStateUS == ""
-    ) {
-      console.log("empty field");
-      return;
-    }
-    if (
-      enteredName.trim().length > 50 ||
-      enteredAddress.trim().length > 100 ||
-      enteredSecondAddress.trim().length > 100 ||
-      enteredCity.trim().length > 100 ||
-      enteredZipcode.trim().length > 9 ||
-      enteredZipcode.trim().length < 5
-    ) {
-      console.log("Field out of bounds");
-      return;
-    }
+    // if (
+    //   enteredName.trim().length === 0 ||
+    //   enteredAddress.trim().length === 0 ||
+    //   enteredCity.trim().length === 0 ||
+    //   enteredZipcode.trim().length === 0 ||
+    //   enteredStateUS == ""
+    // ) {
+    //   console.log("empty field");
+    //   return;
+    // }
+    // if (
+    //   enteredName.trim().length > 50 ||
+    //   enteredAddress.trim().length > 100 ||
+    //   enteredSecondAddress.trim().length > 100 ||
+    //   enteredCity.trim().length > 100 ||
+    //   enteredZipcode.trim().length > 9 ||
+    //   enteredZipcode.trim().length < 5
+    // ) {
+    //   console.log("Field out of bounds");
+    //   return;
+    // }
     console.log(enteredName, enteredAddress);
-    setEnteredName("");
-    setEnteredAddress("");
-    setEnteredSecondAddress("");
-    setEnteredCity("");
-    setEnteredZipcode("");
-    setEnteredStateUS("");
+    // setEnteredName("");
+    // setEnteredAddress("");
+    // setEnteredSecondAddress("");
+    // setEnteredCity("");
+    // setEnteredZipcode("");
+    // setEnteredStateUS("");
   };
 
   const nameChangedHandler = (event) => {
@@ -70,16 +70,37 @@ const ProfileManagement = (props) => {
 
   const [user, sendUser] = useState([]);
 
+  // async function addProfile(userInput) {
+  //  const response = await fetch('http://localhost:3000/profileManagement/updateProfile', {
+  //    method: 'POST',
+  //    body: JSON.stringify(userInput),
+  //    headers: {
+  //      'Content-Type': 'application/json'
+  //    }
+  //  });
+  //  const data = await response.json();
+  //  console.log(data); 
+  // }
   async function addProfile(userInput) {
-   const response = await fetch('http://localhost:3000/profileManagement/updateProfile', {
+    const fields = [].slice.call(userInput.target).map(e => e.value);
+    console.log("hello",fields);
+    
+    checkProfileHandler(userInput)
+    const someInput={
+      "userId": "id_2",
+      "username": "elias@gmail.com",
+      "password2": "david"
+    }
+
+    const response = await fetch('http://localhost:5000/profileManagement/updateProfile', {
      method: 'POST',
-     body: JSON.stringify(userInput),
+     body: JSON.stringify(someInput),
      headers: {
        'Content-Type': 'application/json'
      }
    });
    const data = await response.json();
-   console.log(data); 
+   console.log(data);
   }
 
   return (

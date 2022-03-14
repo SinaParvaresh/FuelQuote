@@ -21,6 +21,9 @@ router.get("/getProfile", function (req, res) {
 router.post("/updateProfile", function (req, res) {
   //desctructuring userId
   const { userId, ...rest } = req.body;
+
+  if (profiles[userId]==null)
+    profiles[userId]={};
   const updatedUserInfo = Object.assign(profiles[userId], rest);
 
   res.status(201).json({
