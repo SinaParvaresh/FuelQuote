@@ -1,15 +1,19 @@
 const { json } = require("express");
-var express = require("express");
-var router = express.Router();
-var fs = require("fs");
+const express = require("express");
+const router = express.Router();
+const fs = require("fs");
 
-//use users.json file as hardcoded DB
-const userDB = JSON.parse(fs.readFileSync(`resources/users.json`));
+// //use users.json file as hardcoded DB
+// const userDB = JSON.parse(fs.readFileSync(`resources/users.json`));
 // const userName = userDB["username"];
 
-/*grab credentials from DB (if it exists)*/
-
+/*
+grab credentials from DB (if it exists)
+--- REMOVE THIS FUNCTION LATER ---
+*/ 
 router.get("/getCredentials", function (req, res) {
+    //use users.json file as hardcoded DB
+    const userDB = JSON.parse(fs.readFileSync(`resources/users.json`));
     res.status(200).json({
         status: "success",
         users: userDB.length,
@@ -19,8 +23,9 @@ router.get("/getCredentials", function (req, res) {
     });
 });
 
-
 router.post("/authentication", function (req, res) {
+    //use users.json file as hardcoded DB
+    const userDB = JSON.parse(fs.readFileSync(`resources/users.json`));
     // console.log(userDB)
     const { username, password } = req.body;
     
@@ -44,6 +49,9 @@ router.post("/authentication", function (req, res) {
 });
 
 router.post("/addUser", function (req, res) {
+    //use users.json file as hardcoded DB
+    const userDB = JSON.parse(fs.readFileSync(`resources/users.json`));
+    const fuelQuoteDB = JSON.parse(fs.readFileSync(`resources/fuelQuotes.json`));
     //desctructuring userId
     const { username, password } = req.body;
 
@@ -57,6 +65,8 @@ router.post("/addUser", function (req, res) {
     }
 
     userDB[username]={"password" : password};
+    fuelQuoteDB[username]={"numberOfQuotes" : 0};
+
     res.status(201).json({
       status: "success",
       data: {
@@ -66,6 +76,7 @@ router.post("/addUser", function (req, res) {
   
     //write POST request to JSON file
     fs.writeFile(`resources/users.json`, JSON.stringify(userDB), (err) => {});
+    fs.writeFile(`resources/fuelQuotes.json`, JSON.stringify(fuelQuoteDB), (err) => {});
   });
 
 module.exports = router;

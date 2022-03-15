@@ -6,6 +6,14 @@ import NavigationBar from "./navigationBar";
 
 const ProfileManagement = (props) => {
 
+  const [enteredName, setEnteredName] = useState("");
+  const [enteredAddress, setEnteredAddress] = useState("");
+  const [enteredSecondAddress, setEnteredSecondAddress] = useState("");
+  const [enteredCity, setEnteredCity] = useState("");
+  const [enteredStateUS, setEnteredStateUS] = useState("");
+  const [enteredZipcode, setEnteredZipcode] = useState("");
+  const [profileIsStored, setProfileBool] = useState(false);
+
   const retrieveProfile = async (some_username) => {
     let profileInfo = {
       "full_name": "",
@@ -23,30 +31,25 @@ const ProfileManagement = (props) => {
       }
     });
     const response = await request.json();
-    if (response.status == "success") {
+    if (response.status === "success") {
       profileInfo = response.data.profile;
       //  console.log(profileInfo);
-      setEnteredName(profileInfo.full_name);
-      setEnteredAddress(profileInfo.address_1);
-      setEnteredSecondAddress(profileInfo.address_2);
-      setEnteredCity(profileInfo.city);
-      setEnteredStateUS(profileInfo.usa_state);
-      setEnteredZipcode(profileInfo.zipcode);
+      setEnteredName(profileInfo.full_name != null ? profileInfo.full_name : "");
+      setEnteredAddress(profileInfo.address_1 != null ? profileInfo.address_1 : "");
+      setEnteredSecondAddress(profileInfo.address_2 != null ? profileInfo.address_2 : "");
+      setEnteredCity(profileInfo.city != null ? profileInfo.city : "");
+      setEnteredStateUS(profileInfo.usa_state != null ? profileInfo.usa_state : "");
+      setEnteredZipcode(profileInfo.zipcode != null ? profileInfo.zipcode : "");
+      setProfileBool(true);
     }
   }
 
+  const USERNAME = "someuser@some.com";
   // const USERNAME="someone@email.com";
-  const USERNAME = "davebrown@trash.com";
+  // const USERNAME = "davebrown@trash.com";
   useEffect(() => {
     retrieveProfile(USERNAME);
   }, []);
-
-  const [enteredName, setEnteredName] = useState("");
-  const [enteredAddress, setEnteredAddress] = useState("");
-  const [enteredSecondAddress, setEnteredSecondAddress] = useState("");
-  const [enteredCity, setEnteredCity] = useState("");
-  const [enteredStateUS, setEnteredStateUS] = useState("");
-  const [enteredZipcode, setEnteredZipcode] = useState("");
 
   const nameChangedHandler = (event) => {
     setEnteredName(event.target.value);
@@ -74,15 +77,11 @@ const ProfileManagement = (props) => {
 
   const addProfile = async (userInput) => {
     userInput.preventDefault();
-    console.log(enteredName, enteredAddress);
+    // console.log(enteredName, enteredAddress);
 
     const profileInfo = {};
     const fields = ([].slice.call(userInput.target).slice(0, 6));
     fields.forEach((element) => profileInfo[element.name] = element.value);
-
-    // const fieldNames = ([].slice.call(userInput.target).slice(0,6)).map(e => e.name);
-    // const fieldValues = ([].slice.call(userInput.target).slice(0,6)).map(e => e.value);
-    // fieldNames.forEach((element, index) => profileInfo[element]=fieldValues[index]);
 
     profileInfo["userId"] = USERNAME;
 
@@ -95,15 +94,17 @@ const ProfileManagement = (props) => {
     });
     const data = await response.json();
     console.log(data);
-    if (data.status == "success")
+    if (data.status === "success")
       document.getElementById("profile-form").submit();
+    else
+      alert("No account exists for this user.\nPlease register user first.");
   }
 
 
 
   return (
     <div className="page" style={{ maxWidth: "100%" }}>
-      <NavigationBar pageName="ProfileManagement"></NavigationBar>
+      <NavigationBar pageName="ProfileManagement" disableRest={!profileIsStored}></NavigationBar>
       <div className="container">
         <div className="card bg-light">
           <article className="card-body mx-auto" style={{ maxWidth: "100%" }}>

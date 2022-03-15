@@ -1,7 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect, Component } from "react";
 import NavigationBar from "./navigationBar";
 
 const FuelQuoteHistory = () => {
+
+    const [quoteHistory, setHistory] = useState({});
+
+    const retrieveQuotes = async (some_username) => {
+        const request = await fetch('http://localhost:5000/fuelQuoteManagement/getQuotes', {
+          method: 'POST',
+          body: JSON.stringify({ "userId": some_username }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const response = await request.json();
+        console.log(response);
+        if (response.status === "success") {
+            setHistory(response.data.quotes);
+        }
+      }
+
+      const USERNAME="someuser@some.com";
+  // const USERNAME="someone@email.com";
+  // const USERNAME = "davebrown@trash.com";
+
+  useEffect(() => {
+    retrieveQuotes(USERNAME);
+  }, []);
+  console.log(quoteHistory);
+
     return (
         <div className="page">
             <NavigationBar pageName="FuelQuoteHistory"></NavigationBar>

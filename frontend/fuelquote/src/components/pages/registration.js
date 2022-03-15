@@ -29,16 +29,16 @@ const Registration = (props) => {
         // const fields = [].slice.call(retrieved.target).map(e => e.value);
         console.log(fields);
 
-        const response = await fetch('http://localhost:5000/userManagement/addUser', {
+        const request = await fetch('http://localhost:5000/userManagement/addUser', {
             method: 'POST',
             body: JSON.stringify({ "username": fields[0], "password": fields[1] }),
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        const data = await response.json();
-        console.log(data);
-        if (data.status != "success")
+        const response = await request.json();
+        console.log(response);
+        if (response.status !== "success")
             alert("This user already exists. Please login instead.");
         else
             document.getElementById("registration-form").submit();
@@ -47,7 +47,7 @@ const Registration = (props) => {
     const usernameHandler = (retrieved) => {
         checkEmpty(retrieved);
 
-        if (!retrieved.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/))
+        if (!retrieved.target.value.match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/))
             errors["username"] = 1;
         else {
             delete errors["username"];

@@ -23,7 +23,7 @@ const Login = (props) => {
         });
         const data = await response.json();
         console.log(data);
-        if (data.status != "success") {
+        if (data.status !== "success") {
             alert("Invalid Entry");
 
         } else {
@@ -50,15 +50,15 @@ const Login = (props) => {
                 <br />
                 <div className="input-group mb-3">
                     <div className="input-group-prepend">
-                        <span className="input-group-text" id="basic-addon1">Username</span>
+                        <label htmlFor="usernm" className="input-group-text" id="basic-addon1">Username</label>
                     </div>
-                    <input onChange={event => setUsername(event.target.value)} value={username} type="text" className="form-control" placeholder="user@example.com" aria-label="Username" aria-describedby="basic-addon1" required />
+                    <input id="usernm" onChange={event => setUsername(event.target.value)} value={username} type="text" className="form-control" placeholder="user@example.com" aria-label="Username" aria-describedby="basic-addon1" required />
                 </div>
                 <div className="input-group mb-3">
                     <div className="input-group-prepend">
-                        <span className="input-group-text" id="basic-addon1">Password</span>
+                        <label htmlFor="passwrd" className="input-group-text" id="basic-addon1">Password</label>
                     </div>
-                    <input onChange={event => setPassword(event.target.value)} type="password" className="form-control" placeholder="********" aria-label="Username" aria-describedby="basic-addon1" required />
+                    <input id="passwrd" onChange={event => setPassword(event.target.value)} type="password" className="form-control" placeholder="********" aria-label="Username" aria-describedby="basic-addon1" required />
                 </div>
                 <div>
                     <button type='submit' className="btn btn-primary">Submit</button>

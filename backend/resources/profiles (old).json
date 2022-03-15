@@ -1,6 +1,5 @@
 {
   "sjparvaresh@gmail.com": {
-    "password": "bob",
     "full_name": "Sina Paravaresh",
     "address_1": "scripps",
     "address_2": "",
@@ -8,19 +7,12 @@
     "usa_state": "CA",
     "zipcode": "123456"
   },
-  "elias@gmail.com": {
-    "password": "goodbye"
-  },
   "davebrown@trash.com": {
-    "password": "davethebrave",
     "full_name": "David Brown",
     "address_1": "4800 Calhoun Rd.",
     "address_2": "",
     "city": "Houston",
     "usa_state": "TX",
     "zipcode": "77074"
-  },
-  "someuser@some.com": {
-    "password": "someones"
   }
 }
