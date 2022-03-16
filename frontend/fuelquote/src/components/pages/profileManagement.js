@@ -23,7 +23,7 @@ const ProfileManagement = (props) => {
       setButton(true);
     else
       setButton(false);
-  }
+  };
 
   const retrieveProfile = async (some_username) => {
     let profileInfo = {
@@ -57,7 +57,7 @@ const ProfileManagement = (props) => {
     else
       document.getElementById("completion-alert").style.display = 'block';
     checkEmpty();
-  }
+  };
 
   const USERNAME = "someuser@some.com";
   // const USERNAME="someone@email.com";
@@ -102,7 +102,7 @@ const ProfileManagement = (props) => {
     const profileInfo = {};
     const fields = ([].slice.call(userInput.target).slice(0, 6));
     fields.forEach((element) => profileInfo[element.name] = element.value);
-    if (Object.keys(profileInfo).reduce((prev, curr) => prev * (profileInfo[curr]==recievedProfileIfo[curr]), 1))
+    if (Object.keys(profileInfo).reduce((prev, curr) => prev * (profileInfo[curr] == recievedProfileIfo[curr]), 1))
       return;
     profileInfo["userId"] = USERNAME;
     const request = await fetch('http://localhost:5000/profileManagement/updateProfile', {
@@ -118,7 +118,7 @@ const ProfileManagement = (props) => {
       document.getElementById("profile-form").submit();
     else
       alert("No account exists for this user.\nPlease register user first.");
-  }
+  };
 
 
 

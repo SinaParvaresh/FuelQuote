@@ -2,21 +2,21 @@
   "someuser@some.com": {
     "numberOfQuotes": 3,
     "q1": {
-      "numOfgallons": "12",
+      "numOfGallons": "12",
       "deliveryAddress": "1234 Hollywood Blvd.",
       "deliveryDate": "2022-03-17",
       "gallonRate": "1.50",
       "totalCost": "18.00"
     },
     "q2": {
-      "numOfgallons": "21",
+      "numOfGallons": "21",
       "deliveryAddress": "1234 Hollywood Blvd.",
       "deliveryDate": "2022-03-22",
       "gallonRate": "1.50",
       "totalCost": "31.50"
     },
     "q3": {
-      "numOfgallons": "56",
+      "numOfGallons": "56",
       "deliveryAddress": "1234 Hollywood Blvd.",
       "deliveryDate": "2022-04-02",
       "gallonRate": "1.50",

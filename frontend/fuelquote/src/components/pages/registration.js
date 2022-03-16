@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import './registration.css';
 import ClickAlert from './clickalert';
+import Button from './Button';
 
 const Registration = (props) => {
 
@@ -14,7 +15,7 @@ const Registration = (props) => {
             setButton(true);
         else
             setButton(false);
-    }
+    };
 
     const submitHandler = async (retrieved) => {
         retrieved.preventDefault();
@@ -22,9 +23,7 @@ const Registration = (props) => {
             document.getElementById(err + 'Alert').style.display = 'block';
         if (Object.keys(errors).length > 0)
             return;
-        const fields = [].slice.call(document.querySelectorAll("[class^='form-control']")).map(e => e.value);
-        // const fields = [].slice.call(retrieved.target).map(e => e.value);
-        console.log(fields);
+        const fields = [].slice.call(document.querySelectorAll(".form-control")).map(e => e.value);
         const request = await fetch('http://localhost:5000/userManagement/addUser', {
             method: 'POST',
             body: JSON.stringify({ "username": fields[0], "password": fields[1] }),
@@ -38,7 +37,7 @@ const Registration = (props) => {
             alert("This user already exists. Please login instead.");
         else
             document.getElementById("registration-form").submit();
-    }
+    };
 
     const usernameHandler = (retrieved) => {
         checkEmpty();
@@ -48,7 +47,7 @@ const Registration = (props) => {
             delete errors["username"];
             document.getElementById('usernameAlert').style.display = 'none';
         }
-    }
+    };
 
     const passwordHandler = (retrieved) => {
         checkEmpty();
@@ -58,7 +57,7 @@ const Registration = (props) => {
             delete errors["password"];
             document.getElementById('passwordAlert').style.display = 'none';
         }
-    }
+    };
 
     return (
         <div className='registration-background'>
@@ -88,7 +87,7 @@ const Registration = (props) => {
                 <ClickAlert id="passwordAlert" alertType={"danger"} color='rgb(150,0,0)'>Password cannot contain whitespaces.</ClickAlert>
 
                 <div>
-                    <button disabled={!button_state} type="submit" id="submit-register" className="btn btn-primary">Submit</button>
+                    <Button disabled={!button_state} type="submit" id="submit-register"> Submit </Button>
                 </div>
                 <br />
                 <Link to="/login">Already a user? Login</Link>

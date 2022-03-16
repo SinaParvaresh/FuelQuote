@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import NavigationBar from "./navigationBar";
+import Button from "./Button";
 
 const FuelQuoteForm = (props) => {
+
   const getTodayDate = () => {
     const today = new Date();
     let dd = today.getDate();
@@ -12,15 +14,32 @@ const FuelQuoteForm = (props) => {
     if (mm < 10)
       mm = '0' + mm;
     return yyyy + '-' + mm + '-' + dd;
-  }
+  };
 
   const [userAddress, setAddress] = useState("Address from backend.");
   const [gallons, setGallons] = useState(0);
+  const [deliveryDate, setDate] = useState("");
+  const [priceGalRate, setRate] = useState((1.5).toFixed(2));
+
+  const [button_state, setButton] = useState(false);
+
+  const checkEmpty = () => {
+    if (document.getElementById("numOfGallons").value != 0 &&
+      document.getElementById("deliveryDate").value != "")
+      setButton(true);
+    else
+      setButton(false);
+  };
+
   const gallonsHandler = (retrieved) => {
+    checkEmpty();
     setGallons(retrieved.target.value);
   };
 
-  const [priceGalRate, setRate] = useState((1.5).toFixed(2));
+  const dateHandler = (retrieved) => {
+    checkEmpty();
+    setDate(retrieved.target.value);
+  };
 
   const USERNAME = "someuser@some.com";
   // const USERNAME="someone@email.com";
@@ -44,7 +63,7 @@ const FuelQuoteForm = (props) => {
       alert("No address exists for this user.\nPlease complete profile first.");
     else
       alert("No account exists for this user.\nPlease register user first.");
-  }
+  };
 
   useEffect(() => {
     getDataForQuote(USERNAME);
@@ -52,13 +71,10 @@ const FuelQuoteForm = (props) => {
 
   const submitQuoteRequest = async (userInput) => {
     userInput.preventDefault();
-
     const quoteInfo = {};
     const fields = ([].slice.call(userInput.target).slice(0, 4));
     fields.forEach((element) => quoteInfo[element.id] = element.value);
-
     quoteInfo["userId"] = USERNAME;
-
     const request = await fetch('http://localhost:5000/fuelQuoteManagement/addQuote', {
       method: 'POST',
       body: JSON.stringify(quoteInfo),
@@ -72,7 +88,7 @@ const FuelQuoteForm = (props) => {
       document.getElementById("fuelquote-form").submit();
     else
       alert("No account exists for this user.\nPlease register user first.");
-  }
+  };
 
   return (
     <div className="page" style={{ maxWidth: "100%" }}>
@@ -84,7 +100,7 @@ const FuelQuoteForm = (props) => {
             <form id="fuelquote-form" onSubmit={submitQuoteRequest}>
               <div className="form-group">
                 <label htmlFor="numOfgallons">Gallons Requested</label>
-                <input id="numOfgallons" onChange={gallonsHandler} type="number" className="form-control" min={0} max={10 ** 9} placeholder="Enter number of gallons." required />
+                <input id="numOfGallons" onChange={gallonsHandler} type="number" className="form-control" min={0} max={10 ** 9} placeholder="Enter number of gallons." required />
               </div>
 
               <div className="form-group">
@@ -94,7 +110,7 @@ const FuelQuoteForm = (props) => {
 
               <div className="form-group">
                 <label htmlFor="deliveryDate">Delivery Date</label>
-                <input id="deliveryDate" type="date" className="form-control" min={getTodayDate()} max={'2100-01-01'} required />
+                <input id="deliveryDate" onChange={dateHandler} type="date" className="form-control" min={getTodayDate()} max={'2100-01-01'} required />
               </div>
 
               <div className="form-group">
@@ -107,7 +123,7 @@ const FuelQuoteForm = (props) => {
                 <input id="totalCost" type="zipcode" className="form-control" value={(gallons * priceGalRate).toFixed(2)} readOnly />
               </div>
 
-              <button type="submit" className="btn btn-primary">Submit</button>
+              <Button disabled={!button_state} type="submit" id="submit-register"> Submit </Button>
 
             </form>
           </article>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NavigationBar from "./navigationBar";
 import './fuelQuoteHistory.css';
-import convertToDate from "./functions";
 
 const FuelQuoteHistory = () => {
 
@@ -35,18 +34,18 @@ const FuelQuoteHistory = () => {
 
     const renderTableData = () => {
         return quoteHistory.map((quote, index) => {
-            const { deliveryAddress, deliveryDate, gallonRate, numOfgallons, totalCost } = quote //destructuring
+            const { deliveryAddress, deliveryDate, gallonRate, numOfGallons, totalCost } = quote; //destructuring
             return (
                 <tr key={"q" + index + 1}>
                     <th scope="row">{index + 1}</th>
-                    <td style={tdSTYLE}>{numOfgallons + " gal"}</td>
+                    <td style={tdSTYLE}>{numOfGallons + " gal"}</td>
                     <td style={tdSTYLE}>{deliveryAddress}</td>
-                    <td style={tdSTYLE}>{convertToDate(deliveryDate)}</td>
+                    <td style={tdSTYLE}>{new Date(deliveryDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                     <td style={tdSTYLE}>{'$' + gallonRate}</td>
                     <td style={tdSTYLE}>{'$' + totalCost}</td>
                 </tr>
-            )
-        })
+            );
+        });
     }
 
     return (

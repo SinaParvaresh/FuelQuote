@@ -1,8 +1,9 @@
 import React from "react";
 const ClickAlert = (props) => {
+
     const closeAlert = (retrieved) => {
         document.getElementById(retrieved.target.offsetParent.id).style.display = 'none';
-    }
+    };
 
     return (
         <div id={props.id} className={"alert alert-" + props.alertType + " collapse"} role="alert" style={{ display: props.display, textAlign: "center" }}>

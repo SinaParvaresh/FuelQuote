@@ -5,12 +5,12 @@ const NavigationBar = (props) => {
 
     const sleep = async (ms) => {
         await new Promise(resolve => setTimeout(resolve, ms));
-    }
+    };
 
     const logoutHandler = (retrieved) => {
         retrieved.preventDefault();
         sleep(1000).then(function () { console.log("Sleep of 2 seconds successful."); document.getElementById("Logout-link").click(); })
-    }
+    };
 
     return (
         <div className="container">

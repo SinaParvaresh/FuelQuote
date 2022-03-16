@@ -20,6 +20,6 @@ Total Amount Due => 1500 * 1.695 = $2542.50
 
 const calculateQuote = (gallons, state, history, amount) =>{
     return;
-}
+};
 
 module.exports = calculateQuote;
