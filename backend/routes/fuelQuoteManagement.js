@@ -4,10 +4,6 @@ const router = express.Router();
 const fs = require("fs");
 const fuelQuoteCalculation = require("../resources/fuelQuoteCalculation");
 
-
-// //use fuelQuotes.json file as hardcoded DB
-// const fuelQuoteDB = JSON.parse(fs.readFileSync(`resources/fuelQuotes.json`));
-
 const GALLON_RATE = 1.5;
 
 router.post("/getParamsForQuote", function (req, res) {
@@ -67,8 +63,6 @@ router.post("/addQuote", function (req, res) {
   //desctructuring userId
   const { userId, ...rest } = req.body;
 
-  // if (fuelQuoteDB[userId]==null)
-  //   fuelQuoteDB[userId]={};
   if (fuelQuoteDB[userId] == null) {
     res.status(404).json({
       status: "error",
@@ -77,15 +71,11 @@ router.post("/addQuote", function (req, res) {
     return;
   }
 
-  const quoteNumber = fuelQuoteDB[userId].numberOfQuotes = parseInt(fuelQuoteDB[userId].numberOfQuotes) + 1; //chain assignments later.
-  // fuelQuoteDB[userId].numberOfQuotes;
-  // console.log(quoteNumber);
+  const quoteNumber = fuelQuoteDB[userId].numberOfQuotes = parseInt(fuelQuoteDB[userId].numberOfQuotes) + 1;
 
-  // console.log(rest);
   fuelQuoteDB[userId]["q" + quoteNumber] = { ...rest };
   fuelQuoteDB[userId]["q" + quoteNumber]["totalCost"] = (parseInt(rest.numOfgallons) * GALLON_RATE).toFixed(2);
 
-  // const {password, ...updatedUserInfo} = Object.assign(fuelQuoteDB[userId], rest);
   res.status(201).json({
     status: "success",
     data: {

@@ -12,24 +12,26 @@ router.post("/getProfile", function (req, res) {
   const profileDB = JSON.parse(fs.readFileSync(`resources/users.json`));
   //desctructuring userId
   const { userId, ...rest } = req.body;
-  if (profileDB[userId] == null) {
+  const userProfile=profileDB[userId];
+  if (userProfile == null) {
     res.status(404).json({
       status: "error",
       message: "User {" + userId + "} does not exist in database."
     });
     return;
   }
-  if (profileDB[userId].full_name == null) {
+  if (userProfile.full_name == null) {
     res.status(404).json({
       status: "error-address",
       message: "User {" + userId + "} has not completed profile."
     });
     return;
   }
+  const {password, ...toSend}=userProfile;
   res.status(200).json({
     status: "success",
     data: {
-      profile: profileDB[userId]
+      profile: toSend
     }
   });
 });
@@ -41,8 +43,6 @@ router.post("/updateProfile", function (req, res) {
   //desctructuring userId
   const { userId, ...rest } = req.body;
 
-  // if (profileDB[userId]==null)
-  //   profileDB[userId]={};
   if (profileDB[userId] == null) {
     res.status(404).json({
       status: "error",

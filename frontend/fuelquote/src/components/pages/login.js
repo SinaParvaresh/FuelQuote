@@ -4,42 +4,29 @@ import './login.css'
 
 const Login = (props) => {
 
-    //let history = useHistory();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    //const checkUserInfo = async (event) => {
     const checkUserInfo = async (event) => {
         event.preventDefault();
         console.log(username);
         console.log(password);
-
-        const response = await fetch('http://localhost:5000/userManagement/authentication', {
+        const request = await fetch('http://localhost:5000/userManagement/authentication', {
             method: 'POST',
             body: JSON.stringify({ username, password }),
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        const data = await response.json();
-        console.log(data);
-        if (data.status !== "success") {
+        const response = await request.json();
+        console.log(response);
+        if (response.status !== "success") {
             alert("Invalid Entry");
 
         } else {
-            //Navigate to the next page
-            //props.login(username,data.users[0].first_name)
-            /*           alert("Success"); */
             document.getElementById("login-form").submit();
-            //props.history.push(`/dashboard/${body.data.users[0].first_name}`);
-            //history.push(`/fuelQuoteHistory/${data.users[0].first_name}`);
         }
-
     }
-
-    // const submitHandler = (event) => {
-    //     event.preventDefault();
-    // }
 
     return (
         <div className='login-background'>

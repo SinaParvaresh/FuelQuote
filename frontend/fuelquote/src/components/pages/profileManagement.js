@@ -1,8 +1,8 @@
-import React, { useState, useEffect, Component } from "react";
-import { ReactDOM } from "react";
+import React, { useState, useEffect } from "react";
 
 import Button from "./Button";
 import NavigationBar from "./navigationBar";
+import ClickAlert from './clickalert';
 
 const ProfileManagement = (props) => {
 
@@ -13,6 +13,17 @@ const ProfileManagement = (props) => {
   const [enteredStateUS, setEnteredStateUS] = useState("");
   const [enteredZipcode, setEnteredZipcode] = useState("");
   const [profileIsStored, setProfileBool] = useState(false);
+
+  const [recievedProfileIfo, setProfileInfo] = useState({});
+  const [button_state, setButton] = useState(false);
+
+  const checkEmpty = () => {
+    const fields = document.querySelectorAll("[class='form-control']");
+    if ([].slice.call(fields).reduce((prev, curr) => prev * (!!curr.value), 1))
+      setButton(true);
+    else
+      setButton(false);
+  }
 
   const retrieveProfile = async (some_username) => {
     let profileInfo = {
@@ -31,70 +42,79 @@ const ProfileManagement = (props) => {
       }
     });
     const response = await request.json();
+    console.log(response);
     if (response.status === "success") {
       profileInfo = response.data.profile;
-      //  console.log(profileInfo);
-      setEnteredName(profileInfo.full_name != null ? profileInfo.full_name : "");
-      setEnteredAddress(profileInfo.address_1 != null ? profileInfo.address_1 : "");
-      setEnteredSecondAddress(profileInfo.address_2 != null ? profileInfo.address_2 : "");
-      setEnteredCity(profileInfo.city != null ? profileInfo.city : "");
-      setEnteredStateUS(profileInfo.usa_state != null ? profileInfo.usa_state : "");
-      setEnteredZipcode(profileInfo.zipcode != null ? profileInfo.zipcode : "");
+      setProfileInfo(profileInfo);
+      setEnteredName(profileInfo.full_name || "");
+      setEnteredAddress(profileInfo.address_1 || "");
+      setEnteredSecondAddress(profileInfo.address_2 || "");
+      setEnteredCity(profileInfo.city || "");
+      setEnteredStateUS(profileInfo.usa_state || "");
+      setEnteredZipcode(profileInfo.zipcode || "");
       setProfileBool(true);
     }
+    else
+      document.getElementById("completion-alert").style.display = 'block';
+    checkEmpty();
   }
 
   const USERNAME = "someuser@some.com";
   // const USERNAME="someone@email.com";
   // const USERNAME = "davebrown@trash.com";
+
   useEffect(() => {
     retrieveProfile(USERNAME);
   }, []);
 
   const nameChangedHandler = (event) => {
+    checkEmpty();
     setEnteredName(event.target.value);
   };
 
   const addressChangedHandler = (event) => {
+    checkEmpty();
     setEnteredAddress(event.target.value);
   };
 
   const secondAddressChangedHandler = (event) => {
+    checkEmpty();
     setEnteredSecondAddress(event.target.value);
   };
 
   const cityChangedHandler = (event) => {
+    checkEmpty();
     setEnteredCity(event.target.value);
   };
 
   const stateUSChangedHandler = (event) => {
+    checkEmpty();
     setEnteredStateUS(event.target.value);
   };
 
   const zipcodeChangedHandler = (event) => {
+    checkEmpty();
     setEnteredZipcode(event.target.value);
   };
 
   const addProfile = async (userInput) => {
     userInput.preventDefault();
-    // console.log(enteredName, enteredAddress);
-
     const profileInfo = {};
     const fields = ([].slice.call(userInput.target).slice(0, 6));
     fields.forEach((element) => profileInfo[element.name] = element.value);
-
+    if (Object.keys(profileInfo).reduce((prev, curr) => prev * (profileInfo[curr]==recievedProfileIfo[curr]), 1))
+      return;
     profileInfo["userId"] = USERNAME;
-
-    const response = await fetch('http://localhost:5000/profileManagement/updateProfile', {
+    const request = await fetch('http://localhost:5000/profileManagement/updateProfile', {
       method: 'POST',
       body: JSON.stringify(profileInfo),
       headers: {
         'Content-Type': 'application/json'
       }
     });
-    const data = await response.json();
-    console.log(data);
-    if (data.status === "success")
+    const response = await request.json();
+    console.log(response);
+    if (response.status === "success")
       document.getElementById("profile-form").submit();
     else
       alert("No account exists for this user.\nPlease register user first.");
@@ -107,6 +127,7 @@ const ProfileManagement = (props) => {
       <NavigationBar pageName="ProfileManagement" disableRest={!profileIsStored}></NavigationBar>
       <div className="container">
         <div className="card bg-light">
+          <ClickAlert id="completion-alert" alertType={"info"} >Profile must be completed before visiting other pages.</ClickAlert>
           <article className="card-body mx-auto" style={{ maxWidth: "100%" }}>
             <h4 className="card-title mt-3 text-center">Profile</h4>
 
@@ -147,7 +168,7 @@ const ProfileManagement = (props) => {
                 </div>
                 <input
                   name="address_2"
-                  className="form-control"
+                  className="form-control "
                   placeholder="Address 2"
                   type="text"
                   value={enteredSecondAddress}
@@ -178,7 +199,7 @@ const ProfileManagement = (props) => {
                 </div>
                 <select
                   name="usa_state"
-                  className="form-control"
+                  className="form-control "
                   onChange={stateUSChangedHandler}
                   value={enteredStateUS}
                   required
@@ -256,7 +277,7 @@ const ProfileManagement = (props) => {
               </div>
 
               <div className="form-group">
-                <Button type="submit"> Submit </Button>
+                <Button disabled={!button_state} type="submit"> Submit </Button>
               </div>
             </form>
           </article>

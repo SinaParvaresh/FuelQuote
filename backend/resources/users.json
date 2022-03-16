@@ -21,6 +21,12 @@
     "zipcode": "77074"
   },
   "someuser@some.com": {
-    "password": "someones"
+    "password": "someones",
+    "full_name": "George Clooney",
+    "address_1": "1234 Hollywood Blvd.",
+    "address_2": "",
+    "city": "Hollywood",
+    "usa_state": "CA",
+    "zipcode": "99999"
   }
 }

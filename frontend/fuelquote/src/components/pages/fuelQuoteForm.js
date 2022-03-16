@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from "react";
+import React, { useState, useEffect } from "react";
 import NavigationBar from "./navigationBar";
 
 const FuelQuoteForm = (props) => {
@@ -7,7 +7,6 @@ const FuelQuoteForm = (props) => {
     let dd = today.getDate();
     let mm = today.getMonth() + 1; //January is 0!
     const yyyy = today.getFullYear();
-
     if (dd < 10)
       dd = '0' + dd;
     if (mm < 10)
@@ -20,7 +19,7 @@ const FuelQuoteForm = (props) => {
   const gallonsHandler = (retrieved) => {
     setGallons(retrieved.target.value);
   };
-  // const [priceGalRate, setRate] = useState((Math.random()*8+1).toFixed(2));
+
   const [priceGalRate, setRate] = useState((1.5).toFixed(2));
 
   const USERNAME = "someuser@some.com";
@@ -36,7 +35,7 @@ const FuelQuoteForm = (props) => {
       }
     });
     const response = await request.json();
-    // console.log(response);
+    console.log(response);
     if (response.status === "success") {
       setAddress(response.data.params.address);
       setRate(response.data.params.gallon_rate);
@@ -68,7 +67,7 @@ const FuelQuoteForm = (props) => {
       }
     });
     const response = await request.json();
-    // console.log(response);
+    console.log(response);
     if (response.status === "success")
       document.getElementById("fuelquote-form").submit();
     else

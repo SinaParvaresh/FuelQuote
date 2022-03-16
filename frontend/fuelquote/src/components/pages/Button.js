@@ -1,15 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-import classes from "./Button.module.css";
+import "./Button.module.css";
 
 const Button = (props) => {
   return (
-    <button
-      className="btn btn-primary"
-      //className={classes.button}
-      type={props.type || "button"}
-      onClick={props.onClick}
-    >
+    <button className="btn btn-primary" type={props.type || "button"} onClick={props.onClick} disabled={props.disabled}>
       {props.children}
     </button>
   );

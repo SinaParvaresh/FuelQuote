@@ -26,11 +26,9 @@ router.get("/getCredentials", function (req, res) {
 router.post("/authentication", function (req, res) {
     //use users.json file as hardcoded DB
     const userDB = JSON.parse(fs.readFileSync(`resources/users.json`));
-    // console.log(userDB)
     const { username, password } = req.body;
     
     if (userDB[username]==null || (password != userDB[username].password))
-    // if (username != "elias@gmail.com" || password != "goodbye")
     {
         res.status(404).json({
             status: "error",

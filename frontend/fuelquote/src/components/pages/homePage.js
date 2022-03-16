@@ -10,11 +10,9 @@ const HomePage = () => {
                     Welcome<br/>to the Fuel Quote Website<br/>of GROUP 33!!!
                 </h1>
                 <br/>
-                {/* <div style={{margin: 'auto'}}> */}
                 <Link to="/login" style={{textDecoration: 'none'}}>
                     <button className="btn btn-outline-secondary btn-lg btn-block text-uppercase font-weight-bold">Click here to Login!</button>
                 </Link>
-                {/* </div> */}
             </div>
         </div>
     )

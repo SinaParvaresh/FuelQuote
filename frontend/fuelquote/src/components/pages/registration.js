@@ -1,34 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
-import './registration.css'
+import './registration.css';
+import ClickAlert from './clickalert';
 
 const Registration = (props) => {
 
-    const [button_state, setButton] = useState(true);
+    const [button_state, setButton] = useState(false);
     const [errors, setErrors] = useState({});
 
-    const checkEmpty = (retrieved) => {
-        let fields = document.querySelectorAll("[class^='form-control']");
-
+    const checkEmpty = () => {
+        const fields = document.querySelectorAll(".form-control");
         if ([].slice.call(fields).reduce((prev, curr) => prev * (!!curr.value), 1))
-            setButton(false);
-        else
             setButton(true);
+        else
+            setButton(false);
     }
 
     const submitHandler = async (retrieved) => {
         retrieved.preventDefault();
-
         for (let err in errors)
             document.getElementById(err + 'Alert').style.display = 'block';
-
         if (Object.keys(errors).length > 0)
             return;
-
         const fields = [].slice.call(document.querySelectorAll("[class^='form-control']")).map(e => e.value);
         // const fields = [].slice.call(retrieved.target).map(e => e.value);
         console.log(fields);
-
         const request = await fetch('http://localhost:5000/userManagement/addUser', {
             method: 'POST',
             body: JSON.stringify({ "username": fields[0], "password": fields[1] }),
@@ -45,9 +41,8 @@ const Registration = (props) => {
     }
 
     const usernameHandler = (retrieved) => {
-        checkEmpty(retrieved);
-
-        if (!retrieved.target.value.match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/))
+        checkEmpty();
+        if (!retrieved.target.value.match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/))
             errors["username"] = 1;
         else {
             delete errors["username"];
@@ -56,18 +51,13 @@ const Registration = (props) => {
     }
 
     const passwordHandler = (retrieved) => {
-        checkEmpty(retrieved);
-
+        checkEmpty();
         if (!retrieved.target.value.match(/^\S+$/))
             errors["password"] = 2;
         else {
             delete errors["password"];
             document.getElementById('passwordAlert').style.display = 'none';
         }
-    }
-
-    const closeAlert = (retrieved) => {
-        document.getElementById(retrieved.target.offsetParent.id).style.display = 'none';
     }
 
     return (
@@ -85,12 +75,7 @@ const Registration = (props) => {
                 </div>
                 <small className="form-text text-muted pt-0 mt-0 mb-3">Username should be of email format.</small>
 
-                <div id="usernameAlert" className="alert alert-danger collapse" role="alert">
-                    <span className="text-center font-weight-bold" style={{ color: 'rgb(150,0,0)', fontSize: '11pt' }}>Username must be in valid email format.</span>
-                    <button type="button" className="close" onClick={closeAlert} aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+                <ClickAlert id="usernameAlert" alertType={"danger"} color='rgb(150,0,0)'>Username must be in valid email format.</ClickAlert>
 
                 <div className="input-group mb-0">
                     <div className="input-group-prepend">
@@ -100,15 +85,10 @@ const Registration = (props) => {
                 </div>
                 <small className="form-text text-muted pt-0 mt-0 mb-3">Password should be 8 to 16 characters without whitespaces.</small>
 
-                <div id="passwordAlert" className="alert alert-danger collapse" role="alert">
-                    <span className="text-center font-weight-bold" style={{ color: 'rgb(150,0,0)', fontSize: '11pt' }}>Password cannot contain whitespaces.</span>
-                    <button type="button" className="close" onClick={closeAlert} aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+                <ClickAlert id="passwordAlert" alertType={"danger"} color='rgb(150,0,0)'>Password cannot contain whitespaces.</ClickAlert>
 
                 <div>
-                    <button disabled={button_state} type="submit" id="submit-register" className="btn btn-primary">Submit</button>
+                    <button disabled={!button_state} type="submit" id="submit-register" className="btn btn-primary">Submit</button>
                 </div>
                 <br />
                 <Link to="/login">Already a user? Login</Link>

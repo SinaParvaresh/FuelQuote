@@ -3,15 +3,6 @@ import { Link, NavLink } from 'react-router-dom';
 
 const NavigationBar = (props) => {
 
-    const determineActive = (listItem) => {
-        const original = "nav-item"
-        if (listItem === props.pageName)
-            return original + " active";
-        // if(props.disableRest==true)
-        //     return original+" disabled";
-        return original;
-    }
-
     const sleep = async (ms) => {
         await new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -31,25 +22,7 @@ const NavigationBar = (props) => {
                     </button>
                     <div className="container">
                         <div className="collapse navbar-collapse" id="navbarNav">
-                            {/* <li className={determineActive("ProfileManagement")}>
-                                    <Link className="nav-link" to="/profileManagement" style={{textDecoration: 'none'}}>Profile Management</Link>
-                                </li>
-                                <li className={determineActive("FuelQuoteForm")}>
-                                    <Link className="nav-link" to="/fuelQuoteForm" style={{textDecoration: 'none'}}>Fuel Quote Form</Link>
-                                </li>
-                                <li className={determineActive("FuelQuoteHistory")}>
-                                    <Link className="nav-link" to="/fuelQuoteHistory" style={{textDecoration: 'none'}}>Fuel Quote History</Link>
-                                </li> */}
-                            {/* <li>
-                                    <NavLink className="nav-item nav-link" to="/profileManagement">Profile Management</NavLink>
-                                </li>
-                                <li>
-                                    <NavLink className="nav-item nav-link" to="/fuelQuoteForm">Fuel Quote Form</NavLink>
-                                </li>
-                                <li>
-                                    <NavLink className="nav-item nav-link" to="/fuelQuoteHistory">Fuel Quote History</NavLink>
-                                </li> */}
-                            {props.disableRest == true ?
+                            {props.disableRest === true ?
                                 <ul className="navbar-nav mr-auto mt-lg-0">
                                     <NavLink className="nav-item nav-link disabled" to="/profileManagement" style={{ pointerEvents: "none" }}>Profile Management</NavLink>
                                     <NavLink className="nav-item nav-link disabled" to="/fuelQuoteForm" style={{ pointerEvents: "none" }}>Fuel Quote Form</NavLink>
