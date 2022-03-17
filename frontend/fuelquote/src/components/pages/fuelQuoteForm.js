@@ -24,7 +24,7 @@ const FuelQuoteForm = (props) => {
   const [button_state, setButton] = useState(false);
 
   const checkEmpty = () => {
-    if (document.getElementById("numOfGallons").value != 0 &&
+    if (Math.round(document.getElementById("numOfGallons").value) != 0 &&
       document.getElementById("deliveryDate").value != "")
       setButton(true);
     else
@@ -33,7 +33,7 @@ const FuelQuoteForm = (props) => {
 
   const gallonsHandler = (retrieved) => {
     checkEmpty();
-    setGallons(retrieved.target.value);
+    setGallons(Math.round(retrieved.target.value));
   };
 
   const dateHandler = (retrieved) => {
@@ -41,9 +41,9 @@ const FuelQuoteForm = (props) => {
     setDate(retrieved.target.value);
   };
 
-  const USERNAME = "someuser@some.com";
+  // const USERNAME = "someuser@some.com";
   // const USERNAME="someone@email.com";
-  // const USERNAME = "davebrown@trash.com";
+  const USERNAME = "davebrown@trash.com";
 
   const getDataForQuote = async (some_username) => {
     const request = await fetch('http://localhost:5000/fuelQuoteManagement/getParamsForQuote', {
@@ -99,8 +99,8 @@ const FuelQuoteForm = (props) => {
 
             <form id="fuelquote-form" onSubmit={submitQuoteRequest}>
               <div className="form-group">
-                <label htmlFor="numOfgallons">Gallons Requested</label>
-                <input id="numOfGallons" onChange={gallonsHandler} type="number" className="form-control" min={0} max={10 ** 9} placeholder="Enter number of gallons." required />
+                <label htmlFor="numOfGallons">Gallons Requested</label>
+                <input id="numOfGallons" onChange={gallonsHandler} type="number" className="form-control" min={0} max={10 ** 12} placeholder="Enter number of gallons." required />
               </div>
 
               <div className="form-group">

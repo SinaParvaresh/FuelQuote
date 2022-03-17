@@ -41,7 +41,7 @@ const Registration = (props) => {
 
     const usernameHandler = (retrieved) => {
         checkEmpty();
-        if (!retrieved.target.value.match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/))
+        if (!retrieved.target.value.trim().match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/))
             errors["username"] = 1;
         else {
             delete errors["username"];

@@ -18,5 +18,5 @@ app.use("/profileManagement", profileManagement);
 app.use("/fuelQuoteManagement", fuelQuoteManagement);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Fuel Quote Server listening on port ${port}`);
 });

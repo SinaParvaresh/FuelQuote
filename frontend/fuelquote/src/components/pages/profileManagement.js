@@ -101,7 +101,7 @@ const ProfileManagement = (props) => {
     userInput.preventDefault();
     const profileInfo = {};
     const fields = ([].slice.call(userInput.target).slice(0, 6));
-    fields.forEach((element) => profileInfo[element.name] = element.value);
+    fields.forEach((element) => profileInfo[element.name] = (typeof element.value == "string" ? element.value.trim() : element.value));
     if (Object.keys(profileInfo).reduce((prev, curr) => prev * (profileInfo[curr] == recievedProfileIfo[curr]), 1))
       return;
     profileInfo["userId"] = USERNAME;

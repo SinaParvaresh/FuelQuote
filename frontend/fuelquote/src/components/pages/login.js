@@ -20,7 +20,7 @@ const Login = (props) => {
 
     const usernameHandler = (event) => {
         checkEmpty();
-        setUsername(event.target.value);
+        setUsername(event.target.value.trim());
     };
 
     const passwordHandler = (event) => {

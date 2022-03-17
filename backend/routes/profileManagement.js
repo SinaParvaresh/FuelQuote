@@ -3,16 +3,14 @@ const express = require("express");
 const router = express.Router();
 const fs = require("fs");
 
-// //use users.json file as hardcoded DB
-// const profileDB = JSON.parse(fs.readFileSync(`resources/users.json`));
-
-/*grab profile for user from DB (if it exists)*/
+/*Grab profile for user from DB (if it exists)*/
 router.post("/getProfile", function (req, res) {
-  //use users.json file as hardcoded DB
+  //Use users.json file as hardcoded DB
   const profileDB = JSON.parse(fs.readFileSync(`resources/users.json`));
-  //desctructuring userId
-  const { userId, ...rest } = req.body;
-  const userProfile=profileDB[userId];
+
+  /* Transfer these validations to separate validation functions later. */
+  const { userId, ...rest } = req.body; //Destructuring userId
+  const userProfile = profileDB[userId];
   if (userProfile == null) {
     res.status(404).json({
       status: "error",
@@ -27,7 +25,7 @@ router.post("/getProfile", function (req, res) {
     });
     return;
   }
-  const {password, ...toSend}=userProfile;
+  const { password, ...toSend } = userProfile;
   res.status(200).json({
     status: "success",
     data: {
@@ -36,13 +34,13 @@ router.post("/getProfile", function (req, res) {
   });
 });
 
-/* update profile */
+/*Update profile*/
 router.post("/updateProfile", function (req, res) {
-  //use users.json file as hardcoded DB
+  //Use users.json file as hardcoded DB
   const profileDB = JSON.parse(fs.readFileSync(`resources/users.json`));
-  //desctructuring userId
-  const { userId, ...rest } = req.body;
 
+  /* Transfer these validations to separate validation functions later. */
+  const { userId, ...rest } = req.body; //Destructuring userId
   if (profileDB[userId] == null) {
     res.status(404).json({
       status: "error",
@@ -51,15 +49,17 @@ router.post("/updateProfile", function (req, res) {
     return;
   }
 
-  const { password, ...updatedUserInfo } = Object.assign(profileDB[userId], rest);
+  /* Insert backend validations here. */
+
+  const { password, ...updatedUserInfo } = Object.assign(profileDB[userId], rest); /* All writes to database need to be validated. 'rest' needs to always be validated precisely first. */
   res.status(201).json({
     status: "success",
     data: {
       profile: updatedUserInfo,
-    },
+    }
   });
 
-  //write POST request to JSON file
+  //Write POST request to JSON file
   fs.writeFile(`resources/users.json`, JSON.stringify(profileDB), (err) => { });
 });
 

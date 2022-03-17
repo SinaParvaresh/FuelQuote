@@ -1,8 +1,8 @@
 const GALLON_RATE = 1.5;
-const LOCATION_FACTOR=[0.02,0.04];
-const HISTORY_FACTOR=[0.01,0.0];
-const AMOUNT_FACTOR=[0.02,0.03];
-const PROFIT_FACTOR=0.10;
+const LOCATION_FACTOR = [0.02, 0.04];
+const HISTORY_FACTOR = [0.01, 0.0];
+const AMOUNT_FACTOR = [0.02, 0.03];
+const PROFIT_FACTOR = 0.10;
 
 /*
 Location Factor = 2% for Texas, 4% for out of state.
@@ -18,8 +18,19 @@ Suggested Price/gallon => 1.50 + .195 = $1.695
 Total Amount Due => 1500 * 1.695 = $2542.50
 */
 
-const calculateQuote = (gallons, state, history, amount) =>{
-    return;
+const roundDecimal = (num) => {
+    return +(Math.round(num + "e+15") + "e-15");
+}
+
+const getQuoteFactors = () => {
+    return { "gallon_rate": GALLON_RATE, "location_factor": LOCATION_FACTOR, "history_factor": HISTORY_FACTOR, "amount_factor": AMOUNT_FACTOR, "profit_factor": PROFIT_FACTOR }
+}
+
+const calculateRate = (gallons, state, history) => {
+    const margin = (state == "TX" ? LOCATION_FACTOR[0] : LOCATION_FACTOR[1]) - (history > 0 ? HISTORY_FACTOR[0] : HISTORY_FACTOR[1])
+        + (gallons > 1000 ? AMOUNT_FACTOR[0] : AMOUNT_FACTOR[1]) + PROFIT_FACTOR;
+    return roundDecimal(GALLON_RATE * (1 + margin));
 };
 
-module.exports = calculateQuote;
+module.exports = getQuoteFactors;
+module.exports = calculateRate;

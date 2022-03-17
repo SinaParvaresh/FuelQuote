@@ -2,15 +2,17 @@ const { json } = require("express");
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
-const fuelQuoteCalculation = require("../resources/fuelQuoteCalculation");
+const calculateRate = require("../resources/fuelQuoteCalculation");
+const getQuoteFactors = require("../resources/fuelQuoteCalculation");
 
 const GALLON_RATE = 1.5;
 
 router.post("/getParamsForQuote", function (req, res) {
-  //use fuelQuotes.json file as hardcoded DB
+  //Use users.json file as hardcoded DB
   const profileDB = JSON.parse(fs.readFileSync(`resources/users.json`));
-  //desctructuring userId
-  const { userId, ...rest } = req.body;
+
+  /* Transfer these validations to separate validation functions later. */
+  const { userId, ...rest } = req.body; //Destructuring userId
   if (profileDB[userId] == null) {
     res.status(404).json({
       status: "error",
@@ -25,22 +27,25 @@ router.post("/getParamsForQuote", function (req, res) {
     });
     return;
   }
+  /* Transfer this section to separate functions later.*/
   const userInfo = profileDB[userId];
   const secondAddress = (userInfo.address_2 == "" ? "" : ", " + userInfo.address_2);
+  const restOfAddress = ", " + userInfo.city + ", " + userInfo.usa_state + ' ' + userInfo.zipcode;
   res.status(200).json({
     status: "success",
     data: {
-      params: { "address": (userInfo.address_1 + secondAddress), "gallon_rate": GALLON_RATE }
+      params: { address: (userInfo.address_1 + secondAddress + restOfAddress), gallon_rate: GALLON_RATE, quote_factors: getQuoteFactors() }
     }
   });
 });
 
-/*grab fuel quotes for user from DB (if it exists)*/
+/*Grab fuel quotes for user from DB (if it exists)*/
 router.post("/getQuotes", function (req, res) {
-  //use fuelQuotes.json file as hardcoded DB
+  //Use fuelQuotes.json file as hardcoded DB
   const fuelQuoteDB = JSON.parse(fs.readFileSync(`resources/fuelQuotes.json`));
-  //desctructuring userId
-  const { userId, ...rest } = req.body;
+
+  /* Transfer these validations to separate validation functions later. */
+  const { userId, ...rest } = req.body; //Destructuring userId
   if (fuelQuoteDB[userId] == null) {
     res.status(404).json({
       status: "error",
@@ -56,13 +61,13 @@ router.post("/getQuotes", function (req, res) {
   });
 });
 
-/* update quotes */
+/*Update quotes*/
 router.post("/addQuote", function (req, res) {
-  //use fuelQuotes.json file as hardcoded DB
+  //Use fuelQuotes.json file as hardcoded DB
   const fuelQuoteDB = JSON.parse(fs.readFileSync(`resources/fuelQuotes.json`));
-  //desctructuring userId
-  const { userId, ...rest } = req.body;
 
+  /* Transfer these validations to separate validation functions later. */
+  const { userId, deliveryAddress, ...rest } = req.body; //Destructuring userId and deliveryAddress
   if (fuelQuoteDB[userId] == null) {
     res.status(404).json({
       status: "error",
@@ -70,20 +75,51 @@ router.post("/addQuote", function (req, res) {
     });
     return;
   }
+  if (parseInt(rest.numOfGallons) != parseFloat(rest.numOfGallons)) {
+    res.status(404).json({
+      status: "error",
+      message: "Gallons must be integer values."
+    });
+    return;
+  }
+  if (!(rest.numOfGallons > 0)) {
+    res.status(404).json({
+      status: "error",
+      message: "Must order at least 1 gallon."
+    });
+    return;
+  }
 
-  const quoteNumber = fuelQuoteDB[userId].numberOfQuotes = parseInt(fuelQuoteDB[userId].numberOfQuotes) + 1;
+  /* Insert backend validations here and transfer to separate validation functions later. */
 
-  fuelQuoteDB[userId]["q" + quoteNumber] = { ...rest };
-  fuelQuoteDB[userId]["q" + quoteNumber]["totalCost"] = (parseInt(rest.numOfgallons) * GALLON_RATE).toFixed(2);
+  //Use users.json file as hardcoded DB
+  const profileDB = JSON.parse(fs.readFileSync(`resources/users.json`));
+  const userInfo = profileDB[userId];
+  const secondAddress = (userInfo.address_2 == "" ? "" : ", " + userInfo.address_2);
+  const restOfAddress = ", " + userInfo.city + ", " + userInfo.usa_state + ' ' + userInfo.zipcode;
+  if (deliveryAddress != (userInfo.address_1 + secondAddress + restOfAddress)) {
+    res.status(404).json({
+      status: "error",
+      message: "Address of user {" + userId + "} does not match that in database."
+    });
+    return;
+  }
+
+  //Calculate quote rate
+  const quoteNumber = fuelQuoteDB[userId].numberOfQuotes += 1;
+  const perGallonPrice = calculateRate(rest.numOfGallons, userInfo.usa_state, quoteNumber - 1);
+
+  fuelQuoteDB[userId]["q" + quoteNumber] = { deliveryAddress: deliveryAddress, ...rest }; /* All writes to database need to be validated. 'rest' needs to always be validated precisely first. */
+  fuelQuoteDB[userId]["q" + quoteNumber]["totalCost"] = (parseInt(rest.numOfGallons) * perGallonPrice).toFixed(2);
 
   res.status(201).json({
     status: "success",
     data: {
       quotes: fuelQuoteDB[userId]["q" + quoteNumber],
-    },
+    }
   });
 
-  //write POST request to JSON file
+  //Write POST request to JSON file
   fs.writeFile(`resources/fuelQuotes.json`, JSON.stringify(fuelQuoteDB), (err) => { });
 });
 

@@ -1,26 +1,8 @@
 {
   "someuser@some.com": {
-    "numberOfQuotes": 3,
-    "q1": {
-      "numOfGallons": "12",
-      "deliveryAddress": "1234 Hollywood Blvd.",
-      "deliveryDate": "2022-03-17",
-      "gallonRate": "1.50",
-      "totalCost": "18.00"
-    },
-    "q2": {
-      "numOfGallons": "21",
-      "deliveryAddress": "1234 Hollywood Blvd.",
-      "deliveryDate": "2022-03-22",
-      "gallonRate": "1.50",
-      "totalCost": "31.50"
-    },
-    "q3": {
-      "numOfGallons": "56",
-      "deliveryAddress": "1234 Hollywood Blvd.",
-      "deliveryDate": "2022-04-02",
-      "gallonRate": "1.50",
-      "totalCost": "84.00"
-    }
+    "numberOfQuotes": 0
+  },
+  "davebrown@trash.com": {
+    "numberOfQuotes": 0
   }
 }

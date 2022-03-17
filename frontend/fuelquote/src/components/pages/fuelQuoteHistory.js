@@ -24,9 +24,9 @@ const FuelQuoteHistory = () => {
         }
     }
 
-    const USERNAME = "someuser@some.com";
+    // const USERNAME = "someuser@some.com";
     // const USERNAME="someone@email.com";
-    // const USERNAME = "davebrown@trash.com";
+    const USERNAME = "davebrown@trash.com";
 
     useEffect(() => {
         retrieveQuotes(USERNAME);
@@ -64,7 +64,7 @@ const FuelQuoteHistory = () => {
                                 <th style={thSTYLE}>Gallons Requested</th>
                                 <th style={thSTYLE}>Delivery Address</th>
                                 <th style={thSTYLE}>Delivery Date</th>
-                                <th style={thSTYLE}>Suggested Price / gallon</th>
+                                <th style={thSTYLE}>Suggested Price / Gallon</th>
                                 <th style={thSTYLE}>Total Amount Due</th>
                             </tr>
                         </thead>
