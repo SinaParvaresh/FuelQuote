@@ -22,8 +22,11 @@ const roundDecimal = (num) => {
     return +(Math.round(num + "e+15") + "e-15");
 }
 
-const getQuoteFactors = () => {
-    return { "gallon_rate": GALLON_RATE, "location_factor": LOCATION_FACTOR, "history_factor": HISTORY_FACTOR, "amount_factor": AMOUNT_FACTOR, "profit_factor": PROFIT_FACTOR }
+const getQuoteFactors = (state, history) => {
+    return {
+        "gallon_rate": GALLON_RATE, "location_factor": (state == "TX" ? LOCATION_FACTOR[0] : LOCATION_FACTOR[1]),
+        "history_factor": (history > 0 ? HISTORY_FACTOR[0] : HISTORY_FACTOR[1]), "amount_factor": AMOUNT_FACTOR, "profit_factor": PROFIT_FACTOR
+    }
 }
 
 const calculateRate = (gallons, state, history) => {
@@ -32,5 +35,4 @@ const calculateRate = (gallons, state, history) => {
     return roundDecimal(GALLON_RATE * (1 + margin));
 };
 
-module.exports = getQuoteFactors;
-module.exports = calculateRate;
+module.exports = { "getQuoteFactors": getQuoteFactors, "calculateRate": calculateRate };

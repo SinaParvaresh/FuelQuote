@@ -2,8 +2,9 @@ const { json } = require("express");
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
-const calculateRate = require("../resources/fuelQuoteCalculation");
-const getQuoteFactors = require("../resources/fuelQuoteCalculation");
+const quoteCalculation = require("../resources/fuelQuoteCalculation");
+const calculateRate = quoteCalculation.calculateRate;
+const getQuoteFactors = quoteCalculation.getQuoteFactors;
 
 const GALLON_RATE = 1.5;
 
@@ -34,7 +35,7 @@ router.post("/getParamsForQuote", function (req, res) {
   res.status(200).json({
     status: "success",
     data: {
-      params: { address: (userInfo.address_1 + secondAddress + restOfAddress), gallon_rate: GALLON_RATE, quote_factors: getQuoteFactors() }
+      params: { address: (userInfo.address_1 + secondAddress + restOfAddress), quote_factors: getQuoteFactors() }
     }
   });
 });

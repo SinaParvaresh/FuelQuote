@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import NavigationBar from "./navigationBar";
 import Button from "./Button";
+import calculateRate from "./fuelQuoteCalculation";
 
 const FuelQuoteForm = (props) => {
 
@@ -18,14 +19,14 @@ const FuelQuoteForm = (props) => {
 
   const [userAddress, setAddress] = useState("Address from backend.");
   const [gallons, setGallons] = useState(0);
-  const [deliveryDate, setDate] = useState("");
   const [priceGalRate, setRate] = useState((1.5).toFixed(2));
+  const [quoteFactors, setFactors] = useState({});
 
   const [button_state, setButton] = useState(false);
 
   const checkEmpty = () => {
-    if (Math.round(document.getElementById("numOfGallons").value) != 0 &&
-      document.getElementById("deliveryDate").value != "")
+    if (Math.round(document.getElementById("numOfGallons").value) !== 0 &&
+      document.getElementById("deliveryDate").value !== "")
       setButton(true);
     else
       setButton(false);
@@ -33,12 +34,10 @@ const FuelQuoteForm = (props) => {
 
   const gallonsHandler = (retrieved) => {
     checkEmpty();
-    setGallons(Math.round(retrieved.target.value));
-  };
-
-  const dateHandler = (retrieved) => {
-    checkEmpty();
-    setDate(retrieved.target.value);
+    const fieldGallons=Math.round(retrieved.target.value);
+    setGallons(fieldGallons);
+    setRate(calculateRate(fieldGallons,quoteFactors.gallon_rate,quoteFactors.location_factor,quoteFactors.history_factor,
+      quoteFactors.amount_factor,quoteFactors.profit_factor));
   };
 
   // const USERNAME = "someuser@some.com";
@@ -57,7 +56,10 @@ const FuelQuoteForm = (props) => {
     console.log(response);
     if (response.status === "success") {
       setAddress(response.data.params.address);
-      setRate(response.data.params.gallon_rate);
+      const quoteFacts=response.data.params.quote_factors;
+      setFactors(quoteFacts);
+      setRate(calculateRate(gallons,quoteFacts.gallon_rate,quoteFacts.location_factor,quoteFacts.history_factor,
+        quoteFacts.amount_factor,quoteFacts.profit_factor));
     }
     else if (response.status === "error-address")
       alert("No address exists for this user.\nPlease complete profile first.");
@@ -110,7 +112,7 @@ const FuelQuoteForm = (props) => {
 
               <div className="form-group">
                 <label htmlFor="deliveryDate">Delivery Date</label>
-                <input id="deliveryDate" onChange={dateHandler} type="date" className="form-control" min={getTodayDate()} max={'2100-01-01'} required />
+                <input id="deliveryDate" onChange={checkEmpty} type="date" className="form-control" min={getTodayDate()} max={'2100-01-01'} required />
               </div>
 
               <div className="form-group">

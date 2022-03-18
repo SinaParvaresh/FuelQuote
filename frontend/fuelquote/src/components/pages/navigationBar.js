@@ -12,6 +12,10 @@ const NavigationBar = (props) => {
         sleep(1000).then(function () { console.log("Sleep of 2 seconds successful."); document.getElementById("Logout-link").click(); })
     };
 
+    const disableClick = () => {
+        return props.disableRest === true ? { pointerEvents: "none" } : {};
+    }
+
     return (
         <div className="container">
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -22,21 +26,12 @@ const NavigationBar = (props) => {
                     </button>
                     <div className="container">
                         <div className="collapse navbar-collapse" id="navbarNav">
-                            {props.disableRest === true ?
-                                <ul className="navbar-nav mr-auto mt-lg-0">
-                                    <NavLink className="nav-item nav-link disabled" to="/profileManagement" style={{ pointerEvents: "none" }}>Profile Management</NavLink>
-                                    <NavLink className="nav-item nav-link disabled" to="/fuelQuoteForm" style={{ pointerEvents: "none" }}>Fuel Quote Form</NavLink>
-                                    <NavLink className="nav-item nav-link disabled" to="/fuelQuoteHistory" style={{ pointerEvents: "none" }}>Fuel Quote History</NavLink>
-                                    {props.children}
-                                </ul>
-                                :
-                                <ul className="navbar-nav mr-auto mt-lg-0">
-                                    <NavLink className="nav-item nav-link" to="/profileManagement">Profile Management</NavLink>
-                                    <NavLink className="nav-item nav-link" to="/fuelQuoteForm">Fuel Quote Form</NavLink>
-                                    <NavLink className="nav-item nav-link" to="/fuelQuoteHistory">Fuel Quote History</NavLink>
-                                    {props.children}
-                                </ul>
-                            }
+                            <ul className="navbar-nav mr-auto mt-lg-0">
+                                <NavLink className="nav-item nav-link disabled" to="/profileManagement" style={disableClick}>Profile Management</NavLink>
+                                <NavLink className="nav-item nav-link disabled" to="/fuelQuoteForm" style={disableClick}>Fuel Quote Form</NavLink>
+                                <NavLink className="nav-item nav-link disabled" to="/fuelQuoteHistory" style={disableClick}>Fuel Quote History</NavLink>
+                                {props.children}
+                            </ul>
                         </div>
                     </div>
                 </div>
