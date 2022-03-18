@@ -58,7 +58,7 @@ const FuelQuoteForm = (props) => {
       setAddress(response.data.params.address);
       const quoteFacts=response.data.params.quote_factors;
       setFactors(quoteFacts);
-      setRate(calculateRate(gallons,quoteFacts.gallon_rate,quoteFacts.location_factor,quoteFacts.history_factor,
+      setRate(calculateRate(0,quoteFacts.gallon_rate,quoteFacts.location_factor,quoteFacts.history_factor,
         quoteFacts.amount_factor,quoteFacts.profit_factor));
     }
     else if (response.status === "error-address")
