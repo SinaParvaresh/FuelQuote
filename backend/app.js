@@ -1,3 +1,4 @@
+// 'use strict';
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -6,6 +7,9 @@ const bodyParser = require("body-parser");
 const userManagement = require("./routes/userManagement");
 const profileManagement = require("./routes/profileManagement");
 const fuelQuoteManagement = require("./routes/fuelQuoteManagement");
+const { createSaltforToken } = require("./resources/tokenHandler");
+
+createSaltforToken();
 
 app.use(cors())
 app.use(express.json())

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom';
+import { React, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 import './registration.css';
 import ClickAlert from './clickalert';
 import Button from './Button';
@@ -7,7 +7,8 @@ import Button from './Button';
 const Registration = (props) => {
 
     const [button_state, setButton] = useState(false);
-    const [errors, setErrors] = useState({});
+    const [errors] = useState({});
+    const navigate = useNavigate();
 
     const checkEmpty = () => {
         const fields = document.querySelectorAll(".form-control");
@@ -17,31 +18,9 @@ const Registration = (props) => {
             setButton(false);
     };
 
-    const submitHandler = async (retrieved) => {
-        retrieved.preventDefault();
-        for (let err in errors)
-            document.getElementById(err + 'Alert').style.display = 'block';
-        if (Object.keys(errors).length > 0)
-            return;
-        const fields = [].slice.call(document.querySelectorAll(".form-control")).map(e => e.value);
-        const request = await fetch('http://localhost:5000/userManagement/addUser', {
-            method: 'POST',
-            body: JSON.stringify({ "username": fields[0], "password": fields[1] }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const response = await request.json();
-        console.log(response);
-        if (response.status !== "success")
-            alert("This user already exists. Please login instead.");
-        else
-            document.getElementById("registration-form").submit();
-    };
-
-    const usernameHandler = (retrieved) => {
+    const usernameHandler = (event) => {
         checkEmpty();
-        if (!retrieved.target.value.trim().match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/))
+        if (!event.target.value.trim().match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/))
             errors["username"] = 1;
         else {
             delete errors["username"];
@@ -49,13 +28,41 @@ const Registration = (props) => {
         }
     };
 
-    const passwordHandler = (retrieved) => {
+    const passwordHandler = (event) => {
         checkEmpty();
-        if (!retrieved.target.value.match(/^\S+$/))
+        if (!event.target.value.match(/^\S+$/))
             errors["password"] = 2;
         else {
             delete errors["password"];
             document.getElementById('passwordAlert').style.display = 'none';
+        }
+    };
+
+    const submitHandler = async (event) => {
+        event.preventDefault();
+        for (let err in errors)
+            document.getElementById(err + 'Alert').style.display = 'block';
+        if (Object.keys(errors).length > 0)
+            return;
+        const fields = [].slice.call(document.querySelectorAll(".form-control")).map(e => e.value);
+        try {
+            const request = await fetch('http://localhost:5000/userManagement/addUser', {
+                method: 'POST',
+                body: JSON.stringify({ "username": fields[0], "password": fields[1] }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const response = await request.json();
+            console.log(response);
+            if (response.status !== "success")
+                alert("This user already exists. Please login instead.");
+            else
+                navigate('/login');
+            // document.getElementById("registration-form").submit();
+        }
+        catch (err) {
+            console.error(err);
         }
     };
 

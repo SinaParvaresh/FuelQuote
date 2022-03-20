@@ -1,10 +1,20 @@
-import React, { useState, useEffect } from "react";
-
+import { React, useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 import Button from "./Button";
 import NavigationBar from "./navigationBar";
 import ClickAlert from './clickalert';
 
 const ProfileManagement = (props) => {
+
+  const [cookies] = useCookies(['user-token']);
+  const navigate = useNavigate();
+  const [fetchError, setError] = useState();
+  const setPageError = (message, redirect) => {
+    setButton(false);
+    [].slice.call(document.getElementById("profile-form").elements).forEach(element => element.disabled = true);
+    setError([message, () => navigate(redirect)]);
+  }
 
   const [enteredName, setEnteredName] = useState("");
   const [enteredAddress, setEnteredAddress] = useState("");
@@ -12,8 +22,8 @@ const ProfileManagement = (props) => {
   const [enteredCity, setEnteredCity] = useState("");
   const [enteredStateUS, setEnteredStateUS] = useState("");
   const [enteredZipcode, setEnteredZipcode] = useState("");
-  const [profileIsStored, setProfileBool] = useState(false);
 
+  const [profileIsStored, setProfileBool] = useState(false);
   const [recievedProfileIfo, setProfileInfo] = useState({});
   const [button_state, setButton] = useState(false);
 
@@ -24,48 +34,6 @@ const ProfileManagement = (props) => {
     else
       setButton(false);
   };
-
-  const retrieveProfile = async (some_username) => {
-    let profileInfo = {
-      "full_name": "",
-      "address_1": "",
-      "address_2": "",
-      "city": "",
-      "usa_state": "",
-      "zipcode": ""
-    }
-    const request = await fetch('http://localhost:5000/profileManagement/getProfile', {
-      method: 'POST',
-      body: JSON.stringify({ "userId": some_username }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    const response = await request.json();
-    console.log(response);
-    if (response.status === "success") {
-      profileInfo = response.data.profile;
-      setProfileInfo(profileInfo);
-      setEnteredName(profileInfo.full_name || "");
-      setEnteredAddress(profileInfo.address_1 || "");
-      setEnteredSecondAddress(profileInfo.address_2 || "");
-      setEnteredCity(profileInfo.city || "");
-      setEnteredStateUS(profileInfo.usa_state || "");
-      setEnteredZipcode(profileInfo.zipcode || "");
-      setProfileBool(true);
-    }
-    else
-      document.getElementById("completion-alert").style.display = 'block';
-    checkEmpty();
-  };
-
-  const USERNAME = "someuser@some.com";
-  // const USERNAME="someone@email.com";
-  // const USERNAME = "davebrown@trash.com";
-
-  useEffect(() => {
-    retrieveProfile(USERNAME);
-  }, []);
 
   const nameChangedHandler = (event) => {
     checkEmpty();
@@ -99,35 +67,121 @@ const ProfileManagement = (props) => {
 
   const addProfile = async (userInput) => {
     userInput.preventDefault();
-    const profileInfo = {};
-    const fields = ([].slice.call(userInput.target).slice(0, 6));
-    fields.forEach((element) => profileInfo[element.name] = (typeof element.value == "string" ? element.value.trim() : element.value));
-    if (Object.keys(profileInfo).reduce((prev, curr) => prev * (profileInfo[curr] == recievedProfileIfo[curr]), 1))
-      return;
-    profileInfo["userId"] = USERNAME;
-    const request = await fetch('http://localhost:5000/profileManagement/updateProfile', {
-      method: 'POST',
-      body: JSON.stringify(profileInfo),
-      headers: {
-        'Content-Type': 'application/json'
+    try {
+      const profileInfo = {};
+      const fields = ([].slice.call(userInput.target).slice(0, 6));
+      fields.forEach((element) => profileInfo[element.name] = (typeof element.value == "string" ? element.value.trim() : element.value));
+      if (Object.keys(profileInfo).reduce((prev, curr) => prev * (profileInfo[curr] === recievedProfileIfo[curr]), 1))
+        return;
+      profileInfo["token"] = cookies.Token;
+      const request = await fetch('http://localhost:5000/profileManagement/updateProfile', {
+        method: 'POST',
+        body: JSON.stringify(profileInfo),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const response = await request.json();
+      console.log(response);
+      if (response.status === "success")
+        document.getElementById("profile-form").submit();
+      else if (response.status === "error-token") {
+        // alert("Token is invalid. Please login again.");
+        // navigate('/login');
+        setPageError("Token is invalid. Please login again.", "/login");
+        return;
       }
-    });
-    const response = await request.json();
-    console.log(response);
-    if (response.status === "success")
-      document.getElementById("profile-form").submit();
-    else
-      alert("No account exists for this user.\nPlease register user first.");
+      else {
+        // alert("An unknown error has occurred during server request.");
+        // navigate('/');
+        setPageError("An unknown error has occurred during server request.", "/");
+        return;
+      }
+    }
+    catch (err) {
+      console.error(err);
+    }
   };
 
+  useEffect(() => {
+    const setPageError = (message, redirect) => {
+      setButton(false);
+      [].slice.call(document.getElementById("profile-form").elements).forEach(element => element.disabled = true);
+      setError([message, () => navigate(redirect)]);
+    }
+    if (!cookies.Token) {
+      // alert("Missing token. Please login before accessing this page.");
+      // navigate('/login');
 
+      // [].slice.call(document.getElementById("profile-form").elements).forEach(element => element.disabled = true);
+      // setError(["Missing token. Please login before accessing this page.", () => navigate('/login')]);
+
+      setPageError("Missing token. Please login before accessing this page.", "/login");
+
+      return;
+    }
+
+    const retrieveProfile = async (user_token) => {
+      let profileInfo = {
+        "full_name": "",
+        "address_1": "",
+        "address_2": "",
+        "city": "",
+        "usa_state": "",
+        "zipcode": ""
+      }
+      try {
+        const request = await fetch('http://localhost:5000/profileManagement/getProfile', {
+          method: 'POST',
+          body: JSON.stringify({ token: user_token }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const response = await request.json();
+        console.log(response);
+        if (response.status === "success") {
+          profileInfo = response.data.profile;
+          setProfileInfo(profileInfo);
+          setEnteredName(profileInfo.full_name || "");
+          setEnteredAddress(profileInfo.address_1 || "");
+          setEnteredSecondAddress(profileInfo.address_2 || "");
+          setEnteredCity(profileInfo.city || "");
+          setEnteredStateUS(profileInfo.usa_state || "");
+          setEnteredZipcode(profileInfo.zipcode || "");
+          setProfileBool(true);
+        }
+        else if (response.status === "error-profile")
+          document.getElementById("completion-alert").style.display = 'block';
+        else if (response.status === "error-token") {
+          // alert("Token is invalid. Please login again.");
+          // navigate('/login');
+          setPageError("Token is invalid. Please login again.", "/login");
+          return;
+        }
+        else {
+          // alert("An unknown error has occurred during server request.");
+          // navigate('/');
+          setPageError("An unknown error has occurred during server request.", "/");
+          return;
+        }
+        checkEmpty();
+      }
+      catch (err) {
+        console.error(err);
+      }
+    };
+
+    retrieveProfile(cookies.Token);
+  }, [cookies.Token, navigate]);
 
   return (
     <div className="page" style={{ maxWidth: "100%" }}>
-      <NavigationBar pageName="ProfileManagement" disableRest={!profileIsStored}></NavigationBar>
+      <NavigationBar pageName="ProfileManagement" disableRest={!profileIsStored || (fetchError != null)}></NavigationBar>
       <div className="container">
         <div className="card bg-light">
-          <ClickAlert id="completion-alert" alertType={"info"} >Profile must be completed before visiting other pages.</ClickAlert>
+          {!fetchError ? <ClickAlert id="completion-alert" alertType={"info"} >Profile must be completed before visiting other pages.</ClickAlert>
+            : <ClickAlert id="loginAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert>}
           <article className="card-body mx-auto" style={{ maxWidth: "100%" }}>
             <h4 className="card-title mt-3 text-center">Profile</h4>
 
@@ -168,7 +222,7 @@ const ProfileManagement = (props) => {
                 </div>
                 <input
                   name="address_2"
-                  className="form-control "
+                  className="form-control ."
                   placeholder="Address 2"
                   type="text"
                   value={enteredSecondAddress}
@@ -199,7 +253,7 @@ const ProfileManagement = (props) => {
                 </div>
                 <select
                   name="usa_state"
-                  className="form-control "
+                  className="form-control"
                   onChange={stateUSChangedHandler}
                   value={enteredStateUS}
                   required

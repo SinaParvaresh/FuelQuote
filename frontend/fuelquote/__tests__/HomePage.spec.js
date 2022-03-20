@@ -4,13 +4,13 @@
 // // describe("Profile Management", () => {
 
 // //     test("it should handle valid login info", () => { 
-  
+
 // //     });
-  
+
 // //     test("it should handle invalid login info", () => { 
-  
+
 // //     });
-  
+
 // //   });
 
 // //   <ProfileManagement />
@@ -36,16 +36,18 @@
 
 
 import React from 'react';
-import renderer from 'react-test-renderer';
-import { Link } from 'react-router-dom';
+import {act, create} from 'react-test-renderer';
 import { MemoryRouter } from 'react-router-dom';
 
 import HomePage from '../src/components/pages/homePage';
 // import { Counter } from './App';
 
 describe('Home page', () => {
-  test('snapshot renders', () => {
-    const component = renderer.create(<MemoryRouter><HomePage /></MemoryRouter>);
+  test('if render matches snapshot', async() => {
+    let component;
+    await act(async() => { 
+      component = create(<MemoryRouter><HomePage /></MemoryRouter>);
+    });
     let snap = component.toJSON();
     expect(snap).toMatchSnapshot();
   });

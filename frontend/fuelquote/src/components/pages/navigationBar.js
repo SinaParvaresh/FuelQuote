@@ -1,20 +1,42 @@
 import React from "react";
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
 const NavigationBar = (props) => {
 
-    const sleep = async (ms) => {
-        await new Promise(resolve => setTimeout(resolve, ms));
-    };
+    const [cookies, , removeCookie] = useCookies(['user-token']);
+    const navigate = useNavigate();
 
-    const logoutHandler = (retrieved) => {
-        retrieved.preventDefault();
-        sleep(1000).then(function () { console.log("Sleep of 2 seconds successful."); document.getElementById("Logout-link").click(); })
+    const logoutHandler = async (event) => {
+        event.preventDefault();
+        try {
+            if (!cookies.Token) {
+                navigate('/login');
+                return;
+            }
+            const request = await fetch('http://localhost:5000/userManagement/logout', {
+                method: 'POST',
+                body: JSON.stringify({ token: cookies.Token }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            // removeCookie('Token', { path: '/', domain: "localhost" });
+            Object.keys(cookies).forEach(c => removeCookie(c, { domain: "localhost" }));
+            const response = await request.json();
+            console.log(response);
+            if ((response.status !== "success") && (response.cause !== "missing"))
+                alert("An error occured while logging out.");
+            navigate('/login');
+        }
+        catch (err) {
+            console.error(err);
+        }
     };
 
     const disableClick = () => {
         return props.disableRest === true ? { pointerEvents: "none" } : {};
-    }
+    };
 
     return (
         <div className="container">
@@ -35,9 +57,9 @@ const NavigationBar = (props) => {
                         </div>
                     </div>
                 </div>
-                <Link id="Logout-link" to="/login" style={{ textDecoration: 'none' }}>
-                    <button onClick={logoutHandler} className="btn btn-outline-success ml-auto">Logout</button>
-                </Link>
+                {/* <Link id="Logout-link" to="/login" style={{ textDecoration: 'none' }}> */}
+                <button onClick={logoutHandler} className="btn btn-outline-success ml-auto">Logout</button>
+                {/* </Link> */}
             </nav>
         </div>
 

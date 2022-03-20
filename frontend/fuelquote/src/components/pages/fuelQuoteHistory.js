@@ -1,36 +1,64 @@
-import React, { useState, useEffect } from "react";
+import { React, useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 import NavigationBar from "./navigationBar";
+import ClickAlert from "./clickalert";
 import './fuelQuoteHistory.css';
 
 const FuelQuoteHistory = () => {
+
+    const [cookies] = useCookies(['user-token']);
+    const navigate = useNavigate();
+    const [fetchError, setError] = useState();
 
     const [quoteHistory, setHistory] = useState([]);
     const tdSTYLE = { textAlign: 'center' };
     const thSTYLE = { textAlign: 'center' };
 
-    const retrieveQuotes = async (some_username) => {
-        const request = await fetch('http://localhost:5000/fuelQuoteManagement/getQuotes', {
-            method: 'POST',
-            body: JSON.stringify({ "userId": some_username }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const response = await request.json();
-        console.log(response);
-        if (response.status === "success") {
-            const responseData = response.data.quotes;
-            setHistory(Object.keys(responseData).map(e => responseData[e]).slice(1));
-        }
-    }
-
-    // const USERNAME = "someuser@some.com";
-    // const USERNAME="someone@email.com";
-    const USERNAME = "davebrown@trash.com";
-
     useEffect(() => {
-        retrieveQuotes(USERNAME);
-    }, []);
+        const setPageError = (message, redirect) => {
+            setError([message, () => navigate(redirect)]);
+        }
+        if (!cookies.Token) {
+            // alert("Please login before accessing this page.");
+            // navigate('/login');
+            setPageError("Missing token. Please login before accessing this page.", "/login");
+            return;
+        }
+        const retrieveQuotes = async (some_token) => {
+            try {
+                const request = await fetch('http://localhost:5000/fuelQuoteManagement/getQuotes', {
+                    method: 'POST',
+                    body: JSON.stringify({ "token": some_token }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const response = await request.json();
+                console.log(response);
+                if (response.status === "success") {
+                    const responseData = response.data.quotes;
+                    setHistory(Object.keys(responseData).map(e => responseData[e]).slice(1));
+                }
+                else if (response.status === "error-token") {
+                    // alert("Token is invalid. Please login again.");
+                    // navigate('/login');
+                    setPageError("Token is invalid. Please login again.", "/login");
+                    return;
+                }
+                else {
+                    // alert("An unknown error has occurred during server request.");
+                    // navigate('/');
+                    setPageError("An unknown error has occurred during server request.", "/");
+                    return;
+                }
+            }
+            catch (err) {
+                console.error(err);
+            }
+        };
+        retrieveQuotes(cookies.Token);
+    }, [cookies.Token, navigate]);
 
     const renderTableData = () => {
         return quoteHistory.map((quote, index) => {
@@ -50,12 +78,13 @@ const FuelQuoteHistory = () => {
 
     return (
         <div className="page">
-            <NavigationBar pageName="FuelQuoteHistory"></NavigationBar>
+            <NavigationBar pageName="FuelQuoteHistory" disableRest={fetchError != null}></NavigationBar>
             <div className='container'>
                 <div>
                     <h1> Fuel Quote History</h1>
                 </div>
                 <br />
+                {fetchError != null ? <ClickAlert id="loginAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
                 <div className='table'>
                     <table className="table">
                         <thead className="thead-dark">

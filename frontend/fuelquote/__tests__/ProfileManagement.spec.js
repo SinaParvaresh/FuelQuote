@@ -4,13 +4,13 @@
 // // describe("Profile Management", () => {
 
 // //     test("it should handle valid login info", () => { 
-  
+
 // //     });
-  
+
 // //     test("it should handle invalid login info", () => { 
-  
+
 // //     });
-  
+
 // //   });
 
 // //   <ProfileManagement />
@@ -18,14 +18,17 @@
 
 
 import React from 'react';
-import renderer from 'react-test-renderer';
+import {act, create} from 'react-test-renderer';
 import { MemoryRouter } from 'react-router-dom';
 
 import ProfileManagement from '../src/components/pages/profileManagement';
 
 describe('Profile Management', () => {
-  test('snapshot renders', () => {
-    const component = renderer.create(<MemoryRouter><ProfileManagement /></MemoryRouter>);
+  test('if render matches snapshot', async() => {
+    let component;
+    await act(async() => { 
+      component = create(<MemoryRouter><ProfileManagement /></MemoryRouter>);
+    });
     let snap = component.toJSON();
     expect(snap).toMatchSnapshot();
   });

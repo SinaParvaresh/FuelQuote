@@ -1,8 +1,10 @@
 import React from "react";
 const ClickAlert = (props) => {
 
-    const closeAlert = (retrieved) => {
-        document.getElementById(retrieved.target.offsetParent.id).style.display = 'none';
+    const closeAlert = (event) => {
+        document.getElementById(event.target.offsetParent.id).style.display = 'none';
+        if (props.extraEvent != null)
+            props.extraEvent();
     };
 
     return (
@@ -15,4 +17,4 @@ const ClickAlert = (props) => {
     );
 };
 
-export default ClickAlert;
+export default React.memo(ClickAlert);

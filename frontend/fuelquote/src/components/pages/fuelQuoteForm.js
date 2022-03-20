@@ -1,9 +1,21 @@
-import React, { useState, useEffect } from "react";
+import { React, useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 import NavigationBar from "./navigationBar";
+import ClickAlert from "./clickalert";
 import Button from "./Button";
 import calculateRate from "./fuelQuoteCalculation";
 
 const FuelQuoteForm = (props) => {
+
+  const [cookies] = useCookies(['user-token']);
+  const navigate = useNavigate();
+  const [fetchError, setError] = useState();
+  const setPageError = (message, redirect) => {
+    setButton(false);
+    [].slice.call(document.getElementById("fuelquote-form").elements).forEach(element => element.disabled = true);
+    setError([message, () => navigate(redirect)]);
+  }
 
   const getTodayDate = () => {
     const today = new Date();
@@ -32,73 +44,117 @@ const FuelQuoteForm = (props) => {
       setButton(false);
   };
 
-  const gallonsHandler = (retrieved) => {
+  const gallonsHandler = (event) => {
     checkEmpty();
-    const fieldGallons=Math.round(retrieved.target.value);
+    const fieldGallons = Math.round(event.target.value);
     setGallons(fieldGallons);
-    setRate(calculateRate(fieldGallons,quoteFactors.gallon_rate,quoteFactors.location_factor,quoteFactors.history_factor,
-      quoteFactors.amount_factor,quoteFactors.profit_factor));
+    setRate(calculateRate(fieldGallons, quoteFactors.gallon_rate, quoteFactors.location_factor, quoteFactors.history_factor,
+      quoteFactors.amount_factor, quoteFactors.profit_factor));
   };
-
-  // const USERNAME = "someuser@some.com";
-  // const USERNAME="someone@email.com";
-  const USERNAME = "davebrown@trash.com";
-
-  const getDataForQuote = async (some_username) => {
-    const request = await fetch('http://localhost:5000/fuelQuoteManagement/getParamsForQuote', {
-      method: 'POST',
-      body: JSON.stringify({ "userId": some_username }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    const response = await request.json();
-    console.log(response);
-    if (response.status === "success") {
-      setAddress(response.data.params.address);
-      const quoteFacts=response.data.params.quote_factors;
-      setFactors(quoteFacts);
-      setRate(calculateRate(0,quoteFacts.gallon_rate,quoteFacts.location_factor,quoteFacts.history_factor,
-        quoteFacts.amount_factor,quoteFacts.profit_factor));
-    }
-    else if (response.status === "error-address")
-      alert("No address exists for this user.\nPlease complete profile first.");
-    else
-      alert("No account exists for this user.\nPlease register user first.");
-  };
-
-  useEffect(() => {
-    getDataForQuote(USERNAME);
-  }, []);
 
   const submitQuoteRequest = async (userInput) => {
     userInput.preventDefault();
     const quoteInfo = {};
     const fields = ([].slice.call(userInput.target).slice(0, 4));
     fields.forEach((element) => quoteInfo[element.id] = element.value);
-    quoteInfo["userId"] = USERNAME;
-    const request = await fetch('http://localhost:5000/fuelQuoteManagement/addQuote', {
-      method: 'POST',
-      body: JSON.stringify(quoteInfo),
-      headers: {
-        'Content-Type': 'application/json'
+    quoteInfo["token"] = cookies.Token;
+    try {
+      const request = await fetch('http://localhost:5000/fuelQuoteManagement/addQuote', {
+        method: 'POST',
+        body: JSON.stringify(quoteInfo),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const response = await request.json();
+      console.log(response);
+      if (response.status === "success")
+        document.getElementById("fuelquote-form").submit();
+      else if (response.status === "error-token") {
+        // alert("Token is invalid. Please login again.");
+        // navigate('/login');
+        setPageError("Token is invalid. Please login again.", "/login");
+        return;
       }
-    });
-    const response = await request.json();
-    console.log(response);
-    if (response.status === "success")
-      document.getElementById("fuelquote-form").submit();
-    else
-      alert("No account exists for this user.\nPlease register user first.");
+      else if (response.status === "error-address") {
+        // alert("Given address did not match that of database.");
+        // navigate('/profileManagement');
+        setPageError("Given address did not match that of database.", "/profileManagement");
+      }
+      else {
+        // alert("An unknown error has occurred during server request.");
+        // navigate('/');
+        setPageError("An unknown error has occurred during server request.", "/");
+        return;
+      }
+    }
+    catch (err) {
+      console.error(err);
+    }
   };
+
+  useEffect(() => {
+    const setPageError = (message, redirect) => {
+      setButton(false);
+      [].slice.call(document.getElementById("fuelquote-form").elements).forEach(element => element.disabled = true);
+      setError([message, () => navigate(redirect)]);
+    }
+    if (!cookies.Token) {
+      // alert("Please login before accessing this page.");
+      // navigate('/login');
+      setPageError("Missing token. Please login before accessing this page.", "/login");
+      return;
+    }
+    const getDataForQuote = async (user_token) => {
+      try {
+        const request = await fetch('http://localhost:5000/fuelQuoteManagement/getParamsForQuote', {
+          method: 'POST',
+          body: JSON.stringify({ token: user_token }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const response = await request.json();
+        console.log(response);
+        if (response.status === "success") {
+          setAddress(response.data.params.address);
+          const quoteFacts = response.data.params.quote_factors;
+          setFactors(quoteFacts);
+          setRate(calculateRate(0, quoteFacts.gallon_rate, quoteFacts.location_factor, quoteFacts.history_factor,
+            quoteFacts.amount_factor, quoteFacts.profit_factor));
+        }
+        else if (response.status === "error-token") {
+          // alert("Token is invalid. Please login again.");
+          // navigate('/login');
+          setPageError("Token is invalid. Please login again.", "/login");
+          return;
+        }
+        else if (response.status === "error-address") {
+          // alert("No address exists for this user.\nPlease complete profile first.");
+          // navigate('/profileManagement');
+          setPageError("No address exists for this user.\nPlease complete profile first.", "/profileManagement");
+        }
+        else {
+          // alert("An unknown error has occurred during server request.");
+          // navigate('/');
+          setPageError("An unknown error has occurred during server request.", "/");
+          return;
+        }
+      }
+      catch (err) {
+        console.error(err);
+      }
+    };
+    getDataForQuote(cookies.Token);
+  }, [cookies.Token, navigate]);
 
   return (
     <div className="page" style={{ maxWidth: "100%" }}>
-      <NavigationBar pageName="FuelQuoteForm"></NavigationBar>
+      <NavigationBar pageName="FuelQuoteForm" disableRest={fetchError != null}></NavigationBar>
       <div className="container">
         <div className="card bg-light">
+          {fetchError != null ? <ClickAlert id="loginAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
           <article className="card-body">
-
             <form id="fuelquote-form" onSubmit={submitQuoteRequest}>
               <div className="form-group">
                 <label htmlFor="numOfGallons">Gallons Requested</label>
