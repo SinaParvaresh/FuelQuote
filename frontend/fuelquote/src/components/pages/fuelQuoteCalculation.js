@@ -21,5 +21,4 @@ const calculateRate = (gallons, gallonRate, locationFactor, historyFactor, amoun
     return roundDecimal(gallonRate * (1 + margin));
 };
 
-// module.exports = calculateRate;
 export default calculateRate;

@@ -59,7 +59,6 @@ const Registration = (props) => {
                 alert("This user already exists. Please login instead.");
             else
                 navigate('/login');
-            // document.getElementById("registration-form").submit();
         }
         catch (err) {
             console.error(err);

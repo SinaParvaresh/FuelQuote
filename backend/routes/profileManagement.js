@@ -8,10 +8,8 @@ router.post("/getProfile", function (req, res) {
   const userId = validateToken(token, res);
   if (userId === undefined)
     return;
-
   //Use users.json file as hardcoded DB
   const profileDB = JSON.parse(fs.readFileSync(`resources/users.json`));
-
   /* Transfer these validations to separate validation functions later. */
   const userProfile = profileDB[userId];
   if (!userProfile.full_name) {
@@ -37,13 +35,9 @@ router.post("/updateProfile", function (req, res) {
   const userId = validateToken(token, res);
   if (userId === undefined)
     return;
-
   //Use users.json file as hardcoded DB
   const profileDB = JSON.parse(fs.readFileSync(`resources/users.json`));
-
-  /* Transfer these validations to separate validation functions later. */
-  /* Insert backend validations here. */
-
+  /* Insert backend validations here and transfer to separate validation functions later. */
   const { password, ...updatedUserInfo } = Object.assign(profileDB[userId], rest); /* All writes to database need to be validated. 'rest' needs to always be validated precisely first. */
   res.status(201).json({
     status: "success",
@@ -51,7 +45,6 @@ router.post("/updateProfile", function (req, res) {
       profile: updatedUserInfo,
     }
   });
-
   //Update JSON file
   fs.writeFileSync(`resources/users.json`, JSON.stringify(profileDB));
 });

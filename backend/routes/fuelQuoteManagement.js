@@ -9,10 +9,8 @@ router.post("/getParamsForQuote", function (req, res) {
   const userId = validateToken(token, res);
   if (userId === undefined)
     return;
-
   //Use users.json file as hardcoded DB
   const profileDB = JSON.parse(fs.readFileSync(`resources/users.json`));
-
   /* Transfer these validations to separate validation functions later. */
   if (!profileDB[userId].address_1) {
     console.error("User {" + userId + "} is missing Address 1.");
@@ -56,7 +54,6 @@ router.post("/addQuote", function (req, res) {
   const userId = validateToken(token, res);
   if (userId === undefined)
     return;
-
   /* Transfer these validations to separate validation functions later. */
   if (parseInt(rest.numOfGallons) != parseFloat(rest.numOfGallons)) {
     console.error("Gallons {" + rest.numOfGallons + "} are of incorrect type.");
@@ -74,9 +71,7 @@ router.post("/addQuote", function (req, res) {
     });
     return;
   }
-
   /* Insert backend validations here and transfer to separate validation functions later. */
-
   //Use users.json file as hardcoded DB
   const profileDB = JSON.parse(fs.readFileSync(`resources/users.json`));
   const userInfo = profileDB[userId];
@@ -90,24 +85,19 @@ router.post("/addQuote", function (req, res) {
     });
     return;
   }
-
   //Use fuelQuotes.json file as hardcoded DB
   const fuelQuoteDB = JSON.parse(fs.readFileSync(`resources/fuelQuotes.json`));
-
   //Calculate quote rate
   const quoteNumber = fuelQuoteDB[userId].numberOfQuotes += 1;
   const perGallonPrice = calculateRate(rest.numOfGallons, userInfo.usa_state, quoteNumber - 1);
-
   fuelQuoteDB[userId]["q" + quoteNumber] = { deliveryAddress: deliveryAddress, ...rest }; /* All writes to database need to be validated. 'rest' needs to always be validated precisely first. */
   fuelQuoteDB[userId]["q" + quoteNumber]["totalCost"] = (parseInt(rest.numOfGallons) * perGallonPrice).toFixed(2);
-
   res.status(201).json({
     status: "success",
     data: {
       quotes: fuelQuoteDB[userId]["q" + quoteNumber],
     }
   });
-
   //Update JSON file
   fs.writeFileSync(`resources/fuelQuotes.json`, JSON.stringify(fuelQuoteDB));
 });

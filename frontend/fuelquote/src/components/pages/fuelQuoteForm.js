@@ -71,19 +71,14 @@ const FuelQuoteForm = (props) => {
       if (response.status === "success")
         document.getElementById("fuelquote-form").submit();
       else if (response.status === "error-token") {
-        // alert("Token is invalid. Please login again.");
-        // navigate('/login');
         setPageError("Token is invalid. Please login again.", "/login");
         return;
       }
       else if (response.status === "error-address") {
-        // alert("Given address did not match that of database.");
-        // navigate('/profileManagement');
         setPageError("Given address did not match that of database.", "/profileManagement");
+        return;
       }
       else {
-        // alert("An unknown error has occurred during server request.");
-        // navigate('/');
         setPageError("An unknown error has occurred during server request.", "/");
         return;
       }
@@ -100,8 +95,6 @@ const FuelQuoteForm = (props) => {
       setError([message, () => navigate(redirect)]);
     }
     if (!cookies.Token) {
-      // alert("Please login before accessing this page.");
-      // navigate('/login');
       setPageError("Missing token. Please login before accessing this page.", "/login");
       return;
     }
@@ -124,19 +117,14 @@ const FuelQuoteForm = (props) => {
             quoteFacts.amount_factor, quoteFacts.profit_factor));
         }
         else if (response.status === "error-token") {
-          // alert("Token is invalid. Please login again.");
-          // navigate('/login');
           setPageError("Token is invalid. Please login again.", "/login");
           return;
         }
         else if (response.status === "error-address") {
-          // alert("No address exists for this user.\nPlease complete profile first.");
-          // navigate('/profileManagement');
           setPageError("No address exists for this user.\nPlease complete profile first.", "/profileManagement");
+          return;
         }
         else {
-          // alert("An unknown error has occurred during server request.");
-          // navigate('/');
           setPageError("An unknown error has occurred during server request.", "/");
           return;
         }

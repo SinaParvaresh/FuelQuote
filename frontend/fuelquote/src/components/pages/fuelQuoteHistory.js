@@ -20,8 +20,6 @@ const FuelQuoteHistory = () => {
             setError([message, () => navigate(redirect)]);
         }
         if (!cookies.Token) {
-            // alert("Please login before accessing this page.");
-            // navigate('/login');
             setPageError("Missing token. Please login before accessing this page.", "/login");
             return;
         }
@@ -41,14 +39,10 @@ const FuelQuoteHistory = () => {
                     setHistory(Object.keys(responseData).map(e => responseData[e]).slice(1));
                 }
                 else if (response.status === "error-token") {
-                    // alert("Token is invalid. Please login again.");
-                    // navigate('/login');
                     setPageError("Token is invalid. Please login again.", "/login");
                     return;
                 }
                 else {
-                    // alert("An unknown error has occurred during server request.");
-                    // navigate('/');
                     setPageError("An unknown error has occurred during server request.", "/");
                     return;
                 }

@@ -86,14 +86,10 @@ const ProfileManagement = (props) => {
       if (response.status === "success")
         document.getElementById("profile-form").submit();
       else if (response.status === "error-token") {
-        // alert("Token is invalid. Please login again.");
-        // navigate('/login');
         setPageError("Token is invalid. Please login again.", "/login");
         return;
       }
       else {
-        // alert("An unknown error has occurred during server request.");
-        // navigate('/');
         setPageError("An unknown error has occurred during server request.", "/");
         return;
       }
@@ -110,14 +106,7 @@ const ProfileManagement = (props) => {
       setError([message, () => navigate(redirect)]);
     }
     if (!cookies.Token) {
-      // alert("Missing token. Please login before accessing this page.");
-      // navigate('/login');
-
-      // [].slice.call(document.getElementById("profile-form").elements).forEach(element => element.disabled = true);
-      // setError(["Missing token. Please login before accessing this page.", () => navigate('/login')]);
-
       setPageError("Missing token. Please login before accessing this page.", "/login");
-
       return;
     }
 
@@ -154,14 +143,10 @@ const ProfileManagement = (props) => {
         else if (response.status === "error-profile")
           document.getElementById("completion-alert").style.display = 'block';
         else if (response.status === "error-token") {
-          // alert("Token is invalid. Please login again.");
-          // navigate('/login');
           setPageError("Token is invalid. Please login again.", "/login");
           return;
         }
         else {
-          // alert("An unknown error has occurred during server request.");
-          // navigate('/');
           setPageError("An unknown error has occurred during server request.", "/");
           return;
         }

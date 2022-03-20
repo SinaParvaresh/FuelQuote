@@ -1,1 +1,53 @@
-{"someuser@some.com":{"numberOfQuotes":4,"q1":{"deliveryAddress":"1234 Hollywood Blvd., Hollywood, CA 99999","numOfGallons":"49","deliveryDate":"2022-03-25","gallonRate":"1.755","totalCost":"85.99"},"q2":{"deliveryAddress":"1234 Hollywood Blvd., Hollywood, CA 99999","numOfGallons":"1234567","deliveryDate":"2022-06-02","gallonRate":"1.74","totalCost":"2129628.08"},"q3":{"deliveryAddress":"1234 Hollywood Blvd., Hollywood, CA 99999","numOfGallons":"1","deliveryDate":"2022-03-20","gallonRate":"1.755","totalCost":"1.74"},"q4":{"deliveryAddress":"1234 Hollywood Blvd., Hollywood, CA 99999","numOfGallons":"987655","deliveryDate":"2045-07-13","gallonRate":"1.74","totalCost":"1703704.88"}},"davebrown@trash.com":{"numberOfQuotes":2,"q1":{"deliveryAddress":"4800 Calhoun Rd., Houston, TX 77074","numOfGallons":"10","deliveryDate":"2022-03-21","gallonRate":"1.755","totalCost":"17.25"},"q2":{"deliveryAddress":"4800 Calhoun Rd., Houston, TX 77074","numOfGallons":"10000","deliveryDate":"2022-04-09","gallonRate":"1.74","totalCost":"16950.00"}},"elias@gmail.com":{"numberOfQuotes":0}}
+{
+  "someuser@some.com": {
+    "numberOfQuotes": 4,
+    "q1": {
+      "deliveryAddress": "1234 Hollywood Blvd., Hollywood, CA 99999",
+      "numOfGallons": "49",
+      "deliveryDate": "2022-03-25",
+      "gallonRate": "1.755",
+      "totalCost": "85.99"
+    },
+    "q2": {
+      "deliveryAddress": "1234 Hollywood Blvd., Hollywood, CA 99999",
+      "numOfGallons": "1234567",
+      "deliveryDate": "2022-06-02",
+      "gallonRate": "1.74",
+      "totalCost": "2129628.08"
+    },
+    "q3": {
+      "deliveryAddress": "1234 Hollywood Blvd., Hollywood, CA 99999",
+      "numOfGallons": "1",
+      "deliveryDate": "2022-03-20",
+      "gallonRate": "1.755",
+      "totalCost": "1.74"
+    },
+    "q4": {
+      "deliveryAddress": "1234 Hollywood Blvd., Hollywood, CA 99999",
+      "numOfGallons": "987655",
+      "deliveryDate": "2045-07-13",
+      "gallonRate": "1.74",
+      "totalCost": "1703704.88"
+    }
+  },
+  "davebrown@trash.com": {
+    "numberOfQuotes": 2,
+    "q1": {
+      "deliveryAddress": "4800 Calhoun Rd., Houston, TX 77074",
+      "numOfGallons": "10",
+      "deliveryDate": "2022-03-21",
+      "gallonRate": "1.755",
+      "totalCost": "17.25"
+    },
+    "q2": {
+      "deliveryAddress": "4800 Calhoun Rd., Houston, TX 77074",
+      "numOfGallons": "10000",
+      "deliveryDate": "2022-04-09",
+      "gallonRate": "1.74",
+      "totalCost": "16950.00"
+    }
+  },
+  "elias@gmail.com": {
+    "numberOfQuotes": 0
+  }
+}

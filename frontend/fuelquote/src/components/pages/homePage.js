@@ -7,10 +7,10 @@ const HomePage = () => {
         <div className='homePage-background'>
             <div className="HomePage">
                 <h1 className="text-uppercase font-weight-bold text-lg-center">
-                    Welcome<br/>to the Fuel Quote Website<br/>of GROUP 33!!!
+                    Welcome<br />to the Fuel Quote Website<br />of GROUP 33!!!
                 </h1>
-                <br/>
-                <Link to="/login" style={{textDecoration: 'none'}}>
+                <br />
+                <Link to="/login" style={{ textDecoration: 'none' }}>
                     <button className="btn btn-outline-secondary btn-lg btn-block text-uppercase font-weight-bold">Click here to Login!</button>
                 </Link>
             </div>

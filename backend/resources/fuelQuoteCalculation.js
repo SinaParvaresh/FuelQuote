@@ -34,5 +34,3 @@ exports.calculateRate = (gallons, state, history) => {
         + (gallons > 1000 ? AMOUNT_FACTOR[0] : AMOUNT_FACTOR[1]) + PROFIT_FACTOR;
     return roundDecimal(GALLON_RATE * (1 + margin));
 };
-
-// module.exports = { "getQuoteFactors": getQuoteFactors, "calculateRate": calculateRate };

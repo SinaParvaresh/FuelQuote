@@ -21,7 +21,6 @@ const NavigationBar = (props) => {
                     'Content-Type': 'application/json'
                 }
             });
-            // removeCookie('Token', { path: '/', domain: "localhost" });
             Object.keys(cookies).forEach(c => removeCookie(c, { domain: "localhost" }));
             const response = await request.json();
             console.log(response);
@@ -57,9 +56,7 @@ const NavigationBar = (props) => {
                         </div>
                     </div>
                 </div>
-                {/* <Link id="Logout-link" to="/login" style={{ textDecoration: 'none' }}> */}
                 <button onClick={logoutHandler} className="btn btn-outline-success ml-auto">Logout</button>
-                {/* </Link> */}
             </nav>
         </div>
 

@@ -38,7 +38,6 @@ router.post("/addUser", function (req, res) {
     //Use users.json file as hardcoded DB
     const userDB = JSON.parse(fs.readFileSync(`resources/users.json`));
     const fuelQuoteDB = JSON.parse(fs.readFileSync(`resources/fuelQuotes.json`));
-
     /* Transfer these validations to separate validation functions later. */
     const { username, password } = req.body; //Destructuring username and password
     if (userDB[username] != null) {
@@ -65,17 +64,14 @@ router.post("/addUser", function (req, res) {
         });
         return;
     }
-
     userDB[username] = { "password": password };
     fuelQuoteDB[username] = { "numberOfQuotes": 0 };
-
     res.status(201).json({
         status: "success",
         data: {
             username: username
         }
     });
-
     //Update JSON files
     fs.writeFileSync(`resources/users.json`, JSON.stringify(userDB));
     fs.writeFileSync(`resources/fuelQuotes.json`, JSON.stringify(fuelQuoteDB));

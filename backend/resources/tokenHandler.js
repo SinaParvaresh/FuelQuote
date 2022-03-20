@@ -45,7 +45,6 @@ exports.validateToken = (token, res) => {
         });
         return undefined;
     }
-    // fs.writeFileSync(`resources/tokens.json`, JSON.stringify(tokenDB));
     return tokenDB[token].userID;
 }
 

@@ -50,7 +50,6 @@ const Login = (props) => {
             } else {
                 setCookie('Token', response.data.token, { path: '/' });
                 navigate('/profileManagement');
-                // document.getElementById("login-form").submit();
             }
         }
         catch (err) {
