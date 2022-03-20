@@ -141,7 +141,7 @@ const FuelQuoteForm = (props) => {
       <NavigationBar pageName="FuelQuoteForm" disableRest={fetchError != null}></NavigationBar>
       <div className="container">
         <div className="card bg-light">
-          {fetchError != null ? <ClickAlert id="loginAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
+          {fetchError != null ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
           <article className="card-body">
             <form id="fuelquote-form" onSubmit={submitQuoteRequest}>
               <div className="form-group">

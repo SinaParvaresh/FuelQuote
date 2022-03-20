@@ -78,7 +78,7 @@ const FuelQuoteHistory = () => {
                     <h1> Fuel Quote History</h1>
                 </div>
                 <br />
-                {fetchError != null ? <ClickAlert id="loginAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
+                {fetchError != null ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
                 <div className='table'>
                     <table className="table">
                         <thead className="thead-dark">

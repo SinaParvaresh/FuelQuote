@@ -1,6 +1,6 @@
 {
   "someuser@some.com": {
-    "numberOfQuotes": 4,
+    "numberOfQuotes": 5,
     "q1": {
       "deliveryAddress": "1234 Hollywood Blvd., Hollywood, CA 99999",
       "numOfGallons": "49",
@@ -28,6 +28,13 @@
       "deliveryDate": "2045-07-13",
       "gallonRate": "1.74",
       "totalCost": "1703704.88"
+    },
+    "q5": {
+      "deliveryAddress": "5678 Beverly Grove, Hollywood, CA 99999",
+      "numOfGallons": "5",
+      "deliveryDate": "2022-03-26",
+      "gallonRate": "1.755",
+      "totalCost": "8.70"
     }
   },
   "davebrown@trash.com": {

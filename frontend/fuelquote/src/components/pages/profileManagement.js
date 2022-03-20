@@ -166,7 +166,7 @@ const ProfileManagement = (props) => {
       <div className="container">
         <div className="card bg-light">
           {!fetchError ? <ClickAlert id="completion-alert" alertType={"info"} >Profile must be completed before visiting other pages.</ClickAlert>
-            : <ClickAlert id="loginAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert>}
+            : <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert>}
           <article className="card-body mx-auto" style={{ maxWidth: "100%" }}>
             <h4 className="card-title mt-3 text-center">Profile</h4>
 

@@ -19,6 +19,7 @@ const Registration = (props) => {
     };
 
     const usernameHandler = (event) => {
+        document.getElementById('registeredAlert').style.display = 'none';
         checkEmpty();
         if (!event.target.value.trim().match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/))
             errors["username"] = 1;
@@ -55,8 +56,10 @@ const Registration = (props) => {
             });
             const response = await request.json();
             console.log(response);
-            if (response.status !== "success")
-                alert("This user already exists. Please login instead.");
+            if (response.status !== "success") {
+                document.getElementById('registeredAlert').style.display = 'block';
+                console.error("User is already registered.");
+            }
             else
                 navigate('/login');
         }
@@ -81,6 +84,7 @@ const Registration = (props) => {
                 <small className="form-text text-muted pt-0 mt-0 mb-3">Username should be of email format.</small>
 
                 <ClickAlert id="usernameAlert" alertType={"danger"} color='rgb(150,0,0)'>Username must be in valid email format.</ClickAlert>
+                <ClickAlert id="registeredAlert" alertType={"danger"} color='rgb(100,0,0)' fontSize='10pt'>This user already exists. Please login instead.</ClickAlert>
 
                 <div className="input-group mb-0">
                     <div className="input-group-prepend">
