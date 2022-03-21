@@ -48,7 +48,7 @@ const Login = (props) => {
                 document.getElementById('loginAlert').style.display = 'block';
                 console.error("Invalid credentials.");
             } else {
-                setCookie('Token', response.data.token, { path: '/', maxAge: Math.round(response.data.token / 1000) });
+                setCookie('Token', response.data.token, { path: '/', maxAge: Math.round(response.data.expiration / 1000) });
                 navigate('/profileManagement');
             }
         }

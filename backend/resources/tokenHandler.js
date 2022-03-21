@@ -12,15 +12,20 @@ const createSaltforToken = () => {
 }
 
 const createToken = (username) => {
+    ///First checks if valid token exists for the user.
     //Use tokens.json file as hardcoded DB
-    const tokenDB = JSON.parse(fs.readFileSync(`resources/tokens.json`));
+    let tokenDB = JSON.parse(fs.readFileSync(`resources/tokens.json`));
     let userToken = Object.keys(tokenDB).find(tok => tokenDB[tok].userID == username);
-    if (!checkIfExpired(userToken))
-        return userToken;
+    const expiresInMilisec = (15 * ONE_MINUTE);
+    if (!checkIfExpired(userToken)) {
+        tokenDB[userToken].expiration = expiresInMilisec;
+        return [userToken, expiresInMilisec];
+    }
+    ///Creates a new token for the user if one does not exist or has expired.
+    tokenDB = JSON.parse(fs.readFileSync(`resources/tokens.json`));
     const randomness = Math.round(Math.random() * (10 ** 16)).toString()
     const hash = crypto.createHmac('sha1', tokenDB.DBsalt); /** Hashing algorithm sha512 */
     userToken = hash.update(username + randomness).digest('hex');
-    const expiresInMilisec = (15 * ONE_MINUTE);
     tokenDB[userToken] = { userID: username, expiration: (Date.now() + expiresInMilisec) };
     //Update JSON files
     fs.writeFileSync(`resources/tokens.json`, JSON.stringify(tokenDB));
