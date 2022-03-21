@@ -1,30 +1,33 @@
 const fs = require("fs");
 const crypto = require('crypto');
 
-exports.createSaltforToken = () => {
+const ONE_MINUTE = 60000;
+
+const createSaltforToken = () => {
     const tokenDB = JSON.parse(fs.readFileSync(`resources/tokens.json`));
-    if (tokenDB["salt"] != null)
+    if (tokenDB["DBsalt"] != null)
         return;
-    tokenDB["salt"] = crypto.randomBytes(8).toString('hex').slice(0, 16);
+    tokenDB["DBsalt"] = crypto.randomBytes(8).toString('hex').slice(0, 16);
     fs.writeFileSync(`resources/tokens.json`, JSON.stringify(tokenDB));
 }
 
-exports.createToken = (username) => {
+const createToken = (username) => {
     //Use tokens.json file as hardcoded DB
     const tokenDB = JSON.parse(fs.readFileSync(`resources/tokens.json`));
     let userToken = Object.keys(tokenDB).find(tok => tokenDB[tok].userID == username);
-    if (userToken != undefined)
+    if (!checkIfExpired(userToken))
         return userToken;
     const randomness = Math.round(Math.random() * (10 ** 16)).toString()
-    const hash = crypto.createHmac('sha1', tokenDB.salt); /** Hashing algorithm sha512 */
+    const hash = crypto.createHmac('sha1', tokenDB.DBsalt); /** Hashing algorithm sha512 */
     userToken = hash.update(username + randomness).digest('hex');
-    tokenDB[userToken] = { userID: username };
+    const expiresInMilisec = (15 * ONE_MINUTE);
+    tokenDB[userToken] = { userID: username, expiration: (Date.now() + expiresInMilisec) };
     //Update JSON files
     fs.writeFileSync(`resources/tokens.json`, JSON.stringify(tokenDB));
-    return userToken;
+    return [userToken, expiresInMilisec];
 }
 
-exports.validateToken = (token, res) => {
+const validateToken = (token, res) => {
     //Use tokens.json file as hardcoded DB
     const tokenDB = JSON.parse(fs.readFileSync(`resources/tokens.json`));
     if (!token) {
@@ -36,7 +39,7 @@ exports.validateToken = (token, res) => {
         });
         return undefined;
     }
-    if (!tokenDB[token]) {
+    if (checkIfExpired(token)) {
         console.error("Invalid token:", token);
         res.status(403).json({
             status: "error-token",
@@ -48,7 +51,19 @@ exports.validateToken = (token, res) => {
     return tokenDB[token].userID;
 }
 
-exports.deleteToken = (token) => {
+const checkIfExpired = (token) => {
+    const tokenDB = JSON.parse(fs.readFileSync(`resources/tokens.json`));
+    if (!tokenDB[token])
+        return true;
+    if (tokenDB[token].expiration > Date.now())
+        return false;
+    delete tokenDB[token];
+    //Update JSON files
+    fs.writeFileSync(`resources/tokens.json`, JSON.stringify(tokenDB));
+    return true;
+}
+
+const deleteToken = (token) => {
     //Use tokens.json file as hardcoded DB
     const tokenDB = JSON.parse(fs.readFileSync(`resources/tokens.json`));
     if (!tokenDB[token])
@@ -57,3 +72,5 @@ exports.deleteToken = (token) => {
     //Update JSON files
     fs.writeFileSync(`resources/tokens.json`, JSON.stringify(tokenDB));
 }
+
+module.exports = { createSaltforToken, createToken, validateToken, deleteToken }

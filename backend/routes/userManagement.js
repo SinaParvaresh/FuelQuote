@@ -18,7 +18,8 @@ router.post("/authentication", function (req, res) {
     res.status(201).json({
         status: "success",
         data: {
-            token: userToken
+            token: userToken[0],
+            expiration: userToken[1]
         }
     });
 });
