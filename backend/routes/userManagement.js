@@ -3,9 +3,17 @@ const fs = require("fs");
 const { createToken, validateToken, deleteToken } = require("../resources/tokenHandler");
 
 router.post("/authentication", function (req, res) {
+    const { username, password } = req.body;
+    if ((typeof username != "string") || (typeof password != "string")) {
+        console.error("Username or password is empty or not strings.");
+        res.status(400).json({
+            status: "error-empty",
+            message: "Username or password fields are empty or not of string type."
+        });
+        return;
+    }
     //Use users.json file as hardcoded DB
     const userDB = JSON.parse(fs.readFileSync('resources/users.json'));
-    const { username, password } = req.body;
     if (!userDB[username] || (password != userDB[username].password)) {
         console.error(`Username {${username}} and Password {${password}} are incorrect.`);
         res.status(403).json({
@@ -26,7 +34,7 @@ router.post("/authentication", function (req, res) {
 
 router.post("/logout", function (req, res) {
     const { token } = req.body; //Destructuring token
-    const userId = validateToken(token, res);
+    const [userId] = validateToken(token, res);
     if (userId === undefined)
         return;
     deleteToken(token);
@@ -36,12 +44,8 @@ router.post("/logout", function (req, res) {
 });
 
 router.post("/addUser", function (req, res) {
-    //Use users.json file as hardcoded DB
-    const userDB = JSON.parse(fs.readFileSync('resources/users.json'));
-    const fuelQuoteDB = JSON.parse(fs.readFileSync('resources/fuelQuotes.json'));
-    /* Transfer these validations to separate validation functions later. */
     const { username, password } = req.body; //Destructuring username and password
-    if ((typeof username != "string") || (password != "string")) {
+    if ((typeof username != "string") || (typeof password != "string")) {
         console.error("Username or password is empty or not strings.");
         res.status(400).json({
             status: "error-empty",
@@ -49,7 +53,9 @@ router.post("/addUser", function (req, res) {
         });
         return;
     }
-    if (userDB[username] != null) {
+    //Use users.json file as hardcoded DB
+    const userDB = JSON.parse(fs.readFileSync('resources/users.json'));
+    if (!!userDB[username]) {
         console.error(`User {${username}} already exists. Cannot register again.`);
         res.status(403).json({
             status: "error-duplicate",
@@ -82,6 +88,8 @@ router.post("/addUser", function (req, res) {
         return;
     }
     userDB[username] = { "password": password };
+    //Use fuelQuotes.json file as hardcoded DB
+    const fuelQuoteDB = JSON.parse(fs.readFileSync('resources/fuelQuotes.json'));
     fuelQuoteDB[username] = { "numberOfQuotes": 0 };
     res.status(201).json({
         status: "success",
@@ -98,9 +106,9 @@ const deleteUser = (username) => {
     //Use users.json and fuelQuotes.json files as hardcoded DBs
     const userDB = JSON.parse(fs.readFileSync('resources/users.json'));
     const fuelQuoteDB = JSON.parse(fs.readFileSync('resources/fuelQuotes.json'));
-    if (userDB[username] != null)
+    if (!!userDB[username])
         delete userDB[username];
-    if (fuelQuoteDB[username] != null)
+    if (!!fuelQuoteDB[username])
         delete fuelQuoteDB[username];
     //Update JSON files
     fs.writeFileSync('resources/users.json', JSON.stringify(userDB));

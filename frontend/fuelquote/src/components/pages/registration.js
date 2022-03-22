@@ -1,4 +1,4 @@
-import { React, useState } from 'react'
+import { React, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import './registration.css';
 import ClickAlert from './clickalert';
@@ -9,6 +9,12 @@ const Registration = (props) => {
     const [button_state, setButton] = useState(false);
     const [errors] = useState({});
     const navigate = useNavigate();
+    const [fetchError, setError] = useState();
+    const invokePageError = (message, redirect) => {
+        setButton(false);
+        [].slice.call(document.getElementById("registration-form").elements).forEach(element => element.disabled = true);
+        setError([message, () => navigate(redirect)]);
+    }
 
     const checkEmpty = () => {
         const formFields = document.querySelectorAll(".form-control");
@@ -56,17 +62,44 @@ const Registration = (props) => {
             });
             const response = await request.json();
             console.log(response);
-            if (response.status !== "success") {
+            if (response.status === "error-duplicate") {
                 document.getElementById('registeredAlert').style.display = 'block';
                 console.error("User is already registered.");
+                return;
+            }
+            else if (response.status !== "success") {
+                invokePageError(`An error {${response.status}} has occured during registration request.`, "/");
+                return;
             }
             else
                 navigate('/login');
         }
         catch (err) {
             console.error(err);
+            invokePageError("An unknown error has occurred during server request.", "/");
         }
     };
+
+    useEffect(() => {
+        const invokePageError = (message, redirect) => {
+            setButton(false);
+            [].slice.call(document.getElementById("registration-form").elements).forEach(element => element.disabled = true);
+            setError([message, () => navigate(redirect)]);
+        }
+        const checkServer = async () => {
+            try {
+                const request = await fetch('http://localhost:5000', {
+                    method: 'HEAD'
+                });
+                await request.json();
+            }
+            catch (err) {
+                console.error(err);
+                invokePageError("Server is unavailable. Please try again later.", "/");
+            }
+        };
+        checkServer();
+    }, [navigate]);
 
     return (
         <div className='registration-background'>
@@ -75,6 +108,7 @@ const Registration = (props) => {
                     REGISTRATION
                 </h1>
                 <br />
+                {!!fetchError ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
                 <div className="input-group mb-0">
                     <div className="input-group-prepend">
                         <label htmlFor="usernm" className="input-group-text" id="basic-addon1">Create Username</label>

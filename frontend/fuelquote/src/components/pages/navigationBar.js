@@ -31,6 +31,7 @@ const NavigationBar = (props) => {
         }
         catch (err) {
             console.error(err);
+            alert("An unknown error has occurred during server request.");
         }
     };
 

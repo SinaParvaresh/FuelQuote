@@ -8,6 +8,10 @@ const userManagement = require("./routes/userManagement");
 const profileManagement = require("./routes/profileManagement");
 const fuelQuoteManagement = require("./routes/fuelQuoteManagement");
 const { createSaltforToken } = require("./resources/tokenHandler");
+const router = express.Router();
+router.head('/', function (req, res) {
+  res.status(200);
+});
 
 createSaltforToken();
 
@@ -20,6 +24,7 @@ app.use(bodyParser.json());
 app.use("/userManagement", userManagement)
 app.use("/profileManagement", profileManagement);
 app.use("/fuelQuoteManagement", fuelQuoteManagement);
+app.use("/", router);
 
 app.listen(port, () => {
   console.log(`Fuel Quote Server listening on port ${port}`);

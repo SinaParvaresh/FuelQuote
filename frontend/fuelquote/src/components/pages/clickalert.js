@@ -3,7 +3,7 @@ const ClickAlert = (props) => {
 
     const closeAlert = (event) => {
         document.getElementById(event.target.offsetParent.id).style.display = 'none';
-        if (props.extraEvent != null)
+        if (!!props.extraEvent)
             props.extraEvent();
     };
 

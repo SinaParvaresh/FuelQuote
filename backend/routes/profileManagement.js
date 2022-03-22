@@ -10,34 +10,34 @@ const LIST_OF_STATES = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'G
 /*Grab profile for user from DB (if it exists)*/
 router.post("/getProfile", function (req, res) {
   const { token } = req.body; //Destructuring token
-  const userId = validateToken(token, res);
+  const [userId, expiration] = validateToken(token, res);
   if (userId === undefined)
     return;
   //Use users.json file as hardcoded DB
   const profileDB = JSON.parse(fs.readFileSync('resources/users.json'));
-  /* Transfer these validations to separate validation functions later. */
-  const userProfile = profileDB[userId];
-  if (!userProfile.full_name) {
+  if (!profileDB[userId].full_name) {
     console.error(`User {${userId}} is missing full name,\n   and therefore must have not completed profile.`);
     res.status(403).json({
       status: "error-profile",
-      message: `User {${userId}} has not completed profile.`
+      message: `User {${userId}} has not completed profile.`,
+      expiration: expiration
     });
     return;
   }
-  const { password, ...toSend } = userProfile;
+  const { password, ...toSend } = profileDB[userId];
   res.status(201).json({
     status: "success",
     data: {
       profile: toSend
-    }
+    },
+    expiration: expiration
   });
 });
 
 /*Update profile*/
 router.post("/updateProfile", function (req, res) {
   const { token, ...rest } = req.body; //Destructuring token
-  const userId = validateToken(token, res);
+  const [userId, expiration] = validateToken(token, res);
   if (userId === undefined)
     return;
   //Use users.json file as hardcoded DB
@@ -51,14 +51,17 @@ router.post("/updateProfile", function (req, res) {
     res.status(400).json({
       status: "error-field_type",
       message: "Fields ['full_name', 'address_1', 'address_2', 'city', 'usa_state', 'zipcode']" +
-        " are required and must be of string type.\nBut address_2 may be left as an empty string."
+        " are required and must be of string type.\nBut address_2 may be left as an empty string.",
+      expiration: expiration
     });
     return;
   }
   if (profileFields.reduce((prev, field) => prev * (profileDB[userId][field] === cleaned_rest[field]), 1)) {
-    res.status(204).json({
+    console.warn("New profile update request matches old profile.");
+    res.status(200).json({
       status: "success",
-      message: "New profile matches old profile. Therefore, no update was made."
+      message: "New profile matches old profile. Therefore, no update was made.",
+      expiration: expiration
     });
     return;
   }
@@ -67,7 +70,8 @@ router.post("/updateProfile", function (req, res) {
     console.error("Full name field is of incorrect format or exceeds 50 characters.");
     res.status(400).json({
       status: "error-full_name",
-      message: "Full name field is not of correct format or exceeds 50 characters."
+      message: "Full name field is not of correct format or exceeds 50 characters.",
+      expiration: expiration
     });
     return;
   }
@@ -75,7 +79,8 @@ router.post("/updateProfile", function (req, res) {
     console.error("Address 1 field is of incorrect format or exceeds 100 characters.");
     res.status(400).json({
       status: "error-address_1",
-      message: "Address 1 field is not of correct format or exceeds 100 characters."
+      message: "Address 1 field is not of correct format or exceeds 100 characters.",
+      expiration: expiration
     });
     return;
   }
@@ -83,7 +88,8 @@ router.post("/updateProfile", function (req, res) {
     console.error("Address 2 field is of incorrect format or exceeds 100 characters.");
     res.status(400).json({
       status: "error-address_2",
-      message: "Address 2 field is not of correct format or exceeds 100 characters."
+      message: "Address 2 field is not of correct format or exceeds 100 characters.",
+      expiration: expiration
     });
     return;
   }
@@ -91,7 +97,8 @@ router.post("/updateProfile", function (req, res) {
     console.error("City field is of incorrect format or exceeds 100 characters.");
     res.status(400).json({
       status: "error-city",
-      message: "City field is not of correct format or exceeds 100 characters."
+      message: "City field is not of correct format or exceeds 100 characters.",
+      expiration: expiration
     });
     return;
   }
@@ -99,15 +106,17 @@ router.post("/updateProfile", function (req, res) {
     console.error(`State {${cleaned_rest.usa_state}} does not match any of the 50 states 2-character codes.`);
     res.status(400).json({
       status: "error-state",
-      message: "State field does not match any of the 2-character codes for the 50 USA states."
+      message: "State field does not match any of the 2-character codes for the 50 USA states.",
+      expiration: expiration
     });
     return;
   }
   if (!cleaned_rest.zipcode.match(/^[0-9]{5,9}$/)) {
     console.error("Zipcode field is of incorrect format or not between 5 and 9 digits.");
     res.status(400).json({
-      status: "error-city",
-      message: "Zipcode field is not of correct format or not between 5 and 9 digits."
+      status: "error-zipcode",
+      message: "Zipcode field is not of correct format or not between 5 and 9 digits.",
+      expiration: expiration
     });
     return;
   }
@@ -117,7 +126,8 @@ router.post("/updateProfile", function (req, res) {
     status: "success",
     data: {
       profile: updatedUserInfo,
-    }
+    },
+    expiration: expiration
   });
   //Update JSON file
   fs.writeFileSync('resources/users.json', JSON.stringify(profileDB));

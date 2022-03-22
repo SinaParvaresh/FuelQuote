@@ -7,7 +7,7 @@ import './fuelQuoteHistory.css';
 
 const FuelQuoteHistory = () => {
 
-    const [cookies] = useCookies(['user-token']);
+    const [cookies, setCookie] = useCookies(['user-token']);
     const navigate = useNavigate();
     const [fetchError, setError] = useState();
 
@@ -35,6 +35,7 @@ const FuelQuoteHistory = () => {
                 const response = await request.json();
                 console.log(response);
                 if (response.status === "success") {
+                    setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
                     const responseData = response.data.quotes;
                     setHistory(Object.keys(responseData).map(e => responseData[e]).slice(1));
                 }
@@ -42,17 +43,25 @@ const FuelQuoteHistory = () => {
                     invokePageError("Token is invalid. Please login again.", "/login");
                     return;
                 }
+                else if (response.status === "error-profile") {
+                    setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
+                    invokePageError("Please complete profile prior to accessing this page.", "/profileManagement");
+                    return;
+                }
                 else {
-                    invokePageError("An unknown error has occurred during server request.", "/");
+                    if (!!response.expiration)
+                        setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
+                    invokePageError(`An error {${response.status}} has occurred during fuel quote retrieval.`, "/");
                     return;
                 }
             }
             catch (err) {
                 console.error(err);
+                invokePageError("An unknown error has occurred during server request.", "/");
             }
         };
         retrieveQuotes(cookies.Token);
-    }, [cookies.Token, navigate]);
+    }, [cookies.Token, setCookie, navigate]);
 
     const renderTableData = () => {
         return quoteHistory.map((quote, index) => {
@@ -72,13 +81,13 @@ const FuelQuoteHistory = () => {
 
     return (
         <div className="page">
-            <NavigationBar pageName="FuelQuoteHistory" disableRest={fetchError != null} pageError={(fetchError != null) && (fetchError[1] !== "/")}></NavigationBar>
+            <NavigationBar pageName="FuelQuoteHistory" disableRest={!!fetchError} pageError={(!!fetchError) && (fetchError[1] !== "/")}></NavigationBar>
             <div className='container'>
                 <div>
                     <h1> Fuel Quote History</h1>
                 </div>
                 <br />
-                {fetchError != null ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
+                {!!fetchError ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
                 <div className='table'>
                     <table className="table">
                         <thead className="thead-dark">

@@ -7,7 +7,7 @@ import ClickAlert from './clickalert';
 
 const ProfileManagement = (props) => {
 
-  const [cookies] = useCookies(['user-token']);
+  const [cookies, setCookie] = useCookies(['user-token']);
   const navigate = useNavigate();
   const [fetchError, setError] = useState();
   const invokePageError = (message, redirect) => {
@@ -83,19 +83,24 @@ const ProfileManagement = (props) => {
       });
       const response = await request.json();
       console.log(response);
-      if (response.status === "success")
+      if (response.status === "success") {
+        setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
         document.getElementById("profile-form").submit();
+      }
       else if (response.status === "error-token") {
         invokePageError("Token is invalid. Please login again.", "/login");
         return;
       }
       else {
-        invokePageError("An unknown error has occurred during server request.", "/");
+        if (!!response.expiration)
+          setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
+        invokePageError(`An error {${response.status}} has occurred during profile update request.`, "/");
         return;
       }
     }
     catch (err) {
       console.error(err);
+      invokePageError("An unknown error has occurred during server request.", "/");
     }
   };
 
@@ -140,29 +145,34 @@ const ProfileManagement = (props) => {
           setEnteredZipcode(profileInfo.zipcode ?? "");
           setProfileBool(true);
         }
-        else if (response.status === "error-profile")
+        else if (response.status === "error-profile") {
+          setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
           document.getElementById("completion-alert").style.display = 'block';
+        }
         else if (response.status === "error-token") {
           invokePageError("Token is invalid. Please login again.", "/login");
           return;
         }
         else {
-          invokePageError("An unknown error has occurred during server request.", "/");
+          if (!!response.expiration)
+            setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
+          invokePageError(`An error {${response.status}} has occurred during profile info retrieval.`, "/");
           return;
         }
         checkEmpty();
       }
       catch (err) {
         console.error(err);
+        invokePageError("An unknown error has occurred during server request.", "/");
       }
     };
 
     retrieveProfile(cookies.Token);
-  }, [cookies.Token, navigate]);
+  }, [cookies.Token, setCookie, navigate]);
 
   return (
     <div className="page" style={{ maxWidth: "100%" }}>
-      <NavigationBar pageName="ProfileManagement" disableRest={!profileIsStored} pageError={(fetchError != null) && (fetchError[1] !== "/")}></NavigationBar>
+      <NavigationBar pageName="ProfileManagement" disableRest={!profileIsStored} pageError={(!!fetchError) && (fetchError[1] !== "/")}></NavigationBar>
       <div className="container">
         <div className="card bg-light">
           {!fetchError ? <ClickAlert id="completion-alert" alertType={"info"} >Profile must be completed before visiting other pages.</ClickAlert>

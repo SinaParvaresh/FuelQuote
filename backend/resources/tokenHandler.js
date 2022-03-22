@@ -2,10 +2,11 @@ const fs = require("fs");
 const crypto = require('crypto');
 
 const ONE_MINUTE = 60000;
+const expiresInMilisec = (15 * ONE_MINUTE);
 
 const createSaltforToken = () => {
     const tokenDB = JSON.parse(fs.readFileSync('resources/tokens.json'));
-    if (tokenDB["DBsalt"] != null)
+    if (!!tokenDB["DBsalt"])
         return;
     tokenDB["DBsalt"] = crypto.randomBytes(8).toString('hex').slice(0, 16);
     fs.writeFileSync('resources/tokens.json', JSON.stringify(tokenDB));
@@ -16,16 +17,17 @@ const createToken = (username) => {
     //Use tokens.json file as hardcoded DB
     let tokenDB = JSON.parse(fs.readFileSync('resources/tokens.json'));
     let userToken = Object.keys(tokenDB).find(tok => tokenDB[tok].userID == username);
-    const expiresInMilisec = (15 * ONE_MINUTE);
     if (!checkIfExpired(userToken)) {
         tokenDB[userToken].expiration = expiresInMilisec;
         return [userToken, expiresInMilisec];
     }
     ///Creates a new token for the user if one does not exist or has expired.
     tokenDB = JSON.parse(fs.readFileSync('resources/tokens.json'));
-    const randomness = Math.round(Math.random() * (10 ** 16)).toString()
-    const hash = crypto.createHmac('sha1', tokenDB.DBsalt); /** Hashing algorithm sha512 */
-    userToken = hash.update(username + randomness).digest('hex');
+    do {
+        const randomness = Math.round(Math.random() * (10 ** 16)).toString()
+        const hash = crypto.createHmac('sha1', tokenDB.DBsalt); /** Hashing algorithm sha512 */
+        userToken = hash.update(username + randomness).digest('hex');
+    } while (Object.keys(tokenDB).includes(userToken));
     tokenDB[userToken] = { userID: username, expiration: (Date.now() + expiresInMilisec) };
     //Update JSON files
     fs.writeFileSync('resources/tokens.json', JSON.stringify(tokenDB));
@@ -42,7 +44,7 @@ const validateToken = (token, res) => {
             cause: "missing",
             message: "Token is missing."
         });
-        return undefined;
+        return [];
     }
     if (checkIfExpired(token)) {
         console.error("Invalid token:", token);
@@ -51,9 +53,10 @@ const validateToken = (token, res) => {
             cause: "invalid",
             message: "Token is invalid. Please login again."
         });
-        return undefined;
+        return [];
     }
-    return tokenDB[token].userID;
+    tokenDB[token].expiration = (Date.now() + expiresInMilisec);
+    return [tokenDB[token].userID, expiresInMilisec];
 }
 
 const checkIfExpired = (token) => {

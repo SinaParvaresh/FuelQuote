@@ -8,7 +8,7 @@ import calculateRate from "./fuelQuoteCalculation";
 
 const FuelQuoteForm = (props) => {
 
-  const [cookies] = useCookies(['user-token']);
+  const [cookies, setCookie] = useCookies(['user-token']);
   const navigate = useNavigate();
   const [fetchError, setError] = useState();
   const invokePageError = (message, redirect) => {
@@ -17,9 +17,9 @@ const FuelQuoteForm = (props) => {
     setError([message, () => navigate(redirect)]);
   }
 
-  const getMinimumDate =()=>{
-    const today=new Date()
-    return new Date(today.setDate(today.getDate()+1)).toISOString().split('T')[0];
+  const getMinimumDate = () => {
+    const today = new Date();
+    return new Date(today.setDate(today.getDate() + 1)).toISOString().split('T')[0];
   }
 
   const [userAddress, setAddress] = useState("Address from backend.");
@@ -62,23 +62,29 @@ const FuelQuoteForm = (props) => {
       });
       const response = await request.json();
       console.log(response);
-      if (response.status === "success")
+      if (response.status === "success") {
+        setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
         document.getElementById("fuelquote-form").submit();
+      }
       else if (response.status === "error-token") {
         invokePageError("Token is invalid. Please login again.", "/login");
         return;
       }
       else if (response.status === "error-address") {
+        setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
         invokePageError("Given address did not match that of database.", "/profileManagement");
         return;
       }
       else {
-        invokePageError("An unknown error has occurred during server request.", "/");
+        if (!!response.expiration)
+          setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
+        invokePageError(`An error {${response.status}} has occurred during fuel quote submission.`, "/");
         return;
       }
     }
     catch (err) {
       console.error(err);
+      invokePageError("An unknown error has occurred during server request.", "/");
     }
   };
 
@@ -104,6 +110,7 @@ const FuelQuoteForm = (props) => {
         const response = await request.json();
         console.log(response);
         if (response.status === "success") {
+          setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
           setAddress(response.data.params.address);
           const quoteFacts = response.data.params.quote_factors;
           setFactors(quoteFacts);
@@ -114,28 +121,32 @@ const FuelQuoteForm = (props) => {
           invokePageError("Token is invalid. Please login again.", "/login");
           return;
         }
-        else if (response.status === "error-address") {
-          invokePageError("No address exists for this user.\nPlease complete profile first.", "/profileManagement");
+        else if (response.status === "error-profile") {
+          setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
+          invokePageError("Please complete profile prior to accessing this page.", "/profileManagement");
           return;
         }
         else {
-          invokePageError("An unknown error has occurred during server request.", "/");
+          if (!!response.expiration)
+            setCookie('Token', cookies.Token, { path: '/', maxAge: Math.round(response.expiration / 1000) });
+          invokePageError(`An unknown error {${response.status}} has occurred during fuel quote parameter request.`, "/");
           return;
         }
       }
       catch (err) {
         console.error(err);
+        invokePageError("An unknown error has occurred during server request.", "/");
       }
     };
     getDataForQuote(cookies.Token);
-  }, [cookies.Token, navigate]);
+  }, [cookies.Token, setCookie, navigate]);
 
   return (
     <div className="page" style={{ maxWidth: "100%" }}>
-      <NavigationBar pageName="FuelQuoteForm" disableRest={fetchError != null} pageError={(fetchError != null) && (fetchError[1] !== "/")}></NavigationBar>
+      <NavigationBar pageName="FuelQuoteForm" disableRest={!!fetchError} pageError={(!!fetchError) && (fetchError[1] !== "/")}></NavigationBar>
       <div className="container">
         <div className="card bg-light">
-          {fetchError != null ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
+          {!!fetchError ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
           <article className="card-body">
             <form id="fuelquote-form" onSubmit={submitQuoteRequest}>
               <div className="form-group">
