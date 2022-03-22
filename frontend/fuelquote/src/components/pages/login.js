@@ -15,8 +15,8 @@ const Login = (props) => {
 
     const checkEmpty = () => {
         document.getElementById('loginAlert').style.display = 'none';
-        const fields = document.querySelectorAll(".form-control");
-        if ([].slice.call(fields).reduce((prev, curr) => prev * (!!curr.value), 1))
+        const formFields = document.querySelectorAll(".form-control");
+        if ([].slice.call(formFields).reduce((prev, field) => prev * (!!field.value), 1))
             setButton(true);
         else
             setButton(false);

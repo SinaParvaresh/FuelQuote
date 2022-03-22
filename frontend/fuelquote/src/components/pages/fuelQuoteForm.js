@@ -11,23 +11,16 @@ const FuelQuoteForm = (props) => {
   const [cookies] = useCookies(['user-token']);
   const navigate = useNavigate();
   const [fetchError, setError] = useState();
-  const setPageError = (message, redirect) => {
+  const invokePageError = (message, redirect) => {
     setButton(false);
     [].slice.call(document.getElementById("fuelquote-form").elements).forEach(element => element.disabled = true);
     setError([message, () => navigate(redirect)]);
   }
 
-  const getTodayDate = () => {
-    const today = new Date();
-    let dd = today.getDate();
-    let mm = today.getMonth() + 1; //January is 0!
-    const yyyy = today.getFullYear();
-    if (dd < 10)
-      dd = '0' + dd;
-    if (mm < 10)
-      mm = '0' + mm;
-    return yyyy + '-' + mm + '-' + dd;
-  };
+  const getMinimumDate =()=>{
+    const today=new Date()
+    return new Date(today.setDate(today.getDate()+1)).toISOString().split('T')[0];
+  }
 
   const [userAddress, setAddress] = useState("Address from backend.");
   const [gallons, setGallons] = useState(0);
@@ -55,8 +48,9 @@ const FuelQuoteForm = (props) => {
   const submitQuoteRequest = async (userInput) => {
     userInput.preventDefault();
     const quoteInfo = {};
-    const fields = ([].slice.call(userInput.target).slice(0, 4));
-    fields.forEach((element) => quoteInfo[element.id] = element.value);
+    const formFields = ([].slice.call(userInput.target).slice(0, 4));
+    formFields.forEach((element) => quoteInfo[element.id] = element.value);
+    quoteInfo["deliveryDate"] = `${quoteInfo.deliveryDate}T${new Date().toISOString().split('T')[1]}`
     quoteInfo["token"] = cookies.Token;
     try {
       const request = await fetch('http://localhost:5000/fuelQuoteManagement/addQuote', {
@@ -71,15 +65,15 @@ const FuelQuoteForm = (props) => {
       if (response.status === "success")
         document.getElementById("fuelquote-form").submit();
       else if (response.status === "error-token") {
-        setPageError("Token is invalid. Please login again.", "/login");
+        invokePageError("Token is invalid. Please login again.", "/login");
         return;
       }
       else if (response.status === "error-address") {
-        setPageError("Given address did not match that of database.", "/profileManagement");
+        invokePageError("Given address did not match that of database.", "/profileManagement");
         return;
       }
       else {
-        setPageError("An unknown error has occurred during server request.", "/");
+        invokePageError("An unknown error has occurred during server request.", "/");
         return;
       }
     }
@@ -89,13 +83,13 @@ const FuelQuoteForm = (props) => {
   };
 
   useEffect(() => {
-    const setPageError = (message, redirect) => {
+    const invokePageError = (message, redirect) => {
       setButton(false);
       [].slice.call(document.getElementById("fuelquote-form").elements).forEach(element => element.disabled = true);
       setError([message, () => navigate(redirect)]);
     }
     if (!cookies.Token) {
-      setPageError("Missing token. Please login before accessing this page.", "/login");
+      invokePageError("Missing token. Please login before accessing this page.", "/login");
       return;
     }
     const getDataForQuote = async (user_token) => {
@@ -117,15 +111,15 @@ const FuelQuoteForm = (props) => {
             quoteFacts.amount_factor, quoteFacts.profit_factor));
         }
         else if (response.status === "error-token") {
-          setPageError("Token is invalid. Please login again.", "/login");
+          invokePageError("Token is invalid. Please login again.", "/login");
           return;
         }
         else if (response.status === "error-address") {
-          setPageError("No address exists for this user.\nPlease complete profile first.", "/profileManagement");
+          invokePageError("No address exists for this user.\nPlease complete profile first.", "/profileManagement");
           return;
         }
         else {
-          setPageError("An unknown error has occurred during server request.", "/");
+          invokePageError("An unknown error has occurred during server request.", "/");
           return;
         }
       }
@@ -138,7 +132,7 @@ const FuelQuoteForm = (props) => {
 
   return (
     <div className="page" style={{ maxWidth: "100%" }}>
-      <NavigationBar pageName="FuelQuoteForm" disableRest={fetchError != null}></NavigationBar>
+      <NavigationBar pageName="FuelQuoteForm" disableRest={fetchError != null} pageError={(fetchError != null) && (fetchError[1] !== "/")}></NavigationBar>
       <div className="container">
         <div className="card bg-light">
           {fetchError != null ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
@@ -146,7 +140,7 @@ const FuelQuoteForm = (props) => {
             <form id="fuelquote-form" onSubmit={submitQuoteRequest}>
               <div className="form-group">
                 <label htmlFor="numOfGallons">Gallons Requested</label>
-                <input id="numOfGallons" onChange={gallonsHandler} type="number" className="form-control" min={0} max={10 ** 12} placeholder="Enter number of gallons." required />
+                <input id="numOfGallons" onChange={gallonsHandler} type="number" className="form-control" min={0} max={10 ** 6} placeholder="Enter number of gallons." required />
               </div>
 
               <div className="form-group">
@@ -156,7 +150,7 @@ const FuelQuoteForm = (props) => {
 
               <div className="form-group">
                 <label htmlFor="deliveryDate">Delivery Date</label>
-                <input id="deliveryDate" onChange={checkEmpty} type="date" className="form-control" min={getTodayDate()} max={'2100-01-01'} required />
+                <input id="deliveryDate" onChange={checkEmpty} type="date" className="form-control" min={getMinimumDate()} max={'2100-01-01'} required />
               </div>
 
               <div className="form-group">

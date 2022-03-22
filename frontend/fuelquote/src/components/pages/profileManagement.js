@@ -10,7 +10,7 @@ const ProfileManagement = (props) => {
   const [cookies] = useCookies(['user-token']);
   const navigate = useNavigate();
   const [fetchError, setError] = useState();
-  const setPageError = (message, redirect) => {
+  const invokePageError = (message, redirect) => {
     setButton(false);
     [].slice.call(document.getElementById("profile-form").elements).forEach(element => element.disabled = true);
     setError([message, () => navigate(redirect)]);
@@ -24,12 +24,12 @@ const ProfileManagement = (props) => {
   const [enteredZipcode, setEnteredZipcode] = useState("");
 
   const [profileIsStored, setProfileBool] = useState(false);
-  const [recievedProfileIfo, setProfileInfo] = useState({});
+  const [recievedProfileInfo, setProfileInfo] = useState({});
   const [button_state, setButton] = useState(false);
 
   const checkEmpty = () => {
-    const fields = document.querySelectorAll("[class='form-control']");
-    if ([].slice.call(fields).reduce((prev, curr) => prev * (!!curr.value), 1))
+    const formFields = document.querySelectorAll("[class='form-control']");
+    if ([].slice.call(formFields).reduce((prev, field) => prev * (!!field.value), 1))
       setButton(true);
     else
       setButton(false);
@@ -69,9 +69,9 @@ const ProfileManagement = (props) => {
     userInput.preventDefault();
     try {
       const profileInfo = {};
-      const fields = ([].slice.call(userInput.target).slice(0, 6));
-      fields.forEach((element) => profileInfo[element.name] = (typeof element.value == "string" ? element.value.trim() : element.value));
-      if (Object.keys(profileInfo).reduce((prev, curr) => prev * (profileInfo[curr] === recievedProfileIfo[curr]), 1))
+      const formFields = ([].slice.call(userInput.target).slice(0, 6));
+      formFields.forEach((element) => profileInfo[element.name] = (element.value.replace(/\s+/g, ' ').trim()));
+      if (Object.keys(profileInfo).reduce((prev, field) => prev * (profileInfo[field] === recievedProfileInfo[field]), 1))
         return;
       profileInfo["token"] = cookies.Token;
       const request = await fetch('http://localhost:5000/profileManagement/updateProfile', {
@@ -86,11 +86,11 @@ const ProfileManagement = (props) => {
       if (response.status === "success")
         document.getElementById("profile-form").submit();
       else if (response.status === "error-token") {
-        setPageError("Token is invalid. Please login again.", "/login");
+        invokePageError("Token is invalid. Please login again.", "/login");
         return;
       }
       else {
-        setPageError("An unknown error has occurred during server request.", "/");
+        invokePageError("An unknown error has occurred during server request.", "/");
         return;
       }
     }
@@ -100,13 +100,13 @@ const ProfileManagement = (props) => {
   };
 
   useEffect(() => {
-    const setPageError = (message, redirect) => {
+    const invokePageError = (message, redirect) => {
       setButton(false);
       [].slice.call(document.getElementById("profile-form").elements).forEach(element => element.disabled = true);
       setError([message, () => navigate(redirect)]);
     }
     if (!cookies.Token) {
-      setPageError("Missing token. Please login before accessing this page.", "/login");
+      invokePageError("Missing token. Please login before accessing this page.", "/login");
       return;
     }
 
@@ -132,22 +132,22 @@ const ProfileManagement = (props) => {
         if (response.status === "success") {
           profileInfo = response.data.profile;
           setProfileInfo(profileInfo);
-          setEnteredName(profileInfo.full_name || "");
-          setEnteredAddress(profileInfo.address_1 || "");
-          setEnteredSecondAddress(profileInfo.address_2 || "");
-          setEnteredCity(profileInfo.city || "");
-          setEnteredStateUS(profileInfo.usa_state || "");
-          setEnteredZipcode(profileInfo.zipcode || "");
+          setEnteredName(profileInfo.full_name ?? "");
+          setEnteredAddress(profileInfo.address_1 ?? "");
+          setEnteredSecondAddress(profileInfo.address_2 ?? "");
+          setEnteredCity(profileInfo.city ?? "");
+          setEnteredStateUS(profileInfo.usa_state ?? "");
+          setEnteredZipcode(profileInfo.zipcode ?? "");
           setProfileBool(true);
         }
         else if (response.status === "error-profile")
           document.getElementById("completion-alert").style.display = 'block';
         else if (response.status === "error-token") {
-          setPageError("Token is invalid. Please login again.", "/login");
+          invokePageError("Token is invalid. Please login again.", "/login");
           return;
         }
         else {
-          setPageError("An unknown error has occurred during server request.", "/");
+          invokePageError("An unknown error has occurred during server request.", "/");
           return;
         }
         checkEmpty();
@@ -162,7 +162,7 @@ const ProfileManagement = (props) => {
 
   return (
     <div className="page" style={{ maxWidth: "100%" }}>
-      <NavigationBar pageName="ProfileManagement" disableRest={!profileIsStored || (fetchError != null)}></NavigationBar>
+      <NavigationBar pageName="ProfileManagement" disableRest={!profileIsStored} pageError={(fetchError != null) && (fetchError[1] !== "/")}></NavigationBar>
       <div className="container">
         <div className="card bg-light">
           {!fetchError ? <ClickAlert id="completion-alert" alertType={"info"} >Profile must be completed before visiting other pages.</ClickAlert>
@@ -180,10 +180,11 @@ const ProfileManagement = (props) => {
                   className="form-control"
                   placeholder="Full Name"
                   type="text"
+                  pattern="^\s*(?:[a-zA-Z]+(?:[-][a-zA-Z]+)*)+(\s+(?:[a-zA-Z]+(?:[-][a-zA-Z]+)*)+)+\s*$"
                   value={enteredName}
                   onChange={nameChangedHandler}
-                  required
                   maxLength={50}
+                  required
                 />
               </div>
 
@@ -196,9 +197,11 @@ const ProfileManagement = (props) => {
                   className="form-control"
                   placeholder="Address 1"
                   type="text"
+                  pattern="^\s*\S+(?:\s+\S+)*\s*$"
                   value={enteredAddress}
                   onChange={addressChangedHandler}
                   maxLength={100}
+                  required
                 />
               </div>
               <div className="form-group input-group">
@@ -210,6 +213,7 @@ const ProfileManagement = (props) => {
                   className="form-control ."
                   placeholder="Address 2"
                   type="text"
+                  pattern="^\s*\S+(?:\s+\S+)*\s*$"
                   value={enteredSecondAddress}
                   onChange={secondAddressChangedHandler}
                   maxLength={100}
@@ -225,8 +229,10 @@ const ProfileManagement = (props) => {
                   className="form-control"
                   placeholder="City"
                   type="text"
+                  pattern="^\s*(?:[a-zA-Z]+(?:[-][a-zA-Z]+)*)+(\s+(?:[a-zA-Z]+(?:[-][a-zA-Z]+)*)+)*\s*$"
                   value={enteredCity}
                   onChange={cityChangedHandler}
+                  minLength={3}
                   maxLength={100}
                   required
                 />
@@ -306,12 +312,12 @@ const ProfileManagement = (props) => {
                   className="form-control"
                   placeholder="Zipcode"
                   type="text"
-                  pattern="[0-9]*"
+                  pattern="^\s*[0-9]*\s*$"
                   value={enteredZipcode}
                   onChange={zipcodeChangedHandler}
-                  required
                   minLength={5}
                   maxLength={9}
+                  required
                 />
               </div>
 

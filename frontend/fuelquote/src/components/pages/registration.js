@@ -11,8 +11,8 @@ const Registration = (props) => {
     const navigate = useNavigate();
 
     const checkEmpty = () => {
-        const fields = document.querySelectorAll(".form-control");
-        if ([].slice.call(fields).reduce((prev, curr) => prev * (!!curr.value), 1))
+        const formFields = document.querySelectorAll(".form-control");
+        if ([].slice.call(formFields).reduce((prev, field) => prev * (!!field.value), 1))
             setButton(true);
         else
             setButton(false);
@@ -21,7 +21,7 @@ const Registration = (props) => {
     const usernameHandler = (event) => {
         document.getElementById('registeredAlert').style.display = 'none';
         checkEmpty();
-        if (!event.target.value.trim().match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/))
+        if (!event.target.value.trim().match(/^\w+(?:[.-]?\w+)*@\w+(?:[.-]?\w+)*(?:\.\w{2,3})+$/))
             errors["username"] = 1;
         else {
             delete errors["username"];
@@ -45,11 +45,11 @@ const Registration = (props) => {
             document.getElementById(err + 'Alert').style.display = 'block';
         if (Object.keys(errors).length > 0)
             return;
-        const fields = [].slice.call(document.querySelectorAll(".form-control")).map(e => e.value);
+        const formFields = [].slice.call(document.querySelectorAll(".form-control")).map(e => e.value);
         try {
             const request = await fetch('http://localhost:5000/userManagement/addUser', {
                 method: 'POST',
-                body: JSON.stringify({ "username": fields[0], "password": fields[1] }),
+                body: JSON.stringify({ "username": formFields[0], "password": formFields[1] }),
                 headers: {
                     'Content-Type': 'application/json'
                 }

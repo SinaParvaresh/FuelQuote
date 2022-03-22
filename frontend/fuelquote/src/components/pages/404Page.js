@@ -5,8 +5,8 @@ const PageNotFound = () => {
         textAlign: 'center', margin: 0, position: 'absolute', top: '50%', left: '50%',
         msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)'
     };
-    console.error(`This page does not exist.\nTry navigating to one of the following:\n
-    '/', '/login', '/registration', '/profileManagement', '/fuelQuoteForm', '/fuelQuoteHistory'`);
+    console.error("This page does not exist.\nTry navigating to one of the following:" +
+        "\n'/', '/login', '/registration', '/profileManagement', '/fuelQuoteForm', '/fuelQuoteHistory'");
     return (
         <div style={styling}>
             <h1>404 Error</h1>

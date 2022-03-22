@@ -16,11 +16,11 @@ const FuelQuoteHistory = () => {
     const thSTYLE = { textAlign: 'center' };
 
     useEffect(() => {
-        const setPageError = (message, redirect) => {
+        const invokePageError = (message, redirect) => {
             setError([message, () => navigate(redirect)]);
         }
         if (!cookies.Token) {
-            setPageError("Missing token. Please login before accessing this page.", "/login");
+            invokePageError("Missing token. Please login before accessing this page.", "/login");
             return;
         }
         const retrieveQuotes = async (some_token) => {
@@ -39,11 +39,11 @@ const FuelQuoteHistory = () => {
                     setHistory(Object.keys(responseData).map(e => responseData[e]).slice(1));
                 }
                 else if (response.status === "error-token") {
-                    setPageError("Token is invalid. Please login again.", "/login");
+                    invokePageError("Token is invalid. Please login again.", "/login");
                     return;
                 }
                 else {
-                    setPageError("An unknown error has occurred during server request.", "/");
+                    invokePageError("An unknown error has occurred during server request.", "/");
                     return;
                 }
             }
@@ -72,7 +72,7 @@ const FuelQuoteHistory = () => {
 
     return (
         <div className="page">
-            <NavigationBar pageName="FuelQuoteHistory" disableRest={fetchError != null}></NavigationBar>
+            <NavigationBar pageName="FuelQuoteHistory" disableRest={fetchError != null} pageError={(fetchError != null) && (fetchError[1] !== "/")}></NavigationBar>
             <div className='container'>
                 <div>
                     <h1> Fuel Quote History</h1>

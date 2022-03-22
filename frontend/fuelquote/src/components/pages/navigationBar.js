@@ -24,7 +24,8 @@ const NavigationBar = (props) => {
             Object.keys(cookies).forEach(c => removeCookie(c, { domain: "localhost" }));
             const response = await request.json();
             console.log(response);
-            if ((response.status !== "success") && (response.cause !== "missing"))
+            // console.log(!props.pageError);
+            if ((response.status !== "success") && (response.cause !== "missing") && (!props.pageError))
                 alert("An error occured while logging out.");
             navigate('/login');
         }
@@ -34,7 +35,7 @@ const NavigationBar = (props) => {
     };
 
     const disableClick = () => {
-        return props.disableRest === true ? { pointerEvents: "none" } : {};
+        return ((props.disableRest || props.pageError) === true ? { pointerEvents: "none" } : {});
     };
 
     return (
@@ -48,9 +49,9 @@ const NavigationBar = (props) => {
                     <div className="container">
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav mr-auto mt-lg-0">
-                                <NavLink className="nav-item nav-link disabled" to="/profileManagement" style={disableClick}>Profile Management</NavLink>
-                                <NavLink className="nav-item nav-link disabled" to="/fuelQuoteForm" style={disableClick}>Fuel Quote Form</NavLink>
-                                <NavLink className="nav-item nav-link disabled" to="/fuelQuoteHistory" style={disableClick}>Fuel Quote History</NavLink>
+                                <NavLink className="nav-item nav-link disabled" to="/profileManagement" style={disableClick()}>Profile Management</NavLink>
+                                <NavLink className="nav-item nav-link disabled" to="/fuelQuoteForm" style={disableClick()}>Fuel Quote Form</NavLink>
+                                <NavLink className="nav-item nav-link disabled" to="/fuelQuoteHistory" style={disableClick()}>Fuel Quote History</NavLink>
                                 {props.children}
                             </ul>
                         </div>
