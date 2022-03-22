@@ -14,7 +14,8 @@ exports[`Fuel Quote History if render matches snapshot 1`] = `
         className="container mb-2"
       >
         <a
-          className="navbar-brand"
+          aria-current="page"
+          className="navbar-brand active"
           href="/"
           onClick={[Function]}
           style={
@@ -52,7 +53,11 @@ exports[`Fuel Quote History if render matches snapshot 1`] = `
                 className="nav-item nav-link disabled"
                 href="/profileManagement"
                 onClick={[Function]}
-                style={Object {}}
+                style={
+                  Object {
+                    "pointerEvents": "none",
+                  }
+                }
               >
                 Profile Management
               </a>
@@ -60,7 +65,11 @@ exports[`Fuel Quote History if render matches snapshot 1`] = `
                 className="nav-item nav-link disabled"
                 href="/fuelQuoteForm"
                 onClick={[Function]}
-                style={Object {}}
+                style={
+                  Object {
+                    "pointerEvents": "none",
+                  }
+                }
               >
                 Fuel Quote Form
               </a>
@@ -68,7 +77,11 @@ exports[`Fuel Quote History if render matches snapshot 1`] = `
                 className="nav-item nav-link disabled"
                 href="/fuelQuoteHistory"
                 onClick={[Function]}
-                style={Object {}}
+                style={
+                  Object {
+                    "pointerEvents": "none",
+                  }
+                }
               >
                 Fuel Quote History
               </a>
@@ -76,23 +89,14 @@ exports[`Fuel Quote History if render matches snapshot 1`] = `
           </div>
         </div>
       </div>
-      <a
-        href="/login"
-        id="Logout-link"
-        onClick={[Function]}
-        style={
-          Object {
-            "textDecoration": "none",
-          }
-        }
-      >
+      <div>
         <button
           className="btn btn-outline-success ml-auto"
           onClick={[Function]}
         >
           Logout
         </button>
-      </a>
+      </div>
     </nav>
   </div>
   <div
@@ -104,6 +108,41 @@ exports[`Fuel Quote History if render matches snapshot 1`] = `
       </h1>
     </div>
     <br />
+    <div
+      className="alert alert-danger collapse"
+      id="errorAlert"
+      role="alert"
+      style={
+        Object {
+          "display": "block",
+          "textAlign": "center",
+        }
+      }
+    >
+      <span
+        className="text-center font-weight-bold"
+        style={
+          Object {
+            "color": "rgb(100,0,0)",
+            "fontSize": "11pt",
+          }
+        }
+      >
+        Missing token. Please login before accessing this page.
+      </span>
+      <button
+        aria-label="Close"
+        className="close"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+        >
+          ×
+        </span>
+      </button>
+    </div>
     <div
       className="table"
     >

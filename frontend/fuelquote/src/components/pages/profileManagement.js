@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import Button from "./Button";
@@ -166,7 +166,6 @@ const ProfileManagement = (props) => {
         invokePageError("An unknown error has occurred during server request.", "/");
       }
     };
-
     retrieveProfile(cookies.Token);
   }, [cookies.Token, setCookie, navigate]);
 

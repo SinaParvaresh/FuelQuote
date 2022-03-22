@@ -5,7 +5,7 @@ exports[`Login if render matches snapshot 1`] = `
   className="login-background"
 >
   <form
-    action="profileManagement"
+    action="/profileManagement"
     className="Login"
     id="login-form"
     onSubmit={[Function]}
@@ -64,6 +64,41 @@ exports[`Login if render matches snapshot 1`] = `
         required={true}
         type="password"
       />
+    </div>
+    <div
+      className="alert alert-danger collapse"
+      id="loginAlert"
+      role="alert"
+      style={
+        Object {
+          "display": undefined,
+          "textAlign": "center",
+        }
+      }
+    >
+      <span
+        className="text-center font-weight-bold"
+        style={
+          Object {
+            "color": "rgb(100,0,0)",
+            "fontSize": "11pt",
+          }
+        }
+      >
+        Invalid Credentials.
+      </span>
+      <button
+        aria-label="Close"
+        className="close"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+        >
+          ×
+        </span>
+      </button>
     </div>
     <div>
       <button

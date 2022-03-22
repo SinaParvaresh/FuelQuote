@@ -81,6 +81,41 @@ exports[`Registration if render matches snapshot 1`] = `
       </button>
     </div>
     <div
+      className="alert alert-danger collapse"
+      id="registeredAlert"
+      role="alert"
+      style={
+        Object {
+          "display": undefined,
+          "textAlign": "center",
+        }
+      }
+    >
+      <span
+        className="text-center font-weight-bold"
+        style={
+          Object {
+            "color": "rgb(100,0,0)",
+            "fontSize": "10pt",
+          }
+        }
+      >
+        This user already exists. Please login instead.
+      </span>
+      <button
+        aria-label="Close"
+        className="close"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+        >
+          ×
+        </span>
+      </button>
+    </div>
+    <div
       className="input-group mb-0"
     >
       <div
