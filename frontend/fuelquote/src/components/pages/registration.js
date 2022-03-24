@@ -83,7 +83,7 @@ const Registration = (props) => {
     useEffect(() => {
         const invokePageError = (message, redirect) => {
             setButton(false);
-            [].slice.call(document.getElementById("registration-form").elements).forEach(element => element.disabled = true);
+            [].slice.call(document.getElementById("registration-form").elements).forEach(element => { element.disabled = true; element.value = ''; });
             setError([message, () => navigate(redirect)]);
         }
         const checkServer = async () => {
@@ -95,7 +95,7 @@ const Registration = (props) => {
             }
             catch (err) {
                 console.error(err);
-                invokePageError("Server is unavailable. Please try again later.", "/");
+                invokePageError("Can't reach server. Please try again later.", "/");
             }
         };
         checkServer();

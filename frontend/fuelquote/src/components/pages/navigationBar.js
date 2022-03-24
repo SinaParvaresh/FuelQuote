@@ -15,10 +15,10 @@ const NavigationBar = (props) => {
                 return;
             }
             const request = await fetch('http://localhost:5000/userManagement/logout', {
-                method: 'POST',
-                body: JSON.stringify({ token: cookies.Token }),
+                method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Token': cookies.Token
                 }
             });
             Object.keys(cookies).forEach(c => removeCookie(c, { domain: "localhost" }));
@@ -32,11 +32,14 @@ const NavigationBar = (props) => {
         catch (err) {
             console.error(err);
             alert("An unknown error has occurred during server request.");
+            navigate('/login');
         }
     };
 
-    const disableClick = () => {
-        return ((props.disableRest || props.pageError) === true ? { pointerEvents: "none" } : {});
+    const disableClick = (linkAddress) => {
+        if (props.pageError === linkAddress)
+            return {};
+        return ((props.disableLinks || props.pageError) === true ? { pointerEvents: "none" } : {});
     };
 
     return (
@@ -50,9 +53,9 @@ const NavigationBar = (props) => {
                     <div className="container">
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav mr-auto mt-lg-0">
-                                <NavLink className="nav-item nav-link disabled" to="/profileManagement" style={disableClick()}>Profile Management</NavLink>
-                                <NavLink className="nav-item nav-link disabled" to="/fuelQuoteForm" style={disableClick()}>Fuel Quote Form</NavLink>
-                                <NavLink className="nav-item nav-link disabled" to="/fuelQuoteHistory" style={disableClick()}>Fuel Quote History</NavLink>
+                                <NavLink className="nav-item nav-link disabled" to="/profileManagement" style={disableClick("/profileManagement")}>Profile Management</NavLink>
+                                <NavLink className="nav-item nav-link disabled" to="/fuelQuoteForm" style={disableClick("/fuelQuoteForm")}>Fuel Quote Form</NavLink>
+                                <NavLink className="nav-item nav-link disabled" to="/fuelQuoteHistory" style={disableClick("/fuelQuoteHistory")}>Fuel Quote History</NavLink>
                                 {props.children}
                             </ul>
                         </div>

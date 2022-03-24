@@ -1,5 +1,5 @@
 {
-  "name": "backend-test",
+  "name": "fuelquote_backend",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.3"
@@ -10,12 +10,14 @@
   },
   "jest": {
     "collectCoverage": true,
+    "verbose": true,
     "coverageReporters": [
       "html"
     ],
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+      "users.json": "<rootDir>/__mocks__/users_mock.json",
+      "tokens.json": "<rootDir>/__mocks__/tokens_mock.json",
+      "fuelQuotes.json": "<rootDir>/__mocks__/fuelQuotes_mock.json"
     }
   },
   "devDependencies": {

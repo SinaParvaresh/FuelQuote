@@ -14,7 +14,7 @@ const FuelQuoteForm = (props) => {
   const invokePageError = (message, redirect) => {
     setButton(false);
     [].slice.call(document.getElementById("fuelquote-form").elements).forEach(element => element.disabled = true);
-    setError([message, () => navigate(redirect)]);
+    setError([message, redirect]);
   }
 
   const getMinimumDate = () => {
@@ -50,14 +50,14 @@ const FuelQuoteForm = (props) => {
     const quoteInfo = {};
     const formFields = ([].slice.call(userInput.target).slice(0, 4));
     formFields.forEach((element) => quoteInfo[element.id] = element.value);
-    quoteInfo["deliveryDate"] = `${quoteInfo.deliveryDate}T${new Date().toISOString().split('T')[1]}`
-    quoteInfo["token"] = cookies.Token;
+    quoteInfo["deliveryDate"] = `${quoteInfo.deliveryDate}T${new Date().toISOString().split('T')[1]}`;
     try {
       const request = await fetch('http://localhost:5000/fuelQuoteManagement/addQuote', {
         method: 'POST',
         body: JSON.stringify(quoteInfo),
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Token': cookies.Token
         }
       });
       const response = await request.json();
@@ -98,13 +98,13 @@ const FuelQuoteForm = (props) => {
       invokePageError("Missing token. Please login before accessing this page.", "/login");
       return;
     }
-    const getDataForQuote = async (user_token) => {
+    const getDataForQuote = async () => {
       try {
         const request = await fetch('http://localhost:5000/fuelQuoteManagement/getParamsForQuote', {
-          method: 'POST',
-          body: JSON.stringify({ token: user_token }),
+          method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Token': cookies.Token
           }
         });
         const response = await request.json();
@@ -138,15 +138,15 @@ const FuelQuoteForm = (props) => {
         invokePageError("An unknown error has occurred during server request.", "/");
       }
     };
-    getDataForQuote(cookies.Token);
+    getDataForQuote();
   }, [cookies.Token, setCookie, navigate]);
 
   return (
     <div className="page" style={{ maxWidth: "100%" }}>
-      <NavigationBar pageName="FuelQuoteForm" disableRest={!!fetchError} pageError={(!!fetchError) && (fetchError[1] !== "/")}></NavigationBar>
+      <NavigationBar pageName="FuelQuoteForm" disableLinks={!!fetchError} pageError={((!!fetchError) && (fetchError[1] !== "/")) ? fetchError[1] : false}></NavigationBar>
       <div className="container">
         <div className="card bg-light">
-          {!!fetchError ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
+          {!!fetchError ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={!!fetchError ? () => navigate(fetchError[1]) : false}>{fetchError[0]}</ClickAlert> : null}
           <article className="card-body">
             <form id="fuelquote-form" onSubmit={submitQuoteRequest}>
               <div className="form-group">

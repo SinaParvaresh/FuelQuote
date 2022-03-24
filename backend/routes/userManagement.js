@@ -2,7 +2,7 @@ const router = require("express").Router();
 const fs = require("fs");
 const { createToken, validateToken, deleteToken } = require("../resources/tokenHandler");
 
-router.post("/authentication", function (req, res) {
+const authentication = (req, res) => {
     const { username, password } = req.body;
     if ((typeof username != "string") || (typeof password != "string")) {
         console.error("Username or password is empty or not strings.");
@@ -30,10 +30,11 @@ router.post("/authentication", function (req, res) {
             expiration: userToken[1]
         }
     });
-});
+};
+router.post("/authentication", authentication);
 
-router.post("/logout", function (req, res) {
-    const { token } = req.body; //Destructuring token
+const logout = (req, res) => {
+    const { token } = req.headers; //Destructuring token
     const [userId] = validateToken(token, res);
     if (userId === undefined)
         return;
@@ -41,9 +42,10 @@ router.post("/logout", function (req, res) {
     res.status(200).json({
         status: "success"
     });
-});
+}
+router.get("/logout", logout);
 
-router.post("/addUser", function (req, res) {
+const addUser = (req, res) => {
     const { username, password } = req.body; //Destructuring username and password
     if ((typeof username != "string") || (typeof password != "string")) {
         console.error("Username or password is empty or not strings.");
@@ -100,7 +102,8 @@ router.post("/addUser", function (req, res) {
     //Update JSON files
     fs.writeFileSync('resources/users.json', JSON.stringify(userDB));
     fs.writeFileSync('resources/fuelQuotes.json', JSON.stringify(fuelQuoteDB));
-});
+}
+router.post("/addUser", addUser);
 
 const deleteUser = (username) => {
     //Use users.json and fuelQuotes.json files as hardcoded DBs
@@ -115,4 +118,4 @@ const deleteUser = (username) => {
     fs.writeFileSync('resources/fuelQuotes.json', JSON.stringify(fuelQuoteDB));
 };
 
-module.exports = router;
+module.exports = router, { authentication, logout, addUser, deleteUser };

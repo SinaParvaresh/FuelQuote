@@ -8,15 +8,15 @@ const LIST_OF_STATES = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'G
   'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY']
 
 /*Grab profile for user from DB (if it exists)*/
-router.post("/getProfile", function (req, res) {
-  const { token } = req.body; //Destructuring token
+const getProfile = (req, res) => {
+  const { token } = req.headers; //Destructuring token
   const [userId, expiration] = validateToken(token, res);
   if (userId === undefined)
     return;
   //Use users.json file as hardcoded DB
   const profileDB = JSON.parse(fs.readFileSync('resources/users.json'));
   if (!profileDB[userId].full_name) {
-    console.error(`User {${userId}} is missing full name,\n   and therefore must have not completed profile.`);
+    console.error(`User {${userId}} is missing full name, and therefore must have not completed profile.`);
     res.status(403).json({
       status: "error-profile",
       message: `User {${userId}} has not completed profile.`,
@@ -32,11 +32,12 @@ router.post("/getProfile", function (req, res) {
     },
     expiration: expiration
   });
-});
+};
+router.get("/getProfile", getProfile);
 
 /*Update profile*/
-router.post("/updateProfile", function (req, res) {
-  const { token, ...rest } = req.body; //Destructuring token
+const updateProfile = (req, res) => {
+  const { token } = req.headers; //Destructuring token
   const [userId, expiration] = validateToken(token, res);
   if (userId === undefined)
     return;
@@ -45,7 +46,7 @@ router.post("/updateProfile", function (req, res) {
   //Extract all needed fields from request body.
   const cleaned_rest = {}
   const profileFields = ['full_name', 'address_1', 'address_2', 'city', 'usa_state', 'zipcode']
-  profileFields.forEach(field => cleaned_rest[field] = rest[field]);
+  profileFields.forEach(field => cleaned_rest[field] = req.body[field]);
   if (!profileFields.reduce((prev, field) => prev * (typeof cleaned_rest[field] === "string"), 1)) {
     console.error("One of the given fields is missing or not of string type.");
     res.status(400).json({
@@ -131,6 +132,7 @@ router.post("/updateProfile", function (req, res) {
   });
   //Update JSON file
   fs.writeFileSync('resources/users.json', JSON.stringify(profileDB));
-});
+};
+router.post("/updateProfile", updateProfile);
 
-module.exports = router;
+module.exports = router, { getProfile, updateProfile };

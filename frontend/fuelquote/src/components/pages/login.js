@@ -72,7 +72,7 @@ const Login = (props) => {
     useEffect(() => {
         const invokePageError = (message, redirect) => {
             setButton(false);
-            [].slice.call(document.getElementById("login-form").elements).forEach(element => element.disabled = true);
+            [].slice.call(document.getElementById("login-form").elements).forEach(element => { element.disabled = true; element.value = ''; });
             setError([message, () => navigate(redirect)]);
         }
         const checkServer = async () => {
@@ -84,7 +84,7 @@ const Login = (props) => {
             }
             catch (err) {
                 console.error(err);
-                invokePageError("Server is unavailable. Please try again later.", "/");
+                invokePageError("Can't reach server. Please try again later.", "/");
             }
         };
         checkServer();
@@ -98,7 +98,6 @@ const Login = (props) => {
                 </h1>
                 <br />
                 {!!fetchError ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
-                {/* <ClickAlert id="other_errorAlert" alertType={"danger"} color='rgb(100,0,0)' fontSize='10pt'>An error has occured during login.</ClickAlert> */}
                 <div className="input-group mb-3">
                     <div className="input-group-prepend">
                         <label htmlFor="usernm" className="input-group-text" id="basic-addon1">Username</label>

@@ -17,19 +17,19 @@ const FuelQuoteHistory = () => {
 
     useEffect(() => {
         const invokePageError = (message, redirect) => {
-            setError([message, () => navigate(redirect)]);
+            setError([message, redirect]);
         }
         if (!cookies.Token) {
             invokePageError("Missing token. Please login before accessing this page.", "/login");
             return;
         }
-        const retrieveQuotes = async (some_token) => {
+        const retrieveQuotes = async () => {
             try {
                 const request = await fetch('http://localhost:5000/fuelQuoteManagement/getQuotes', {
-                    method: 'POST',
-                    body: JSON.stringify({ "token": some_token }),
+                    method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Token': cookies.Token
                     }
                 });
                 const response = await request.json();
@@ -60,7 +60,7 @@ const FuelQuoteHistory = () => {
                 invokePageError("An unknown error has occurred during server request.", "/");
             }
         };
-        retrieveQuotes(cookies.Token);
+        retrieveQuotes();
     }, [cookies.Token, setCookie, navigate]);
 
     const renderTableData = () => {
@@ -81,13 +81,13 @@ const FuelQuoteHistory = () => {
 
     return (
         <div className="page">
-            <NavigationBar pageName="FuelQuoteHistory" disableRest={!!fetchError} pageError={(!!fetchError) && (fetchError[1] !== "/")}></NavigationBar>
+            <NavigationBar pageName="FuelQuoteHistory" disableLinks={!!fetchError} pageError={((!!fetchError) && (fetchError[1] !== "/")) ? fetchError[1] : false}></NavigationBar>
             <div className='container'>
                 <div>
                     <h1> Fuel Quote History</h1>
                 </div>
                 <br />
-                {!!fetchError ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={fetchError[1]}>{fetchError[0]}</ClickAlert> : null}
+                {!!fetchError ? <ClickAlert id="errorAlert" alertType={"danger"} color='rgb(100,0,0)' display='block' extraEvent={!!fetchError ? () => navigate(fetchError[1]) : false}>{fetchError[0]}</ClickAlert> : null}
                 <div className='table'>
                     <table className="table">
                         <thead className="thead-dark">

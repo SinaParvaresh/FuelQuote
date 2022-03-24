@@ -4,8 +4,8 @@ const { calculateRate } = require("../resources/fuelQuoteCalculation");
 const { getQuoteFactors } = require("../resources/fuelQuoteCalculation");
 const { validateToken } = require("../resources/tokenHandler");
 
-router.post("/getParamsForQuote", function (req, res) {
-  const { token } = req.body; //Destructuring token
+const getParamsForQuote = (req, res) => {
+  const { token } = req.headers; //Destructuring token
   const [userId, expiration] = validateToken(token, res);
   if (userId === undefined)
     return;
@@ -32,11 +32,12 @@ router.post("/getParamsForQuote", function (req, res) {
     },
     expiration: expiration
   });
-});
+};
+router.get("/getParamsForQuote", getParamsForQuote);
 
 /*Grab fuel quotes for user from DB (if it exists)*/
-router.post("/getQuotes", function (req, res) {
-  const { token } = req.body; //Destructuring token
+const getQuotes = (req, res) => {
+  const { token } = req.headers; //Destructuring token
   const [userId, expiration] = validateToken(token, res);
   if (userId === undefined)
     return;
@@ -60,11 +61,12 @@ router.post("/getQuotes", function (req, res) {
     },
     expiration: expiration
   });
-});
+};
+router.get("/getQuotes", getQuotes);
 
 /*Update quotes*/
-router.post("/addQuote", function (req, res) {
-  const { token, ...rest } = req.body; //Destructuring token
+const addQuote = (req, res) => {
+  const { token } = req.headers; //Destructuring token
   const [userId, expiration] = validateToken(token, res);
   if (userId === undefined)
     return;
@@ -82,7 +84,7 @@ router.post("/addQuote", function (req, res) {
   //Extract all needed fields from request body.
   const cleaned_rest = {}
   const profileFields = ['deliveryAddress', 'numOfGallons', 'deliveryDate']
-  profileFields.forEach(field => cleaned_rest[field] = rest[field]);
+  profileFields.forEach(field => cleaned_rest[field] = req.body[field]);
   if (!profileFields.reduce((prev, field) => prev * (typeof cleaned_rest[field] === "string"), 1)) {
     console.error("One of the given fields is missing or not of string type.");
     res.status(400).json({
@@ -139,8 +141,8 @@ router.post("/addQuote", function (req, res) {
   //Calculate quote rate
   const quoteNumber = fuelQuoteDB[userId].numberOfQuotes += 1;
   const perGallonPrice = calculateRate(cleaned_rest.numOfGallons, userInfo.usa_state, quoteNumber - 1);
-  if (rest.gallonRate !== perGallonPrice.toString())
-    console.warn(`Frontend price rate {${rest.gallonRate}} does not match backend price rate {${perGallonPrice}}.`);
+  if (req.body.gallonRate !== perGallonPrice.toString())
+    console.warn(`Frontend price rate {${req.body.gallonRate}} does not match backend price rate {${perGallonPrice}}.`);
   //Store fuel quote request in database
   fuelQuoteDB[userId]["q" + quoteNumber] = { ...cleaned_rest };
   fuelQuoteDB[userId]["q" + quoteNumber]["gallonRate"] = perGallonPrice.toString();
@@ -154,6 +156,7 @@ router.post("/addQuote", function (req, res) {
   });
   //Update JSON file
   fs.writeFileSync('resources/fuelQuotes.json', JSON.stringify(fuelQuoteDB));
-});
+};
+router.post("/addQuote", addQuote);
 
-module.exports = router;
+module.exports = router, { getParamsForQuote, getQuotes, addQuote };

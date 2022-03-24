@@ -18,7 +18,8 @@ const createToken = (username) => {
     let tokenDB = JSON.parse(fs.readFileSync('resources/tokens.json'));
     let userToken = Object.keys(tokenDB).find(tok => tokenDB[tok].userID == username);
     if (!checkIfExpired(userToken)) {
-        tokenDB[userToken].expiration = expiresInMilisec;
+        tokenDB[userToken].expiration = (Date.now() + expiresInMilisec);
+        fs.writeFileSync('resources/tokens.json', JSON.stringify(tokenDB));
         return [userToken, expiresInMilisec];
     }
     ///Creates a new token for the user if one does not exist or has expired.
@@ -35,8 +36,6 @@ const createToken = (username) => {
 }
 
 const validateToken = (token, res) => {
-    //Use tokens.json file as hardcoded DB
-    const tokenDB = JSON.parse(fs.readFileSync('resources/tokens.json'));
     if (!token) {
         console.error("Missing token.");
         res.status(400).json({
@@ -55,6 +54,8 @@ const validateToken = (token, res) => {
         });
         return [];
     }
+    //Use tokens.json file as hardcoded DB
+    const tokenDB = JSON.parse(fs.readFileSync('resources/tokens.json'));
     tokenDB[token].expiration = (Date.now() + expiresInMilisec);
     return [tokenDB[token].userID, expiresInMilisec];
 }

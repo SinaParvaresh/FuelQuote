@@ -73,12 +73,12 @@ const ProfileManagement = (props) => {
       formFields.forEach((element) => profileInfo[element.name] = (element.value.replace(/\s+/g, ' ').trim()));
       if (Object.keys(profileInfo).reduce((prev, field) => prev * (profileInfo[field] === recievedProfileInfo[field]), 1))
         return;
-      profileInfo["token"] = cookies.Token;
       const request = await fetch('http://localhost:5000/profileManagement/updateProfile', {
         method: 'POST',
         body: JSON.stringify(profileInfo),
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Token': cookies.Token
         }
       });
       const response = await request.json();
@@ -115,7 +115,7 @@ const ProfileManagement = (props) => {
       return;
     }
 
-    const retrieveProfile = async (user_token) => {
+    const retrieveProfile = async () => {
       let profileInfo = {
         "full_name": "",
         "address_1": "",
@@ -126,10 +126,10 @@ const ProfileManagement = (props) => {
       }
       try {
         const request = await fetch('http://localhost:5000/profileManagement/getProfile', {
-          method: 'POST',
-          body: JSON.stringify({ token: user_token }),
+          method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Token': cookies.Token
           }
         });
         const response = await request.json();
@@ -166,12 +166,12 @@ const ProfileManagement = (props) => {
         invokePageError("An unknown error has occurred during server request.", "/");
       }
     };
-    retrieveProfile(cookies.Token);
+    retrieveProfile();
   }, [cookies.Token, setCookie, navigate]);
 
   return (
     <div className="page" style={{ maxWidth: "100%" }}>
-      <NavigationBar pageName="ProfileManagement" disableRest={!profileIsStored} pageError={(!!fetchError) && (fetchError[1] !== "/")}></NavigationBar>
+      <NavigationBar pageName="ProfileManagement" disableLinks={!profileIsStored} pageError={(!!fetchError) && (fetchError[1] !== "/")}></NavigationBar>
       <div className="container">
         <div className="card bg-light">
           {!fetchError ? <ClickAlert id="completion-alert" alertType={"info"} >Profile must be completed before visiting other pages.</ClickAlert>
