@@ -25,7 +25,7 @@ const getProfile = (req, res) => {
     return;
   }
   const { password, ...toSend } = profileDB[userId];
-  res.status(201).json({
+  res.status(200).json({
     status: "success",
     data: {
       profile: toSend
@@ -135,4 +135,4 @@ const updateProfile = (req, res) => {
 };
 router.post("/updateProfile", updateProfile);
 
-module.exports = router, { getProfile, updateProfile };
+module.exports = { router, getProfile, updateProfile };

@@ -43,7 +43,7 @@ const Login = (props) => {
         try {
             const request = await fetch('http://localhost:5000/userManagement/authentication', {
                 method: 'POST',
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ "username": username, "password": password }),
                 headers: {
                     'Content-Type': 'application/json'
                 }

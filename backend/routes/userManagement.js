@@ -4,7 +4,7 @@ const { createToken, validateToken, deleteToken } = require("../resources/tokenH
 
 const authentication = (req, res) => {
     const { username, password } = req.body;
-    if ((typeof username != "string") || (typeof password != "string")) {
+    if (((username && password) == false) || (typeof username != "string") || (typeof password != "string")) {
         console.error("Username or password is empty or not strings.");
         res.status(400).json({
             status: "error-empty",
@@ -47,7 +47,7 @@ router.get("/logout", logout);
 
 const addUser = (req, res) => {
     const { username, password } = req.body; //Destructuring username and password
-    if ((typeof username != "string") || (typeof password != "string")) {
+    if (((username && password) == false) || (typeof username != "string") || (typeof password != "string")) {
         console.error("Username or password is empty or not strings.");
         res.status(400).json({
             status: "error-empty",
@@ -106,6 +106,7 @@ const addUser = (req, res) => {
 router.post("/addUser", addUser);
 
 const deleteUser = (username) => {
+    deleteToken(createToken(username)[0]);
     //Use users.json and fuelQuotes.json files as hardcoded DBs
     const userDB = JSON.parse(fs.readFileSync('resources/users.json'));
     const fuelQuoteDB = JSON.parse(fs.readFileSync('resources/fuelQuotes.json'));
@@ -118,4 +119,4 @@ const deleteUser = (username) => {
     fs.writeFileSync('resources/fuelQuotes.json', JSON.stringify(fuelQuoteDB));
 };
 
-module.exports = router, { authentication, logout, addUser, deleteUser };
+module.exports = { router, authentication, logout, addUser, deleteUser };

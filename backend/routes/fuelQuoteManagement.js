@@ -25,7 +25,7 @@ const getParamsForQuote = (req, res) => {
   const restOfAddress = ", " + userInfo.city + ", " + userInfo.usa_state + ' ' + userInfo.zipcode;
   //Use fuelQuotes.json file as hardcoded DB
   const fuelQuoteDB = JSON.parse(fs.readFileSync('resources/fuelQuotes.json'));
-  res.status(201).json({
+  res.status(200).json({
     status: "success",
     data: {
       params: { address: (userInfo.address_1 + secondAddress + restOfAddress), quote_factors: getQuoteFactors(userInfo.usa_state, fuelQuoteDB[userId].numberOfQuotes) }
@@ -54,7 +54,7 @@ const getQuotes = (req, res) => {
   }
   //Use fuelQuotes.json file as hardcoded DB
   const fuelQuoteDB = JSON.parse(fs.readFileSync('resources/fuelQuotes.json'));
-  res.status(201).json({
+  res.status(200).json({
     status: "success",
     data: {
       quotes: fuelQuoteDB[userId]
@@ -159,4 +159,4 @@ const addQuote = (req, res) => {
 };
 router.post("/addQuote", addQuote);
 
-module.exports = router, { getParamsForQuote, getQuotes, addQuote };
+module.exports = { router, getParamsForQuote, getQuotes, addQuote };

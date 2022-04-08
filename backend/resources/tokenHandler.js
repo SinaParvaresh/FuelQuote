@@ -82,4 +82,4 @@ const deleteToken = (token) => {
     fs.writeFileSync('resources/tokens.json', JSON.stringify(tokenDB));
 }
 
-module.exports = { createSaltforToken, createToken, validateToken, deleteToken }
+module.exports = { createSaltforToken, createToken, validateToken, deleteToken };
