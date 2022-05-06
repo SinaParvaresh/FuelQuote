@@ -30,3 +30,15 @@ app.listen(port, () => {
 });
 
 module.exports = app;
+
+// Hello everyone. These are the requirements for the project demo that you will be graded on:
+// The app/website is running i.e. when the user enters the address e.g. localhost:3000 it displays a homepage (login/registration).
+// Users are able to log in / sign up on the website.
+// Users are able to edit their profiles and save them.
+// Users can get a fuel quote.
+// Users can access fuel quote history.
+// All forms are properly validated.
+// Check the DB for all the updates a user does.
+// Contribution of each team member to the project, and showing it in the code.
+// Code coverage and Unit tests.
+// Good luck

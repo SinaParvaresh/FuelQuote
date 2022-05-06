@@ -35,35 +35,6 @@ const getParamsForQuote = (req, res) => {
 };
 router.get("/getParamsForQuote", getParamsForQuote);
 
-/*Grab fuel quotes for user from DB (if it exists)*/
-const getQuotes = (req, res) => {
-  const { token } = req.headers; //Destructuring token
-  const [userId, expiration] = validateToken(token, res);
-  if (userId === undefined)
-    return;
-  //Use users.json file as hardcoded DB
-  const profileDB = JSON.parse(fs.readFileSync('resources/users.json'));
-  if (!profileDB[userId].address_1) {
-    console.error(`User {${userId}} is missing Address 1.`);
-    res.status(403).json({
-      status: "error-profile",
-      message: `User {${userId}} has not completed profile.`,
-      expiration: expiration
-    });
-    return;
-  }
-  //Use fuelQuotes.json file as hardcoded DB
-  const fuelQuoteDB = JSON.parse(fs.readFileSync('resources/fuelQuotes.json'));
-  res.status(200).json({
-    status: "success",
-    data: {
-      quotes: fuelQuoteDB[userId]
-    },
-    expiration: expiration
-  });
-};
-router.get("/getQuotes", getQuotes);
-
 /*Update quotes*/
 const addQuote = (req, res) => {
   const { token } = req.headers; //Destructuring token
@@ -85,7 +56,7 @@ const addQuote = (req, res) => {
   const cleaned_rest = {}
   const profileFields = ['deliveryAddress', 'numOfGallons', 'deliveryDate']
   profileFields.forEach(field => cleaned_rest[field] = req.body[field]);
-  if (!profileFields.reduce((prev, field) => prev * (typeof cleaned_rest[field] === "string"), 1)) {
+  if (!profileFields.reduce((prev, field) => prev * (typeof cleaned_rest[field] === "string") * (cleaned_rest[field] != ""), 1)) {
     console.error("One of the given fields is missing or not of string type.");
     res.status(400).json({
       status: "error-field_type",
@@ -150,7 +121,7 @@ const addQuote = (req, res) => {
   res.status(201).json({
     status: "success",
     data: {
-      quotes: fuelQuoteDB[userId]["q" + quoteNumber],
+      quotes: fuelQuoteDB[userId]["q" + quoteNumber]
     },
     expiration: expiration
   });
@@ -158,5 +129,34 @@ const addQuote = (req, res) => {
   fs.writeFileSync('resources/fuelQuotes.json', JSON.stringify(fuelQuoteDB));
 };
 router.post("/addQuote", addQuote);
+
+/*Grab fuel quotes for user from DB (if it exists)*/
+const getQuotes = (req, res) => {
+  const { token } = req.headers; //Destructuring token
+  const [userId, expiration] = validateToken(token, res);
+  if (userId === undefined)
+    return;
+  //Use users.json file as hardcoded DB
+  const profileDB = JSON.parse(fs.readFileSync('resources/users.json'));
+  if (!profileDB[userId].address_1) {
+    console.error(`User {${userId}} is missing Address 1.`);
+    res.status(403).json({
+      status: "error-profile",
+      message: `User {${userId}} has not completed profile.`,
+      expiration: expiration
+    });
+    return;
+  }
+  //Use fuelQuotes.json file as hardcoded DB
+  const fuelQuoteDB = JSON.parse(fs.readFileSync('resources/fuelQuotes.json'));
+  res.status(200).json({
+    status: "success",
+    data: {
+      quotes: fuelQuoteDB[userId]
+    },
+    expiration: expiration
+  });
+};
+router.get("/getQuotes", getQuotes);
 
 module.exports = { router, getParamsForQuote, getQuotes, addQuote };

@@ -47,7 +47,7 @@ const updateProfile = (req, res) => {
   const cleaned_rest = {}
   const profileFields = ['full_name', 'address_1', 'address_2', 'city', 'usa_state', 'zipcode']
   profileFields.forEach(field => cleaned_rest[field] = req.body[field]);
-  if (!profileFields.reduce((prev, field) => prev * (typeof cleaned_rest[field] === "string"), 1)) {
+  if (!profileFields.reduce((prev, field) => prev * (typeof cleaned_rest[field] === "string") * (field != "address_2" ? cleaned_rest[field] != "" : true), 1)) {
     console.error("One of the given fields is missing or not of string type.");
     res.status(400).json({
       status: "error-field_type",
@@ -67,7 +67,7 @@ const updateProfile = (req, res) => {
     return;
   }
   //Individual field validations
-  if ((cleaned_rest.full_name.length > 50) || (!cleaned_rest.full_name.match(/^(?:[a-zA-Z]+(?:[\-][a-zA-Z]+)*)+(\s(?:[a-zA-Z]+(?:[\-][a-zA-Z]+)*)+)+$/))) {
+  if ((cleaned_rest.full_name.length > 50) || (!cleaned_rest.full_name.match(/^(?:[a-zA-Z]+(?:[-][a-zA-Z]+)*)+(\s(?:[a-zA-Z]+(?:[-][a-zA-Z]+)*)+)+$/))) {
     console.error("Full name field is of incorrect format or exceeds 50 characters.");
     res.status(400).json({
       status: "error-full_name",
@@ -76,7 +76,7 @@ const updateProfile = (req, res) => {
     });
     return;
   }
-  if ((cleaned_rest.address_1.length > 100) || (!cleaned_rest.address_1.match(/^\s*\S+(?:\s\S+)*\s*$/))) {
+  if ((cleaned_rest.address_1.length > 100) || (!cleaned_rest.address_1.match(/^\S+(?:\s\S+)+$/))) {
     console.error("Address 1 field is of incorrect format or exceeds 100 characters.");
     res.status(400).json({
       status: "error-address_1",
@@ -85,7 +85,7 @@ const updateProfile = (req, res) => {
     });
     return;
   }
-  if ((cleaned_rest.address_2 != "") && ((cleaned_rest.address_2.length > 100) || (!cleaned_rest.address_2.match(/^\s*\S+(?:\s\S+)*\s*$/)))) {
+  if ((cleaned_rest.address_2 != "") && ((cleaned_rest.address_2.length > 100) || (!cleaned_rest.address_2.match(/^\S+(?:\s\S+)*$/)))) {
     console.error("Address 2 field is of incorrect format or exceeds 100 characters.");
     res.status(400).json({
       status: "error-address_2",
@@ -94,7 +94,7 @@ const updateProfile = (req, res) => {
     });
     return;
   }
-  if ((cleaned_rest.city.length > 100) || (!cleaned_rest.city.match(/^\s*(?:[a-zA-Z]+(?:[-][a-zA-Z]+)*)+(\s(?:[a-zA-Z]+(?:[-][a-zA-Z]+)*)+)*\s*$/))) {
+  if ((cleaned_rest.city.length > 100) || (!cleaned_rest.city.match(/^(?:[a-zA-Z]+(?:[-][a-zA-Z]+)*)+(\s(?:[a-zA-Z]+(?:[-][a-zA-Z]+)*)+)*$/))) {
     console.error("City field is of incorrect format or exceeds 100 characters.");
     res.status(400).json({
       status: "error-city",

@@ -14,154 +14,507 @@ exports.profileSuite = () => describe("/profileManagement", () => {
       "username": "test1@email.com",
       "password": "some_password1"
     })
-    test_token = response.body.data.token
+    test_token = response.body.data.token;
   })
+  describe("/getProfile", () => {
+    it("should give user profile info if it has been completed", async () => {
+      const userDB = JSON.parse(fs.readFileSync('./resources/users.json'));
+      userDB["test1@email.com"] = {
+        "password": "some_password1",
+        "full_name": "Some Person",
+        "address_1": "A random address",
+        "address_2": "",
+        "city": "Some City",
+        "usa_state": "TX",
+        "zipcode": "00000"
+      };
+      fs.writeFileSync('./resources/users.json', JSON.stringify(userDB));
 
+      const response = await request(app).get("/profileManagement/getProfile").set("Token", test_token);
+      expect(response.statusCode).toBe(200);
+      expect(response.body.data.profile).toBeTruthy();
+      expect(response.body.data.profile).toStrictEqual({
+        "full_name": "Some Person",
+        "address_1": "A random address",
+        "address_2": "",
+        "city": "Some City",
+        "usa_state": "TX",
+        "zipcode": "00000"
+      });
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should fail if profile info has not been completed", async () => {
+      const userDB = JSON.parse(fs.readFileSync('./resources/users.json'));
+      userDB["test1@email.com"] = { "password": "some_password1" };
+      fs.writeFileSync('./resources/users.json', JSON.stringify(userDB));
+
+      const response = await request(app).get("/profileManagement/getProfile").set("Token", test_token);
+      expect(response.statusCode).toBe(403);
+      expect(response.body.status).toBe("error-profile");
+      expect(response.body.expiration).toBeTruthy();
+    })
+  })
   describe("/updateProfile", () => {
     it("should add valid profile information of user to database", async () => {
+      let response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some-one Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(201);
+      expect(response.body.data.profile).toBeTruthy();
+      expect(response.body.data.profile).toStrictEqual({
+        "full_name": "Some-one Person",
+        "address_1": "A random address",
+        "address_2": "",
+        "city": "Some City",
+        "usa_state": "TX",
+        "zipcode": "00000"
+      });
+      expect(response.body.expiration).toBeTruthy();
+
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(201);
+      expect(response.body.data.profile).toBeTruthy();
+      expect(response.body.data.profile).toStrictEqual({
+        "full_name": "Some Person",
+        "address_1": "A random address",
+        "address_2": "",
+        "city": "Some City",
+        "usa_state": "TX",
+        "zipcode": "00000"
+      });
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should fail if any field is empty or not of string type", async () => {
+      let response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": ["Some Person"],
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": ["A random address"],
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": ["Some City"],
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": ["TX"],
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": ""
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": 10000
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-field_type");
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should pass but not add profile information to database", async () => {
       const response = await request(app).post("/profileManagement/updateProfile").set(
         "Token", test_token).send({
           "full_name": "Some Person",
           "address_1": "A random address",
           "address_2": "",
           "city": "Some City",
-          "usa_state": "AL",
+          "usa_state": "TX",
           "zipcode": "00000"
         })
-      expect(response.statusCode).toBe(201);
-      expect(response.body.data.profile).toBeTruthy();
+      expect(response.statusCode).toBe(200);
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should fail when full name is not of valid format", async () => {
+      let response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some1 Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-full_name");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "SomePerson",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-full_name");
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should fail when full name is too long", async () => {
+      const response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "SomePersonSomePersonSomePerson SomePersonSomePersonSomePerson",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-full_name");
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should fail when address 1 is not of valid format", async () => {
+      let response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": " \n\t ",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-address_1");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A_random_address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-address_1");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A  random  address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-address_1");
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should fail when address 1 is too long", async () => {
+      const response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address .......... .......... .......... .......... .......... .......... .......... .......... ..........",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-address_1");
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should fail when address 2 is not of valid format", async () => {
+      let response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": " \n\t ",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-address_2");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "A random  address",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-address_2");
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should fail when address 2 is too long", async () => {
+      const response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "A random address .......... .......... .......... .......... .......... .......... .......... .......... ..........",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-address_2");
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should fail when city is not of valid format", async () => {
+      const response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some1 City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-city");
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should fail when city is too long", async () => {
+      const response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City Some City Some City Some City Some City Some City Some City Some City Some City Some City Some City",
+          "usa_state": "TX",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-city");
+      expect(response.body.expiration).toBeTruthy();
+    })
+
+    it("should fail when state does not match any of the 2-character codes for the 50 USA states", async () => {
+      const response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "ZZ",
+          "zipcode": "00000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-state");
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should fail when zipecode is not of valid format", async () => {
+      const response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "00a00"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-zipcode");
+      expect(response.body.expiration).toBeTruthy();
+    })
+    it("should fail when zipecode is too short or too long", async () => {
+      let response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "0000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-zipcode");
+      expect(response.body.expiration).toBeTruthy();
+      response = await request(app).post("/profileManagement/updateProfile").set(
+        "Token", test_token).send({
+          "full_name": "Some Person",
+          "address_1": "A random address",
+          "address_2": "",
+          "city": "Some City",
+          "usa_state": "TX",
+          "zipcode": "0000000000"
+        })
+      expect(response.statusCode).toBe(400);
+      expect(response.body.status).toBe("error-zipcode");
       expect(response.body.expiration).toBeTruthy();
     })
   })
-
-  describe("/getProfile", () => {
-    it("should give user profile info if it has been completed ", async () => {
-      const response = await request(app).get("/profileManagement/getProfile").set("Token", test_token);
-      expect(response.statusCode).toBe(200);
-      expect(response.body.data.profile).toBeTruthy();
-      expect(response.body.expiration).toBeTruthy();
-    })
-  });
-
-  //   it("should not allow invalid credentials nor provide a token with expiration", async () => {
-  //     const response = await request(app).post("/userManagement/authentication").send({
-  //       "username": "abcdefg@abcd.com",
-  //       "password": "abcdefghijk"
-  //     })
-  //     expect(response.statusCode).toBe(403);
-  //     expect(response.body.data).toBeUndefined();
-  //   })
-  //   it("should not allow empty nor non-string type fields", async () => {
-  //     const response1 = await request(app).post("/userManagement/authentication").send({
-  //       "username": "davebrown@trash.com"
-  //     })
-  //     expect(response1.statusCode).toBe(400);
-  //     expect(response1.body.data).toBeUndefined();
-  //     const response2 = await request(app).post("/userManagement/authentication").send({
-  //       "password": "davethebrave"
-  //     })
-  //     expect(response2.statusCode).toBe(400);
-  //     expect(response2.body.data).toBeUndefined();
-  //     const response3 = await request(app).post("/userManagement/authentication").send({
-  //       "username": "davebrown@trash.com",
-  //       "password": ""
-  //     })
-  //     expect(response3.statusCode).toBe(400);
-  //     expect(response3.body.data).toBeUndefined();
-  //     const response4 = await request(app).post("/userManagement/authentication").send({
-  //       "username": "",
-  //       "password": "davethebrave"
-  //     })
-  //     expect(response4.statusCode).toBe(400);
-  //     expect(response4.body.data).toBeUndefined();
-  //     const password = ["davethebrave"];
-  //     const response5 = await request(app).post("/userManagement/authentication").send({
-  //       "username": "davebrown@trash.com",
-  //       "password": password
-  //     })
-  //     expect(response5.statusCode).toBe(400);
-  //     expect(response5.body.data).toBeUndefined();
-  //     const username = ["davebrown@trash.com"];
-  //     const response6 = await request(app).post("/userManagement/authentication").send({
-  //       "username": username,
-  //       "password": "davethebrave"
-  //     })
-  //     expect(response6.statusCode).toBe(400);
-  //     expect(response6.body.data).toBeUndefined();
-  //   })
-  // })
-
-  // describe("/logout", () => {
-  //   it("should pass with valid token", async () => {
-  //     const response = await request(app).get("/userManagement/logout").set(
-  //       "Token", (await request(app).post("/userManagement/authentication").send({
-  //         "username": "davebrown@trash.com",
-  //         "password": "davethebrave"
-  //       })).body.data.token
-  //     )
-  //     expect(response.statusCode).toBe(200);
-  //   })
-  //   it("should fail with missing token", async () => {
-  //     const response = await request(app).get("/userManagement/logout").set("Username", "davebrown@trash.com")
-  //     expect(response.statusCode).toBe(400);
-  //     expect(response.body.cause).toBe("missing");
-  //   })
-  //   it("should fail with invalid token", async () => {
-  //     const response = await request(app).get("/userManagement/logout").set("Token", "1a2b3c4d5e6f7g8h9i10j")
-  //     expect(response.statusCode).toBe(401);
-  //     expect(response.body.cause).toBe("invalid");
-  //   })
-  // })
-
-  // describe("/addUser", () => {
-  //   it("should add user to database when given valid new user info", async () => {
-  //     deleteUser("test1@email.com");
-  //     const response = await request(app).post("/userManagement/addUser").send({
-  //       "username": "test1@email.com",
-  //       "password": "some_password1"
-  //     })
-  //     expect(response.statusCode).toBe(201);
-  //     expect(response.body.data.username).toBe("test1@email.com");
-  //   })
-  //   it("should fail when given an existing username", async () => {
-  //     const response = await request(app).post("/userManagement/addUser").send({
-  //       "username": "test1@email.com",
-  //       "password": "some_password1"
-  //     })
-  //     expect(response.statusCode).toBe(403);
-  //     expect(response.body.status).toBe("error-duplicate");
-  //   })
-  //   it("should fail when given a username that is not of valid email format", async () => {
-  //     const response = await request(app).post("/userManagement/addUser").send({
-  //       "username": "test2@email.c",
-  //       "password": "some_password2"
-  //     })
-  //     expect(response.statusCode).toBe(400);
-  //     expect(response.body.status).toBe("error-email");
-  //   })
-  //   it("should fail when given a password that is too short or too long", async () => {
-  //     const response1 = await request(app).post("/userManagement/addUser").send({
-  //       "username": "test2@email.com",
-  //       "password": "1234567"
-  //     })
-  //     expect(response1.statusCode).toBe(400);
-  //     expect(response1.body.status).toBe("error-password");
-  //     const response2 = await request(app).post("/userManagement/addUser").send({
-  //       "username": "test2@email.com",
-  //       "password": "12345678901234567"
-  //     })
-  //     expect(response2.statusCode).toBe(400);
-  //     expect(response2.body.status).toBe("error-password");
-  //   })
-  //   it("should fail when given a password that contains white spaces", async () => {
-  //     const response = await request(app).post("/userManagement/addUser").send({
-  //       "username": "test2@email.com",
-  //       "password": "some password2"
-  //     })
-  //     expect(response.statusCode).toBe(400);
-  //     expect(response.body.status).toBe("error-password");
-  //   })
-  // })
   afterAll(() => {
     deleteUser("test1@email.com");
   })
