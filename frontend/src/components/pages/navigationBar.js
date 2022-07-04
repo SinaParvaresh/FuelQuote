@@ -58,6 +58,9 @@ const NavigationBar = (props) => {
             <nav className="navbar navbar-expand-md navbar-light bg-light">
                 <NavLink className="navbar-brand" to="/" style={{ textDecoration: 'none' }}>Group 33</NavLink>
                 <button onClick={logoutHandler} className="btn btn-outline-success" style={{ position: "absolute", top: "10px", right: "15px" }}>Logout</button>
+                <button className="navbar-toggler mr-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span id="menu_toggler_icon" className="navbar-toggler-icon"></span>
+                </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav mr-auto mt-lg-0">
                         <NavLink className="nav-item nav-link disabled" to="/profileManagement" style={disableClick("/profileManagement")}>Profile Management</NavLink>
@@ -66,12 +69,8 @@ const NavigationBar = (props) => {
                         {props.children}
                     </ul>
                 </div>
-                <button className="navbar-toggler mr-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span id="menu_toggler_icon" className="navbar-toggler-icon"></span>
-                </button>
             </nav>
         </div>
-
     );
 };
 
