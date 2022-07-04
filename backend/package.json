@@ -6,8 +6,8 @@
     "supertest": "^6.2.2"
   },
   "scripts": {
-    "start": "node app.js",
-    "test": "jest"
+    "start": "node server.js",
+    "test": "jest --detectOpenHandles"
   },
   "jest": {
     "collectCoverage": true,

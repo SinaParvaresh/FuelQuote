@@ -2,7 +2,6 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const port = 5000;
 const bodyParser = require("body-parser");
 const userManagement = require("./routes/userManagement");
 const profileManagement = require("./routes/profileManagement");
@@ -24,10 +23,6 @@ app.use("/userManagement", userManagement.router);
 app.use("/profileManagement", profileManagement.router);
 app.use("/fuelQuoteManagement", fuelQuoteManagement.router);
 app.use("/", router);
-
-app.listen(port, () => {
-  console.log(`Fuel Quote Server listening on port ${port}`);
-});
 
 module.exports = app;
 

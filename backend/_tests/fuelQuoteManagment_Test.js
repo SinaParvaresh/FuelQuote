@@ -1,12 +1,19 @@
-const app = require("../app.js");
+const application = require("../app.js");
 const request = require("supertest");
 const fs = require("fs");
 const { deleteUser } = require("../routes/userManagement.js");
 
-let test_token = "";
+const later_date = (numOfDays = 0, additionalDays = 30) => {
+  const later_date = new Date();
+  return new Date(later_date.setDate(later_date.getDate() + (numOfDays + additionalDays) + 1)).toISOString().split('T')[0];
+}
+let app, test_token;
 
 exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
   beforeAll(async () => {
+    app = application.listen(4000, (err) => {
+      console.log(`Fuel Quote Server listening on port ${4000}`);
+    });
     let userDB = JSON.parse(fs.readFileSync('./resources/users.json'));
     userDB["test1@email.com"] = { "password": "some_password1" };
     fs.writeFileSync('./resources/users.json', JSON.stringify(userDB));
@@ -106,13 +113,13 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(201);
       expect(response.body.data.quotes).toBeTruthy();
       expect(response.body.data.quotes).toStrictEqual({
         "deliveryAddress": "A random address, Some City, TX 00000",
-        "deliveryDate": "2022-06-01",
+        "deliveryDate": later_date(),
         "gallonRate": "1.725",
         "numOfGallons": "1",
         "totalCost": "1.73"
@@ -123,13 +130,13 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1001",
-          "deliveryDate": "2022-06-02"
+          "deliveryDate": later_date(1)
         })
       expect(response.statusCode).toBe(201);
       expect(response.body.data.quotes).toBeTruthy();
       expect(response.body.data.quotes).toStrictEqual({
         "deliveryAddress": "A random address, Some City, TX 00000",
-        "deliveryDate": "2022-06-02",
+        "deliveryDate": later_date(1),
         "gallonRate": "1.695",
         "numOfGallons": "1001",
         "totalCost": "1696.70"
@@ -144,13 +151,13 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, AL 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-03"
+          "deliveryDate": later_date(2)
         })
       expect(response.statusCode).toBe(201);
       expect(response.body.data.quotes).toBeTruthy();
       expect(response.body.data.quotes).toStrictEqual({
         "deliveryAddress": "A random address, Some City, AL 00000",
-        "deliveryDate": "2022-06-03",
+        "deliveryDate": later_date(2),
         "gallonRate": "1.74",
         "numOfGallons": "1",
         "totalCost": "1.74"
@@ -161,13 +168,13 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, AL 00000",
           "numOfGallons": "1001",
-          "deliveryDate": "2022-06-03"
+          "deliveryDate": later_date(2)
         })
       expect(response.statusCode).toBe(201);
       expect(response.body.data.quotes).toBeTruthy();
       expect(response.body.data.quotes).toStrictEqual({
         "deliveryAddress": "A random address, Some City, AL 00000",
-        "deliveryDate": "2022-06-03",
+        "deliveryDate": later_date(2),
         "gallonRate": "1.725",
         "numOfGallons": "1001",
         "totalCost": "1726.73"
@@ -188,7 +195,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-profile");
@@ -210,7 +217,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
       let response = await request(app).post("/fuelQuoteManagement/addQuote").set(
         "Token", test_token).send({
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -219,7 +226,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -228,7 +235,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": ["A random address, Some City, TX 00000"],
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -237,7 +244,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
       response = await request(app).post("/fuelQuoteManagement/addQuote").set(
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -246,7 +253,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -255,7 +262,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": 1,
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -282,7 +289,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1",
-          "deliveryDate": ["2022-06-01"]
+          "deliveryDate": [later_date()]
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -294,7 +301,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1.5",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-gallons");
@@ -303,13 +310,13 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1.0",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(201);
       expect(response.body.data.quotes).toBeTruthy();
       expect(response.body.data.quotes).toStrictEqual({
         "deliveryAddress": "A random address, Some City, TX 00000",
-        "deliveryDate": "2022-06-01",
+        "deliveryDate": later_date(),
         "gallonRate": "1.71",
         "numOfGallons": "1.0",
         "totalCost": "1.71"
@@ -321,7 +328,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "0",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-gallons");
@@ -330,7 +337,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1000001",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-gallons");
@@ -341,7 +348,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-01-01"
+          "deliveryDate": later_date(-30, 0)
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-delivery_date");
@@ -352,7 +359,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A rando address, Some City, TX 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-address");
@@ -361,7 +368,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some Cit, TX 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-address");
@@ -370,7 +377,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TN 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-address");
@@ -379,7 +386,7 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00001",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-address");
@@ -395,35 +402,35 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
         "numberOfQuotes": 5,
         "q1": {
           "deliveryAddress": "A random address, Some City, TX 00000",
-          "deliveryDate": "2022-06-01",
+          "deliveryDate": later_date(),
           "gallonRate": "1.725",
           "numOfGallons": "1",
           "totalCost": "1.73"
         },
         "q2": {
           "deliveryAddress": "A random address, Some City, TX 00000",
-          "deliveryDate": "2022-06-02",
+          "deliveryDate": later_date(1),
           "gallonRate": "1.695",
           "numOfGallons": "1001",
           "totalCost": "1696.70"
         },
         "q3": {
           "deliveryAddress": "A random address, Some City, AL 00000",
-          "deliveryDate": "2022-06-03",
+          "deliveryDate": later_date(2),
           "gallonRate": "1.74",
           "numOfGallons": "1",
           "totalCost": "1.74"
         },
         "q4": {
           "deliveryAddress": "A random address, Some City, AL 00000",
-          "deliveryDate": "2022-06-03",
+          "deliveryDate": later_date(2),
           "gallonRate": "1.725",
           "numOfGallons": "1001",
           "totalCost": "1726.73"
         },
         "q5": {
           "deliveryAddress": "A random address, Some City, TX 00000",
-          "deliveryDate": "2022-06-01",
+          "deliveryDate": later_date(),
           "gallonRate": "1.71",
           "numOfGallons": "1.0",
           "totalCost": "1.71"
@@ -441,7 +448,8 @@ exports.fuelQuoteSuite = () => describe("/fuelQuoteManagement", () => {
       expect(response.body.expiration).toBeTruthy();
     })
   })
-  afterAll(() => {
+  afterAll((done) => {
     deleteUser("test1@email.com");
+    app.close(done);
   })
 });

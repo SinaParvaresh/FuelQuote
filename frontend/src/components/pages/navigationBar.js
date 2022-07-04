@@ -42,28 +42,39 @@ const NavigationBar = (props) => {
         return ((props.disableLinks || props.pageError) === true ? { pointerEvents: "none" } : {});
     };
 
+    visualViewport.onresize = () => {
+        const icon = document.getElementById("menu_toggler_icon")
+        if (icon == null)
+            return;
+        const navMenu = document.getElementById("navbarNav")
+        if (icon.offsetParent !== null)
+            navMenu.classList.add("ml-3");
+        else
+            navMenu.classList.remove("ml-3");
+    };
+
     return (
         <div className="container">
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <div className="container mb-2">
-                    <NavLink className="navbar-brand" to="/" style={{ textDecoration: 'none' }}>Group 33</NavLink>
-                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="container">
-                        <div className="collapse navbar-collapse" id="navbarNav">
-                            <ul className="navbar-nav mr-auto mt-lg-0">
-                                <NavLink className="nav-item nav-link disabled" to="/profileManagement" style={disableClick("/profileManagement")}>Profile Management</NavLink>
-                                <NavLink className="nav-item nav-link disabled" to="/fuelQuoteForm" style={disableClick("/fuelQuoteForm")}>Fuel Quote Form</NavLink>
-                                <NavLink className="nav-item nav-link disabled" to="/fuelQuoteHistory" style={disableClick("/fuelQuoteHistory")}>Fuel Quote History</NavLink>
-                                {props.children}
-                            </ul>
-                        </div>
-                    </div>
+            <nav className="navbar navbar-expand-md navbar-light bg-light">
+                {/* <div className="container mb-2"> */}
+                <NavLink className="navbar-brand" to="/" style={{ textDecoration: 'none' }}>Group 33</NavLink>
+                <button onClick={logoutHandler} className="btn btn-outline-success" style={{ position: "absolute", top: "10px", right: "15px" }}>Logout</button>
+                {/* <div className="container"> */}
+                <div className="collapse navbar-collapse" id="navbarNav">
+                    <ul className="navbar-nav mr-auto mt-lg-0">
+                        <NavLink className="nav-item nav-link disabled" to="/profileManagement" style={disableClick("/profileManagement")}>Profile Management</NavLink>
+                        <NavLink className="nav-item nav-link disabled" to="/fuelQuoteForm" style={disableClick("/fuelQuoteForm")}>Fuel Quote Form</NavLink>
+                        <NavLink className="nav-item nav-link disabled" to="/fuelQuoteHistory" style={disableClick("/fuelQuoteHistory")}>Fuel Quote History</NavLink>
+                        {props.children}
+                    </ul>
                 </div>
-                <div>
-                    <button onClick={logoutHandler} className="btn btn-outline-success ml-auto">Logout</button>
-                </div>
+                {/* </div> */}
+                {/* </div> */}
+                {/* <div> */}
+                <button className="navbar-toggler mr-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span id="menu_toggler_icon" className="navbar-toggler-icon"></span>
+                </button>
+                {/* </div> */}
             </nav>
         </div>
 

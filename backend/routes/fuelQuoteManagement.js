@@ -56,7 +56,7 @@ const addQuote = (req, res) => {
   const cleaned_rest = {}
   const profileFields = ['deliveryAddress', 'numOfGallons', 'deliveryDate']
   profileFields.forEach(field => cleaned_rest[field] = req.body[field]);
-  if (!profileFields.reduce((prev, field) => prev * (typeof cleaned_rest[field] === "string") * (cleaned_rest[field] != ""), 1)) {
+  if (!profileFields.every(field => (typeof cleaned_rest[field] === "string") && (cleaned_rest[field] != ""))) {
     console.error("One of the given fields is missing or not of string type.");
     res.status(400).json({
       status: "error-field_type",

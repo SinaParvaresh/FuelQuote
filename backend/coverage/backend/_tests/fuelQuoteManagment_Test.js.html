@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>190/190</span>
+                <span class='fraction'>195/195</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>20/20</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>189/189</span>
+                <span class='fraction'>194/194</span>
             </div>
         
             
@@ -509,19 +509,34 @@
 <a name='L444'></a><a href='#L444'>444</a>
 <a name='L445'></a><a href='#L445'>445</a>
 <a name='L446'></a><a href='#L446'>446</a>
-<a name='L447'></a><a href='#L447'>447</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L447'></a><a href='#L447'>447</a>
+<a name='L448'></a><a href='#L448'>448</a>
+<a name='L449'></a><a href='#L449'>449</a>
+<a name='L450'></a><a href='#L450'>450</a>
+<a name='L451'></a><a href='#L451'>451</a>
+<a name='L452'></a><a href='#L452'>452</a>
+<a name='L453'></a><a href='#L453'>453</a>
+<a name='L454'></a><a href='#L454'>454</a>
+<a name='L455'></a><a href='#L455'>455</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">31x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -952,18 +967,26 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const app = require("../app.js");
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const application = require("../app.js");
 const request = require("supertest");
 const fs = require("fs");
 const { deleteUser } = require("../routes/userManagement.js");
 &nbsp;
-let test_token = "";
+const later_date = (numOfDays = 0, additionalDays = 30) =&gt; {
+  const later_date = new Date();
+  return new Date(later_date.setDate(later_date.getDate() + (numOfDays + additionalDays) + 1)).toISOString().split('T')[0];
+}
+let app, test_token;
 &nbsp;
 exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
   beforeAll(async () =&gt; {
+    app = application.listen(4000, (err) =&gt; {
+      console.log(`Fuel Quote Server listening on port ${4000}`);
+    });
     let userDB = JSON.parse(fs.readFileSync('./resources/users.json'));
     userDB["test1@email.com"] = { "password": "some_password1" };
     fs.writeFileSync('./resources/users.json', JSON.stringify(userDB));
@@ -1063,13 +1086,13 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(201);
       expect(response.body.data.quotes).toBeTruthy();
       expect(response.body.data.quotes).toStrictEqual({
         "deliveryAddress": "A random address, Some City, TX 00000",
-        "deliveryDate": "2022-06-01",
+        "deliveryDate": later_date(),
         "gallonRate": "1.725",
         "numOfGallons": "1",
         "totalCost": "1.73"
@@ -1080,13 +1103,13 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1001",
-          "deliveryDate": "2022-06-02"
+          "deliveryDate": later_date(1)
         })
       expect(response.statusCode).toBe(201);
       expect(response.body.data.quotes).toBeTruthy();
       expect(response.body.data.quotes).toStrictEqual({
         "deliveryAddress": "A random address, Some City, TX 00000",
-        "deliveryDate": "2022-06-02",
+        "deliveryDate": later_date(1),
         "gallonRate": "1.695",
         "numOfGallons": "1001",
         "totalCost": "1696.70"
@@ -1101,13 +1124,13 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, AL 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-03"
+          "deliveryDate": later_date(2)
         })
       expect(response.statusCode).toBe(201);
       expect(response.body.data.quotes).toBeTruthy();
       expect(response.body.data.quotes).toStrictEqual({
         "deliveryAddress": "A random address, Some City, AL 00000",
-        "deliveryDate": "2022-06-03",
+        "deliveryDate": later_date(2),
         "gallonRate": "1.74",
         "numOfGallons": "1",
         "totalCost": "1.74"
@@ -1118,13 +1141,13 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, AL 00000",
           "numOfGallons": "1001",
-          "deliveryDate": "2022-06-03"
+          "deliveryDate": later_date(2)
         })
       expect(response.statusCode).toBe(201);
       expect(response.body.data.quotes).toBeTruthy();
       expect(response.body.data.quotes).toStrictEqual({
         "deliveryAddress": "A random address, Some City, AL 00000",
-        "deliveryDate": "2022-06-03",
+        "deliveryDate": later_date(2),
         "gallonRate": "1.725",
         "numOfGallons": "1001",
         "totalCost": "1726.73"
@@ -1145,7 +1168,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-profile");
@@ -1167,7 +1190,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
       let response = await request(app).post("/fuelQuoteManagement/addQuote").set(
         "Token", test_token).send({
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -1176,7 +1199,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -1185,7 +1208,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": ["A random address, Some City, TX 00000"],
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -1194,7 +1217,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
       response = await request(app).post("/fuelQuoteManagement/addQuote").set(
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -1203,7 +1226,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -1212,7 +1235,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": 1,
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -1239,7 +1262,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1",
-          "deliveryDate": ["2022-06-01"]
+          "deliveryDate": [later_date()]
         })
       expect(response.statusCode).toBe(400);
       expect(response.body.status).toBe("error-field_type");
@@ -1251,7 +1274,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1.5",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-gallons");
@@ -1260,13 +1283,13 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1.0",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(201);
       expect(response.body.data.quotes).toBeTruthy();
       expect(response.body.data.quotes).toStrictEqual({
         "deliveryAddress": "A random address, Some City, TX 00000",
-        "deliveryDate": "2022-06-01",
+        "deliveryDate": later_date(),
         "gallonRate": "1.71",
         "numOfGallons": "1.0",
         "totalCost": "1.71"
@@ -1278,7 +1301,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "0",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-gallons");
@@ -1287,7 +1310,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1000001",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-gallons");
@@ -1298,7 +1321,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-01-01"
+          "deliveryDate": later_date(-30, 0)
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-delivery_date");
@@ -1309,7 +1332,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A rando address, Some City, TX 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-address");
@@ -1318,7 +1341,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some Cit, TX 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-address");
@@ -1327,7 +1350,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TN 00000",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-address");
@@ -1336,7 +1359,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "Token", test_token).send({
           "deliveryAddress": "A random address, Some City, TX 00001",
           "numOfGallons": "1",
-          "deliveryDate": "2022-06-01"
+          "deliveryDate": later_date()
         })
       expect(response.statusCode).toBe(403);
       expect(response.body.status).toBe("error-address");
@@ -1352,35 +1375,35 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
         "numberOfQuotes": 5,
         "q1": {
           "deliveryAddress": "A random address, Some City, TX 00000",
-          "deliveryDate": "2022-06-01",
+          "deliveryDate": later_date(),
           "gallonRate": "1.725",
           "numOfGallons": "1",
           "totalCost": "1.73"
         },
         "q2": {
           "deliveryAddress": "A random address, Some City, TX 00000",
-          "deliveryDate": "2022-06-02",
+          "deliveryDate": later_date(1),
           "gallonRate": "1.695",
           "numOfGallons": "1001",
           "totalCost": "1696.70"
         },
         "q3": {
           "deliveryAddress": "A random address, Some City, AL 00000",
-          "deliveryDate": "2022-06-03",
+          "deliveryDate": later_date(2),
           "gallonRate": "1.74",
           "numOfGallons": "1",
           "totalCost": "1.74"
         },
         "q4": {
           "deliveryAddress": "A random address, Some City, AL 00000",
-          "deliveryDate": "2022-06-03",
+          "deliveryDate": later_date(2),
           "gallonRate": "1.725",
           "numOfGallons": "1001",
           "totalCost": "1726.73"
         },
         "q5": {
           "deliveryAddress": "A random address, Some City, TX 00000",
-          "deliveryDate": "2022-06-01",
+          "deliveryDate": later_date(),
           "gallonRate": "1.71",
           "numOfGallons": "1.0",
           "totalCost": "1.71"
@@ -1398,8 +1421,9 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
       expect(response.body.expiration).toBeTruthy();
     })
   })
-  afterAll(() =&gt; {
+  afterAll((done) =&gt; {
     deleteUser("test1@email.com");
+    app.close(done);
   })
 });</pre></td></tr></table></pre>
 
@@ -1408,7 +1432,7 @@ exports.fuelQuoteSuite = () =&gt; describe("/fuelQuoteManagement", () =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Fri May 06 2022 16:08:26 GMT-0500 (Central Daylight Time)
+                at Sun Jul 03 2022 19:48:42 GMT-0500 (Central Daylight Time)
             </div>
         <script src="../../prettify.js"></script>
         <script>

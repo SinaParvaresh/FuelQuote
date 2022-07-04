@@ -1,12 +1,15 @@
-const app = require("../app.js");
+const application = require("../app.js");
 const request = require("supertest");
 const fs = require("fs");
 const { deleteUser } = require("../routes/userManagement.js");
 
-let test_token = "";
+let app, test_token;
 
 exports.profileSuite = () => describe("/profileManagement", () => {
   beforeAll(async () => {
+    app = application.listen(4000, (err) => {
+      console.log(`Fuel Quote Server listening on port ${4000}`);
+    });
     const userDB = JSON.parse(fs.readFileSync('./resources/users.json'));
     userDB["test1@email.com"] = { "password": "some_password1" };
     fs.writeFileSync('./resources/users.json', JSON.stringify(userDB));
@@ -515,7 +518,8 @@ exports.profileSuite = () => describe("/profileManagement", () => {
       expect(response.body.expiration).toBeTruthy();
     })
   })
-  afterAll(() => {
+  afterAll((done) => {
     deleteUser("test1@email.com");
+    app.close(done);
   })
 });

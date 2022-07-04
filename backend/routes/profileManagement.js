@@ -47,7 +47,7 @@ const updateProfile = (req, res) => {
   const cleaned_rest = {}
   const profileFields = ['full_name', 'address_1', 'address_2', 'city', 'usa_state', 'zipcode']
   profileFields.forEach(field => cleaned_rest[field] = req.body[field]);
-  if (!profileFields.reduce((prev, field) => prev * (typeof cleaned_rest[field] === "string") * (field != "address_2" ? cleaned_rest[field] != "" : true), 1)) {
+  if (!profileFields.every(field => (typeof cleaned_rest[field] === "string") && (field != "address_2" ? cleaned_rest[field] != "" : true))) {
     console.error("One of the given fields is missing or not of string type.");
     res.status(400).json({
       status: "error-field_type",
@@ -57,7 +57,7 @@ const updateProfile = (req, res) => {
     });
     return;
   }
-  if (profileFields.reduce((prev, field) => prev * (profileDB[userId][field] === cleaned_rest[field]), 1)) {
+  if (profileFields.every(field => (profileDB[userId][field] === cleaned_rest[field]))) {
     console.warn("New profile update request matches old profile.");
     res.status(200).json({
       status: "success",

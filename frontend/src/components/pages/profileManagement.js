@@ -29,7 +29,7 @@ const ProfileManagement = (props) => {
 
   const checkEmpty = () => {
     const formFields = document.querySelectorAll("[class='form-control']");
-    if ([].slice.call(formFields).reduce((prev, field) => prev * (!!field.value), 1))
+    if ([].slice.call(formFields).every(field => field.value))
       setButton(true);
     else
       setButton(false);
@@ -71,7 +71,7 @@ const ProfileManagement = (props) => {
       const profileInfo = {};
       const formFields = ([].slice.call(userInput.target).slice(0, 6));
       formFields.forEach((element) => profileInfo[element.name] = (element.value.replace(/\s+/g, ' ')));
-      if (Object.keys(profileInfo).reduce((prev, field) => prev * (profileInfo[field] === recievedProfileInfo[field]), 1))
+      if (Object.keys(profileInfo).every(field => profileInfo[field] === recievedProfileInfo[field]))
         return;
       const request = await fetch('http://localhost:5000/profileManagement/updateProfile', {
         method: 'POST',

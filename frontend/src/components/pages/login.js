@@ -22,7 +22,7 @@ const Login = (props) => {
     const checkEmpty = () => {
         document.getElementById('loginAlert').style.display = 'none';
         const formFields = document.querySelectorAll(".form-control");
-        if ([].slice.call(formFields).reduce((prev, field) => prev * (!!field.value), 1))
+        if ([].slice.call(formFields).every(field => field.value))
             setButton(true);
         else
             setButton(false);
