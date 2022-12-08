@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login if render matches snapshot 1`] = `
+<div
+  className="login-background"
+>
+  <form
+    action="/profileManagement"
+    className="Login"
+    id="login-form"
+    onSubmit={[Function]}
+  >
+    <h1>
+      LOGIN
+    </h1>
+    <br />
+    <div
+      className="input-group mb-3"
+    >
+      <div
+        className="input-group-prepend"
+      >
+        <label
+          className="input-group-text"
+          htmlFor="usernm"
+          id="basic-addon1"
+        >
+          Username
+        </label>
+      </div>
+      <input
+        aria-describedby="basic-addon1"
+        aria-label="Username"
+        className="form-control"
+        id="usernm"
+        onChange={[Function]}
+        placeholder="user@example.com"
+        required={true}
+        type="text"
+        value=""
+      />
+    </div>
+    <div
+      className="input-group mb-3"
+    >
+      <div
+        className="input-group-prepend"
+      >
+        <label
+          className="input-group-text"
+          htmlFor="passwrd"
+          id="basic-addon1"
+        >
+          Password
+        </label>
+      </div>
+      <input
+        aria-describedby="basic-addon1"
+        aria-label="Username"
+        className="form-control"
+        id="passwrd"
+        onChange={[Function]}
+        placeholder="********"
+        required={true}
+        type="password"
+      />
+    </div>
+    <div
+      className="alert alert-danger collapse"
+      id="loginAlert"
+      role="alert"
+      style={
+        Object {
+          "display": undefined,
+          "textAlign": "center",
+        }
+      }
+    >
+      <span
+        className="text-center font-weight-bold"
+        style={
+          Object {
+            "color": "rgb(100,0,0)",
+            "fontSize": "11pt",
+          }
+        }
+      >
+        Invalid Credentials.
+      </span>
+      <button
+        aria-label="Close"
+        className="close"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+        >
+          ×
+        </span>
+      </button>
+    </div>
+    <div>
+      <button
+        className="btn btn-primary"
+        disabled={true}
+        type="submit"
+      >
+         Submit 
+      </button>
+    </div>
+    <br />
+    <a
+      href="/registration"
+      onClick={[Function]}
+    >
+      New User? Register here.
+    </a>
+  </form>
+</div>
+`;

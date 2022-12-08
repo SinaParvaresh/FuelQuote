@@ -1,0 +1,204 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Registration if render matches snapshot 1`] = `
+<div
+  className="registration-background"
+>
+  <form
+    action="/login"
+    className="Registration"
+    id="registration-form"
+    onSubmit={[Function]}
+  >
+    <h1>
+      REGISTRATION
+    </h1>
+    <br />
+    <div
+      className="input-group mb-0"
+    >
+      <div
+        className="input-group-prepend"
+      >
+        <label
+          className="input-group-text"
+          htmlFor="usernm"
+          id="basic-addon1"
+        >
+          Create Username
+        </label>
+      </div>
+      <input
+        aria-describedby="basic-addon1"
+        aria-label="Username"
+        className="form-control"
+        id="usernm"
+        maxLength={30}
+        onChange={[Function]}
+        placeholder="user@example.com"
+        required={true}
+        type="email"
+      />
+    </div>
+    <small
+      className="form-text text-muted pt-0 mt-0 mb-3"
+    >
+      Username should be of email format.
+    </small>
+    <div
+      className="alert alert-danger collapse"
+      id="usernameAlert"
+      role="alert"
+      style={
+        Object {
+          "display": undefined,
+          "textAlign": "center",
+        }
+      }
+    >
+      <span
+        className="text-center font-weight-bold"
+        style={
+          Object {
+            "color": "rgb(150,0,0)",
+            "fontSize": "11pt",
+          }
+        }
+      >
+        Username must be in valid email format.
+      </span>
+      <button
+        aria-label="Close"
+        className="close"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+        >
+          ×
+        </span>
+      </button>
+    </div>
+    <div
+      className="alert alert-danger collapse"
+      id="registeredAlert"
+      role="alert"
+      style={
+        Object {
+          "display": undefined,
+          "textAlign": "center",
+        }
+      }
+    >
+      <span
+        className="text-center font-weight-bold"
+        style={
+          Object {
+            "color": "rgb(100,0,0)",
+            "fontSize": "10pt",
+          }
+        }
+      >
+        This user already exists. Please login instead.
+      </span>
+      <button
+        aria-label="Close"
+        className="close"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+        >
+          ×
+        </span>
+      </button>
+    </div>
+    <div
+      className="input-group mb-0"
+    >
+      <div
+        className="input-group-prepend"
+      >
+        <label
+          className="input-group-text"
+          htmlFor="passwrd"
+          id="basic-addon1"
+        >
+          Create Password
+        </label>
+      </div>
+      <input
+        aria-describedby="basic-addon1"
+        aria-label="Password"
+        className="form-control"
+        id="passwrd"
+        maxLength={16}
+        minLength={8}
+        onChange={[Function]}
+        placeholder="********"
+        required={true}
+        type="text"
+      />
+    </div>
+    <small
+      className="form-text text-muted pt-0 mt-0 mb-3"
+    >
+      Password should be 8 to 16 characters without whitespaces.
+    </small>
+    <div
+      className="alert alert-danger collapse"
+      id="passwordAlert"
+      role="alert"
+      style={
+        Object {
+          "display": undefined,
+          "textAlign": "center",
+        }
+      }
+    >
+      <span
+        className="text-center font-weight-bold"
+        style={
+          Object {
+            "color": "rgb(150,0,0)",
+            "fontSize": "11pt",
+          }
+        }
+      >
+        Password cannot contain whitespaces.
+      </span>
+      <button
+        aria-label="Close"
+        className="close"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+        >
+          ×
+        </span>
+      </button>
+    </div>
+    <div>
+      <button
+        className="btn btn-primary"
+        disabled={true}
+        id="submit-register"
+        type="submit"
+      >
+         Submit 
+      </button>
+    </div>
+    <br />
+    <a
+      href="/login"
+      onClick={[Function]}
+    >
+      Already a user? Login
+    </a>
+  </form>
+</div>
+`;

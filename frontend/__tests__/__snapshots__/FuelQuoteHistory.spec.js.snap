@@ -1,0 +1,217 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Fuel Quote History if render matches snapshot 1`] = `
+<div
+  className="page"
+>
+  <div
+    className="container"
+  >
+    <nav
+      className="navbar navbar-expand-lg navbar-light bg-light"
+    >
+      <div
+        className="container mb-2"
+      >
+        <a
+          aria-current="page"
+          className="navbar-brand active"
+          href="/"
+          onClick={[Function]}
+          style={
+            Object {
+              "textDecoration": "none",
+            }
+          }
+        >
+          Group 33
+        </a>
+        <button
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          className="navbar-toggler"
+          data-target="#navbarNav"
+          data-toggle="collapse"
+          type="button"
+        >
+          <span
+            className="navbar-toggler-icon"
+          />
+        </button>
+        <div
+          className="container"
+        >
+          <div
+            className="collapse navbar-collapse"
+            id="navbarNav"
+          >
+            <ul
+              className="navbar-nav mr-auto mt-lg-0"
+            >
+              <a
+                className="nav-item nav-link disabled"
+                href="/profileManagement"
+                onClick={[Function]}
+                style={
+                  Object {
+                    "pointerEvents": "none",
+                  }
+                }
+              >
+                Profile Management
+              </a>
+              <a
+                className="nav-item nav-link disabled"
+                href="/fuelQuoteForm"
+                onClick={[Function]}
+                style={
+                  Object {
+                    "pointerEvents": "none",
+                  }
+                }
+              >
+                Fuel Quote Form
+              </a>
+              <a
+                className="nav-item nav-link disabled"
+                href="/fuelQuoteHistory"
+                onClick={[Function]}
+                style={
+                  Object {
+                    "pointerEvents": "none",
+                  }
+                }
+              >
+                Fuel Quote History
+              </a>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div>
+        <button
+          className="btn btn-outline-success ml-auto"
+          onClick={[Function]}
+        >
+          Logout
+        </button>
+      </div>
+    </nav>
+  </div>
+  <div
+    className="container"
+  >
+    <div>
+      <h1>
+         Fuel Quote History
+      </h1>
+    </div>
+    <br />
+    <div
+      className="alert alert-danger collapse"
+      id="errorAlert"
+      role="alert"
+      style={
+        Object {
+          "display": "block",
+          "textAlign": "center",
+        }
+      }
+    >
+      <span
+        className="text-center font-weight-bold"
+        style={
+          Object {
+            "color": "rgb(100,0,0)",
+            "fontSize": "11pt",
+          }
+        }
+      >
+        Missing token. Please login before accessing this page.
+      </span>
+      <button
+        aria-label="Close"
+        className="close"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          aria-hidden="true"
+        >
+          ×
+        </span>
+      </button>
+    </div>
+    <div
+      className="table"
+    >
+      <table
+        className="table"
+      >
+        <thead
+          className="thead-dark"
+        >
+          <tr>
+            <th
+              style={
+                Object {
+                  "textAlign": "center",
+                }
+              }
+            >
+              #
+            </th>
+            <th
+              style={
+                Object {
+                  "textAlign": "center",
+                }
+              }
+            >
+              Gallons Requested
+            </th>
+            <th
+              style={
+                Object {
+                  "textAlign": "center",
+                }
+              }
+            >
+              Delivery Address
+            </th>
+            <th
+              style={
+                Object {
+                  "textAlign": "center",
+                }
+              }
+            >
+              Delivery Date
+            </th>
+            <th
+              style={
+                Object {
+                  "textAlign": "center",
+                }
+              }
+            >
+              Suggested Price / Gallon
+            </th>
+            <th
+              style={
+                Object {
+                  "textAlign": "center",
+                }
+              }
+            >
+              Total Amount Due
+            </th>
+          </tr>
+        </thead>
+        <tbody />
+      </table>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,27 @@
+{
+  "name": "fuelquote_backend",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "supertest": "^6.2.2"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest --detectOpenHandles"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "verbose": true,
+    "coverageReporters": [
+      "html"
+    ],
+    "moduleNameMapper": {
+      "users.json": "<rootDir>/__mocks__/users_mock.json",
+      "tokens.json": "<rootDir>/__mocks__/tokens_mock.json",
+      "fuelQuotes.json": "<rootDir>/__mocks__/fuelQuotes_mock.json"
+    }
+  },
+  "devDependencies": {
+    "jest": "^27.5.1"
+  }
+}
